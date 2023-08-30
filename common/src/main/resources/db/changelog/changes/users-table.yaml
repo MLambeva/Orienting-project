@@ -1,0 +1,59 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2
+      author: monika
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: user_id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: email
+                  type: nvarchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: password
+                  type: nvarchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: nvarchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: surname
+                  type: nvarchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: ucn
+                  type: nvarchar(50)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: phone_number
+                  type: nvarchar(15)
+              - column:
+                  name: birth_date
+                  type: date
+              - column:
+                  name: club_id
+                  type: int
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: group
+                  type: nvarchar(3)
+              - column:
+                  name: role
+                  type: nvarchar(10)

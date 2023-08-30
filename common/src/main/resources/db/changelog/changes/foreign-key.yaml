@@ -1,0 +1,43 @@
+databaseChangeLog:
+  - changeSet:
+      id: 5
+      author: monika
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: club
+            baseColumnNames: club_id
+            referencedTableName: users
+            referencedColumnNames: club_id
+            constraintName: fk_club
+  - changeSet:
+      id: 6
+      author: monika
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: users
+            baseColumnNames: user_id
+            referencedTableName: club
+            referencedColumnNames: coach_id
+            constraintName: fk_club_coach
+  - changeSet:
+      id: 7
+      author: monika
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: competition
+            baseColumnNames: comp_id
+            referencedTableName: competitors
+            referencedColumnNames: comp_id
+            constraintName: fk_comp
+  - changeSet:
+      id: 8
+      author: monika
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: users
+            baseColumnNames: user_id
+            referencedTableName: competitors
+            referencedColumnNames: user_id
+            constraintName: fk_comp_comp
+
+

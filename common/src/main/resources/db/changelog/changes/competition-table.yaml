@@ -1,0 +1,46 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 3
+      author: monika
+      changes:
+        - createTable:
+            tableName: competition
+            columns:
+              - column:
+                  name: comp_id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: nvarchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date
+                  type: date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: time
+                  type: time
+                  constraints:
+                    nullable: false
+              - column:
+                  name: location
+                  type: nvarchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: length
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: coordinates
+                  type: nvarchar(50)
+                  constraints:
+                    nullable: false

@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: monika
+      changes:
+        - createTable:
+            tableName: club
+            columns:
+              - column:
+                  name: club_id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: club_name
+                  type: nvarchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: coach_id
+                  type: int
+                  constraints:
+                    unique: true
