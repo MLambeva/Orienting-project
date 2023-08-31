@@ -1,6 +1,8 @@
 package com.orienting.orienting.spring.configuration;
 
+import com.orienting.common.repository.ClubRepository;
 import com.orienting.common.repository.UserRepository;
+import com.orienting.common.services.ClubService;
 import com.orienting.common.services.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -18,12 +20,16 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 public class BeanConfiguration {
 
     @Bean
-    public UserService userService(UserRepository repository) {
-        return new UserService(repository);
-    }
+    public UserService userService(UserRepository repository) { return new UserService(repository); }
+    @Bean
+    public ClubService clubService(ClubRepository clubRepository, UserRepository userRepository) { return new ClubService(clubRepository, userRepository); }
     @Bean
     public ModelMapper modelMapper() {
         return new ModelMapper();
     }
+   /* @Bean
+    public PasswordEncoder encoder() {
+        return new BCryptPasswordEncoder();
+    }*/
 
 }

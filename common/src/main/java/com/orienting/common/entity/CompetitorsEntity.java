@@ -14,7 +14,7 @@ import org.springframework.data.relational.core.sql.In;
 public class CompetitorsEntity {
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "comp_id")

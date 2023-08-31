@@ -1,20 +1,21 @@
 package com.orienting.orienting.spring.controller;
-
 import com.orienting.common.dto.UserDto;
+import com.orienting.common.entity.UserEntity;
 import com.orienting.common.services.UserService;
+import jakarta.validation.Valid;
 import lombok.Getter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/users")
 @Getter
 public class UserController {
 
@@ -26,7 +27,7 @@ public class UserController {
         this.userService = userService;
         this.modelMapper = modelMapper;
     }
-    @GetMapping("/users")
+    @GetMapping("/all")
     public ResponseEntity<List<UserDto>> getAllUsers() {
         List<UserDto> userDto = userService.getUsers().stream()
                 .map(user -> modelMapper.map(user, UserDto.class))
@@ -34,4 +35,11 @@ public class UserController {
 
         return ResponseEntity.ok(userDto);
     }
+    @PostMapping("/user")
+    public ResponseEntity<String> createUser(@RequestBody @Valid UserDto userDto) {
+        UserEntity user = modelMapper.map(userDto, UserEntity.class);
+        userService.createUser(user);
+        return ResponseEntity.ok("User added!");
+    }
+
 }

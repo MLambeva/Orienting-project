@@ -14,11 +14,14 @@ import org.springframework.web.service.annotation.GetExchange;
 public class ClubEntity {
     @Id
     @Column(name = "club_id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer clubId;
 
     @Column(name = "clubName")
     private String clubName;
+
+    @Column(name = "city")
+    private String city;
 
     @Column(name = "coach_id")
     private Integer coachId;

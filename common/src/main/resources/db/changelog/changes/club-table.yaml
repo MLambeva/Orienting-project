@@ -8,7 +8,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: club_id
-                  type: int
+                  type: serial
                   autoIncrement: true
                   constraints:
                     primaryKey: true
@@ -18,8 +18,16 @@ databaseChangeLog:
                   type: nvarchar(50)
                   constraints:
                     nullable: false
+                    unique: true
+              - column:
+                  name: city
+                  type: nvarchar(50)
+                  constraints:
+                    nullable: false
               - column:
                   name: coach_id
                   type: int
                   constraints:
                     unique: true
+                    nullable: true
+

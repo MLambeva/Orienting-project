@@ -8,7 +8,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: user_id
-                  type: int
+                  type: serial
                   autoIncrement: true
                   constraints:
                     primaryKey: true
@@ -21,8 +21,8 @@ databaseChangeLog:
               - column:
                   name: password
                   type: nvarchar(50)
-                  constraints:
-                    nullable: false
+                  #constraints:
+                   # nullable: false
               - column:
                   name: name
                   type: nvarchar(50)
@@ -43,16 +43,10 @@ databaseChangeLog:
                   name: phone_number
                   type: nvarchar(15)
               - column:
-                  name: birth_date
-                  type: date
-              - column:
                   name: club_id
                   type: int
-                  constraints:
-                    nullable: false
-                    unique: true
               - column:
-                  name: group
+                  name: race_group
                   type: nvarchar(3)
               - column:
                   name: role

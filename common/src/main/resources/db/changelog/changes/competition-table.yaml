@@ -9,7 +9,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: comp_id
-                  type: int
+                  type: serial
                   autoIncrement: true
                   constraints:
                     primaryKey: true

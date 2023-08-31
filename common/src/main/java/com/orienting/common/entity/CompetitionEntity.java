@@ -14,7 +14,7 @@ import java.util.Date;
 public class CompetitionEntity {
     @Id
     @Column(name = "comp_id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer comp_id;
 
     @Column(name = "name")

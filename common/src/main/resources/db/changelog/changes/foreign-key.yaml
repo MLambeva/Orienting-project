@@ -4,40 +4,46 @@ databaseChangeLog:
       author: monika
       changes:
         - addForeignKeyConstraint:
-            baseTableName: club
+            baseTableName: users
             baseColumnNames: club_id
-            referencedTableName: users
+            referencedTableName: club
             referencedColumnNames: club_id
             constraintName: fk_club
+            onDelete: CASCADE
+            onUpdate: SET NULL
   - changeSet:
       id: 6
       author: monika
       changes:
         - addForeignKeyConstraint:
-            baseTableName: users
-            baseColumnNames: user_id
-            referencedTableName: club
-            referencedColumnNames: coach_id
+            baseTableName: club
+            baseColumnNames: coach_id
+            referencedTableName: users
+            referencedColumnNames: user_id
             constraintName: fk_club_coach
+            onDelete: CASCADE
+            onUpdate: SET NULL
   - changeSet:
       id: 7
       author: monika
       changes:
         - addForeignKeyConstraint:
-            baseTableName: competition
+            baseTableName: competitors
             baseColumnNames: comp_id
-            referencedTableName: competitors
+            referencedTableName: competition
             referencedColumnNames: comp_id
             constraintName: fk_comp
+            onDelete: CASCADE
+            onUpdate: SET NULL
   - changeSet:
       id: 8
       author: monika
       changes:
         - addForeignKeyConstraint:
-            baseTableName: users
+            baseTableName: competitors
             baseColumnNames: user_id
-            referencedTableName: competitors
+            referencedTableName: users
             referencedColumnNames: user_id
             constraintName: fk_comp_comp
-
-
+            onDelete: CASCADE
+            onUpdate: SET NULL
