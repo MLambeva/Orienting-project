@@ -10,6 +10,7 @@ import java.util.Date;
 @Data
 @Getter
 public class UserDto {
+    private Integer userId;
     @Email
     private String email;
     private String name;

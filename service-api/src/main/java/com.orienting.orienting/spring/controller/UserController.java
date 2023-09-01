@@ -42,4 +42,22 @@ public class UserController {
         return ResponseEntity.ok("User added!");
     }
 
+    public ResponseEntity<String> deleteUserBy(UserDto user, String identifier, String identifierType) {
+        if(user != null) {
+            return ResponseEntity.ok(String.format("User with %s: %s was deleted!", identifierType, identifier));
+        }
+        else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    @DeleteMapping("/byUserId/{userId}")
+    public ResponseEntity<String> deleteUserByUserId(@PathVariable("userId") Integer userId) {
+        UserDto userDto = modelMapper.map(userService.deleteUserByUserId(userId), UserDto.class);
+        return deleteUserBy(userDto, userId.toString(), "userId");
+    }
+    @DeleteMapping("/byUcn/{ucn}")
+    public ResponseEntity<String> deleteUserByUcn(@PathVariable("ucn") String ucn) {
+        UserDto userDto = modelMapper.map(userService.deleteUserByUcn(ucn), UserDto.class);
+        return  deleteUserBy(userDto, ucn, "ucn");
+    }
 }
