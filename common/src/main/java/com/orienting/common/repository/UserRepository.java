@@ -10,6 +10,4 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     UserEntity findRoleByUserId(Integer userId);
     UserEntity findUserByUcn(String ucn);
     UserEntity findUserByUserId(Integer userId);
-    //void deleteUserByUcn(String ucn);
-    //void deleteUserById(Integer userId);
 }

@@ -1,11 +1,12 @@
 package com.orienting.common.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.sql.Time;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -15,16 +16,17 @@ public class CompetitionEntity {
     @Id
     @Column(name = "comp_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer comp_id;
+    private Integer compId;
 
     @Column(name = "name")
     private String name;
 
+    @JsonFormat(pattern = "dd-MM-yyyy")
     @Column(name = "date")
-    private Date date;
+    private LocalDate date;
 
     @Column(name = "time")
-    private Time time;
+    private LocalTime time;
 
     @Column(name = "location")
     private String location;

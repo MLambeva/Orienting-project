@@ -35,11 +35,16 @@ public class UserController {
 
         return ResponseEntity.ok(userDto);
     }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserDto> getUser(@PathVariable("userId") Integer userId) {
+        return ResponseEntity.ok(modelMapper.map(userService.getUserById(userId), UserDto.class));
+    }
     @PostMapping("/user")
     public ResponseEntity<String> createUser(@RequestBody @Valid UserDto userDto) {
         UserEntity user = modelMapper.map(userDto, UserEntity.class);
         userService.createUser(user);
-        return ResponseEntity.ok("User added!");
+        return ResponseEntity.ok(String.format("User with id: %d added!", user.getUserId()));
     }
 
     public ResponseEntity<String> deleteUserBy(UserDto user, String identifier, String identifierType) {

@@ -36,6 +36,6 @@ public class ClubController {
     public ResponseEntity<String> createClub(@RequestBody @Valid ClubDto clubDto) {
         ClubEntity club = modelMapper.map(clubDto, ClubEntity.class);
         clubService.createClub(club);
-        return ResponseEntity.ok("Club created successfully");
+        return ResponseEntity.ok(String.format("Club with id: %d created successfully", club.getClubId()));
     }
 }
