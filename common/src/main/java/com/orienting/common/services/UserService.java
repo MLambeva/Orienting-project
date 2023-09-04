@@ -32,19 +32,12 @@ public class UserService {
         return userRepository.findUserByUserId(id);
     }
 
-
-    public void createUser(UserEntity user) {
-        //String hashPassword = passwordEncoder.encode(user.getPassword());
-        //user.setPassword(hashPassword);
-        System.out.println(user);
-        userRepository.save(user);
-    }
-
+    //Coach & admin, but admin can delete coaches?
     public UserEntity deleteUserBy(String identifier, String identifierType) {
         if (identifier == null || identifierType == null) {
             throw new IllegalArgumentException("Identifier and identifierType cannot be null.");
         }
-        UserEntity user = null;
+        UserEntity user;
         if ("userId".equals(identifierType)) {
             Integer userId = Integer.parseInt(identifier);
             user = userRepository.findUserByUserId(userId);

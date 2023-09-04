@@ -40,4 +40,12 @@ public class UserEntity {
 
     public UserEntity(){}
 
+    public boolean isCoach() {
+        return "coach".equals(role);
+    }
+
+    public boolean isCompetitor() {
+        return "competitor".equals(role);
+    }
+
 }

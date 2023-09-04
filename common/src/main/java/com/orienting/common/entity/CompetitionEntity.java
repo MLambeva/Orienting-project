@@ -31,9 +31,6 @@ public class CompetitionEntity {
     @Column(name = "location")
     private String location;
 
-    @Column(name = "length")
-    private Integer length;
-
     @Column(name = "coordinates")
     private String coordinates;
 

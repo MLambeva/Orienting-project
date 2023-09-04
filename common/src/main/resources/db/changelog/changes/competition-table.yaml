@@ -35,11 +35,6 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: length
-                  type: int
-                  constraints:
-                    nullable: false
-              - column:
                   name: coordinates
                   type: nvarchar(50)
                   constraints:

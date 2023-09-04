@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ClubRepository  extends JpaRepository<ClubEntity, Integer> {
-
+    ClubEntity findClubByClubId(Integer clubId);
 }

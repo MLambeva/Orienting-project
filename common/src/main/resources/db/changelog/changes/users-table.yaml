@@ -18,6 +18,7 @@ databaseChangeLog:
                   type: nvarchar(50)
                   constraints:
                     nullable: false
+                    unique: true
               - column:
                   name: password
                   type: nvarchar(50)

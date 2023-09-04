@@ -21,7 +21,6 @@ public class CompetitionDto {
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime time;
     private String location;
-    private Integer length;
     private String coordinates;
     public CompetitionDto() {}
 }
