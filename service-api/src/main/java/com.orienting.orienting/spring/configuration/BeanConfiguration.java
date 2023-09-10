@@ -3,8 +3,9 @@ package com.orienting.orienting.spring.configuration;
 import com.orienting.common.repository.ClubRepository;
 import com.orienting.common.repository.CompetitionRepository;
 import com.orienting.common.repository.UserRepository;
-import com.orienting.common.services.UserClubService;
+import com.orienting.common.services.ClubService;
 import com.orienting.common.services.CompetitionService;
+import com.orienting.common.services.UserClubService;
 import com.orienting.common.services.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -24,7 +25,9 @@ public class BeanConfiguration {
     @Bean
     public UserService userService(UserRepository repository) { return new UserService(repository); }
     @Bean
-    public UserClubService clubService(ClubRepository clubRepository, UserRepository userRepository) { return new UserClubService(clubRepository, userRepository); }
+    public ClubService clubService(ClubRepository clubRepository) { return new ClubService(clubRepository); }
+    @Bean
+    public UserClubService userClubService(UserRepository userRepository, ClubRepository clubRepository) { return new UserClubService(userRepository, clubRepository); }
     @Bean
     public CompetitionService competitionService(CompetitionRepository competitionRepository) { return new CompetitionService(competitionRepository); }
 

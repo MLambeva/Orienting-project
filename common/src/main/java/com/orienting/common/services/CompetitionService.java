@@ -5,7 +5,6 @@ import com.orienting.common.repository.CompetitionRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.relational.core.sql.In;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;

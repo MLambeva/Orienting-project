@@ -1,18 +1,14 @@
 package com.orienting.common.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.Date;
 
 
 @Getter
 @Setter
 @Entity
 @Table(name = "users")
-@Data
 public class UserEntity {
 
     @Id
@@ -23,20 +19,27 @@ public class UserEntity {
     private String email;
     @Column(name = "password")
     private String password;
-    @Column(name = "name")
-    private String name;
-    @Column(name = "surname")
-    private String surname;
+    @Column(name = "first_name")
+    private String firstName;
+    @Column(name = "last_name")
+    private String lastName;
     @Column(name = "ucn")
     private String ucn;
     @Column(name = "phone_number")
     private String phoneNumber;
-    @Column(name = "club_id")
-    private Integer clubId;
     @Column(name = "race_group")
     private String group;
     @Column(name = "role")
     private String role;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "users_clubs", //
+            joinColumns = @JoinColumn(name = "user_id"), //
+            inverseJoinColumns = @JoinColumn(name = "club_id")
+    )
+    private ClubEntity club;
+
 
     public UserEntity(){}
 
@@ -47,5 +50,39 @@ public class UserEntity {
     public boolean isCompetitor() {
         return "competitor".equals(role);
     }
+
+    public void updateUser(UserEntity newUser) {
+        if (newUser != null) {
+            if (newUser.getEmail() != null) {
+                this.setEmail(newUser.getEmail());
+            }
+            if (newUser.getPassword() != null) {
+                this.setPassword(newUser.getPassword());
+            }
+            if (newUser.getFirstName() != null) {
+                this.setFirstName(newUser.getFirstName());
+            }
+            if (newUser.getLastName() != null) {
+                this.setLastName(newUser.getLastName());
+            }
+            if (newUser.getUcn() != null) {
+                this.setUcn(newUser.getUcn());
+            }
+            if (newUser.getPhoneNumber() != null) {
+                this.setPhoneNumber(newUser.getPhoneNumber());
+            }
+            if (newUser.getGroup() != null) {
+                this.setGroup(newUser.getGroup());
+            }
+            if (newUser.getRole() != null) {
+                this.setRole(newUser.getRole());
+            }
+            if (newUser.getClub() != null) {
+                this.setClub(newUser.getClub());
+            }
+        }
+    }
+
+
 
 }

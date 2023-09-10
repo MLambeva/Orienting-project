@@ -21,22 +21,22 @@ databaseChangeLog:
                     unique: true
               - column:
                   name: password
-                  type: nvarchar(50)
+                  type: nvarchar(256)
                   #constraints:
                    # nullable: false
               - column:
-                  name: name
+                  name: first_name
                   type: nvarchar(50)
                   constraints:
                     nullable: false
               - column:
-                  name: surname
+                  name: last_name
                   type: nvarchar(50)
                   constraints:
                     nullable: false
               - column:
                   name: ucn
-                  type: nvarchar(50)
+                  type: nvarchar(10)
                   constraints:
                     unique: true
                     nullable: false
@@ -44,11 +44,10 @@ databaseChangeLog:
                   name: phone_number
                   type: nvarchar(15)
               - column:
-                  name: club_id
-                  type: int
-              - column:
                   name: race_group
                   type: nvarchar(3)
               - column:
                   name: role
                   type: nvarchar(10)
+                  constraints:
+                    nullable: false

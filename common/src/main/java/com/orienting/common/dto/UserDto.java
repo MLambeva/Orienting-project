@@ -1,29 +1,29 @@
 package com.orienting.common.dto;
 
 import jakarta.validation.constraints.*;
-import lombok.Data;
 import lombok.Getter;
-import lombok.NonNull;
+import lombok.Setter;
 
 import java.util.Date;
 
-@Data
 @Getter
+@Setter
 public class UserDto {
     private Integer userId;
     @Email
     private String email;
-    private String name;
-    private String surname;
+    private String firstName;
+    private String lastName;
     private String ucn;
-    @Pattern(regexp = "^(\\+\\d{1,2})?\\s?\\(?\\d{3}\\)?[-.\\s]?\\d{3}[-.\\s]?\\d{4}$", message = "Invalid phone number")
+    //@Pattern(regexp = "^(\\+\\d{1,2})?\\s?\\(?\\d{3}\\)?[-.\\s]?\\d{3}[-.\\s]?\\d{4}$", message = "Invalid phone number")
     private String phoneNumber;
-    @NotNull
-    private Integer clubId;
-    @Pattern(regexp = "^(W|M)\\d{2}$", message = "Invalid format")
+    //@Pattern(regexp = "^(W|M)\\d{2}$", message = "Invalid format")
     private String group;
-    @Pattern(regexp = "^(?i)(coach|competitor)$", message = "Invalid role")
+    //@Pattern(regexp = "^(?i)(coach|competitor)$", message = "Invalid role")
     private String role;
+    private Integer clubId;
+    private String clubName;
+    private String city;
 
     public UserDto() {}
 

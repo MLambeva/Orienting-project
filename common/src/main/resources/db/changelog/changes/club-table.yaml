@@ -4,7 +4,7 @@ databaseChangeLog:
       author: monika
       changes:
         - createTable:
-            tableName: club
+            tableName: clubs
             columns:
               - column:
                   name: club_id
@@ -24,10 +24,57 @@ databaseChangeLog:
                   type: nvarchar(50)
                   constraints:
                     nullable: false
+        - createTable:
+            tableName: users_clubs
+            columns:
               - column:
-                  name: coach_id
-                  type: int
+                  name: user_id
+                  type: serial
                   constraints:
+                    primaryKey: true
+                    nullable: false
                     unique: true
-                    nullable: true
+                    references: users(user_id)
+                    foreignKeyName: fk_users_clubs
+                    deleteCascade: true
+
+              - column:
+                  name: club_id
+                  type: serial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    unique: false
+                    references: clubs(club_id)
+                    foreignKeyName: fk_clubs_users
+                    deleteCascade: true
+        - createTable:
+            tableName: coaches
+            columns:
+              - column:
+                  name: id
+                  type: serial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: serial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    unique: true
+                    references: users(user_id)
+                    foreignKeyName: fk_users_coaches
+                    deleteCascade: true
+              - column:
+                  name: club_id
+                  type: serial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    unique: false
+                    references: clubs(club_id)
+                    foreignKeyName: fk_clubs_coaches
+                    deleteCascade: true
 

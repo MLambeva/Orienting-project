@@ -1,7 +1,6 @@
 package com.orienting.common.repository;
 
 import com.orienting.common.entity.CompetitionEntity;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
