@@ -11,9 +11,6 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Integer> {
-    @Query("SELECT u.role FROM UserEntity u WHERE u.userId = :userId")
-    Optional<String> findRoleByUserId(Integer userId);
-
     Optional<UserEntity> findUserByUcn(String ucn);
 
     Optional<UserEntity> findUserByUserId(Integer userId);

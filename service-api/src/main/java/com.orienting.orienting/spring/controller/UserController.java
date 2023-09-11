@@ -1,5 +1,6 @@
 package com.orienting.orienting.spring.controller;
 
+import com.orienting.common.dto.CoachDto;
 import com.orienting.common.dto.UserDto;
 import com.orienting.common.dto.UserUpdateDto;
 import com.orienting.common.entity.UserEntity;
@@ -34,7 +35,6 @@ public class UserController {
         List<UserDto> userDto = userService.getUsers().stream()
                 .map(user -> modelMapper.map(user, UserDto.class))
                 .collect(Collectors.toList());
-
         return ResponseEntity.ok(userDto);
     }
 
@@ -80,69 +80,62 @@ public class UserController {
         return ResponseEntity.ok(userService.getRoleByUcn(ucn));
     }
 
-    public ResponseEntity<String> deleteUserBy(UserDto user, String identifier, String identifierType) {
-        if (user != null) {
-            return ResponseEntity.ok(String.format("User with %s: %s was deleted!", identifierType, identifier));
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    @GetMapping("/coaches")
+    public ResponseEntity<List<CoachDto>> getAllCoaches() {
+        return ResponseEntity.ok(userService.getAllCoaches().stream().map(user -> modelMapper.map(user, CoachDto.class)).toList());
     }
 
     @DeleteMapping("/byUserId/{userId}")
     public ResponseEntity<String> deleteUserByUserId(@PathVariable("userId") Integer userId) {
-        return deleteUserBy(modelMapper.map(userService.deleteUserByUserId(userId, false), UserDto.class), userId.toString(), "userId");
+        userService.deleteUserByUserId(userId, false);
+        return ResponseEntity.ok(String.format("User with userId: %d was deleted!", userId));
     }
 
     //for Admins
     @DeleteMapping("/byUserIdAdmin/{userId}")
     public ResponseEntity<String> deleteUserByUserIdAdmin(@PathVariable("userId") Integer userId) {
-        return deleteUserBy(modelMapper.map(userService.deleteUserByUserId(userId, true), UserDto.class), userId.toString(), "userId");
+        userService.deleteUserByUserId(userId, true);
+        return ResponseEntity.ok(String.format("User with userId: %d was deleted!", userId));
     }
 
     @DeleteMapping("/byUcn/{ucn}")
     public ResponseEntity<String> deleteUserByUcn(@PathVariable("ucn") String ucn) {
-        return deleteUserBy(modelMapper.map(userService.deleteUserByUcn(ucn, false), UserDto.class), ucn, "ucn");
+        userService.deleteUserByUcn(ucn, false);
+        return ResponseEntity.ok(String.format("User with ucn %s was deleted!", ucn));
     }
 
     //for Admins
     @DeleteMapping("/byUcnAdmin/{ucn}")
     public ResponseEntity<String> deleteUserByUcnAdmin(@PathVariable("ucn") String ucn) {
-        return deleteUserBy(modelMapper.map(userService.deleteUserByUcn(ucn, true), UserDto.class), ucn, "ucn");
-    }
-
-    public ResponseEntity<String> updateUserBy(UserUpdateDto user, String identifier, String identifierType) {
-        if (user != null) {
-            return ResponseEntity.ok(String.format("User with %s: %s was updated!", identifierType, identifier));
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        userService.deleteUserByUcn(ucn, true);
+        return ResponseEntity.ok(String.format("User with ucn %s was deleted!", ucn));
     }
 
     @PutMapping("/byUserId/{userId}")
     public ResponseEntity<String> updateUserByUserId(@PathVariable("userId") Integer userId, @Valid @RequestBody UserUpdateDto newUser) {
         UserEntity newUserEntity = modelMapper.map(newUser, UserEntity.class);
-        UserUpdateDto user = modelMapper.map(userService.updateUserByUserId(userId, false, newUserEntity), UserUpdateDto.class);
-        return updateUserBy(user, userId.toString(), "userId");
+        userService.updateUserByUserId(userId, false, newUserEntity);
+        return ResponseEntity.ok(String.format("User with userId: %d was updated!", userId));
     }
 
     @PutMapping("/byUserIdAdmin/{userId}")
     public ResponseEntity<String> updateUserByUserIdAdmin(@PathVariable("userId") Integer userId, @Valid @RequestBody UserUpdateDto newUser) {
         UserEntity newUserEntity = modelMapper.map(newUser, UserEntity.class);
-        UserUpdateDto user = modelMapper.map(userService.updateUserByUserId(userId, true, newUserEntity), UserUpdateDto.class);
-        return updateUserBy(user, userId.toString(), "userId");
+        userService.updateUserByUserId(userId, true, newUserEntity);
+        return ResponseEntity.ok(String.format("User with userId: %d was updated!", userId));
     }
 
     @PutMapping("byUcn/{ucn}")
     public ResponseEntity<String> updateUserByUcn(@PathVariable("ucn") String ucn, @Valid @RequestBody UserUpdateDto newUser) {
         UserEntity newUserEntity = modelMapper.map(newUser, UserEntity.class);
-        UserUpdateDto user = modelMapper.map(userService.updateUserByUcn(ucn, false, newUserEntity), UserUpdateDto.class);
-        return updateUserBy(user, ucn, "ucn");
+        userService.updateUserByUcn(ucn, false, newUserEntity);
+        return ResponseEntity.ok(String.format("User with ucn: %S was updated!", ucn));
     }
 
     @PutMapping("/byUcnAdmin/{ucn}")
     public ResponseEntity<String> updateUserByUcnAdmin(@PathVariable("ucn") String ucn, @Valid @RequestBody UserUpdateDto newUser) {
         UserEntity newUserEntity = modelMapper.map(newUser, UserEntity.class);
-        UserUpdateDto user = modelMapper.map(userService.updateUserByUcn(ucn, true, newUserEntity), UserUpdateDto.class);
-        return updateUserBy(user, ucn, "ucn");
+        userService.updateUserByUcn(ucn, true, newUserEntity);
+        return ResponseEntity.ok(String.format("User with ucn: %S was updated!", ucn));
     }
 }

@@ -2,9 +2,11 @@ package com.orienting.common.services;
 
 import com.orienting.common.entity.UserEntity;
 import com.orienting.common.exception.InvalidRoleException;
+import com.orienting.common.exception.NoExistedUser;
 import com.orienting.common.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.Getter;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,11 +30,11 @@ public class UserService {
 
     public UserEntity getUserById(Integer userId) {
         return userRepository.findUserByUserId(userId).orElseThrow(() ->
-                new EntityNotFoundException(String.format("User with id: %d does not exits!", userId)));
+                new NoExistedUser(String.format("User with id: %d does not exist!", userId)));
     }
     public UserEntity getUserByUcn(String ucn) {
         return userRepository.findUserByUcn(ucn).orElseThrow(() ->
-                new EntityNotFoundException(String.format("User with unified civil number: %s does not exits!", ucn)));
+                new NoExistedUser(String.format("User with unified civil number: %s does not exist!", ucn)));
     }
     public List<UserEntity> getAllUsersByClubId(Integer clubId) {
         return userRepository.findAllUsersInClub(clubId).orElseThrow(() ->
@@ -50,7 +52,7 @@ public class UserService {
         if (userOptional.isPresent()) {
             return userOptional.get().getRole();
         } else {
-            throw new EntityNotFoundException(String.format("User with userId: %d not existed!", userId));
+            throw new NoExistedUser(String.format("User with userId: %d not existed!", userId));
         }
     }
 
@@ -60,62 +62,63 @@ public class UserService {
         if (userOptional.isPresent()) {
             return userOptional.get().getRole();
         } else {
-            throw new EntityNotFoundException(String.format("User with unified civil number %s not existed!", ucn));
+            throw new NoExistedUser(String.format("User with unified civil number %s not existed!", ucn));
         }
     }
 
+    public List<UserEntity> getAllCoaches() {
+        return userRepository.findAll().stream()
+                .filter(UserEntity::isCoach).toList();
+    }
 
     public UserEntity deleteAndUpdateByHelper(String identifier, String identifierType, Boolean isAdmin, String action) {
         if (identifier == null || identifierType == null) {
             throw new IllegalArgumentException("Identifier and identifierType cannot be null.");
         }
-        Optional<UserEntity> user;
+        UserEntity user;
         if ("userId".equals(identifierType)) {
             Integer userId = Integer.parseInt(identifier);
-            user = userRepository.findUserByUserId(userId);
+            user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUser(String.format("User with userId: %d not existed!", identifier)));
         } else if ("ucn".equals(identifierType))
-            user = userRepository.findUserByUcn(identifier);
+            user = userRepository.findUserByUcn(identifier).orElseThrow(() -> new NoExistedUser(String.format("User with unified civil number %s not existed!", identifier)));
         else
             throw new IllegalArgumentException("Invalid identifierType: " + identifierType);
 
-        if (user.isEmpty())
-            throw new EntityNotFoundException("User not found!");
-
-        if (user.get().isCoach() && !isAdmin) {
+        if (user.isCoach() && !isAdmin) {
             throw new InvalidRoleException("Role must be competitor!");
         }
 
         if ("delete".equals(action)) {
-            userRepository.delete(user.get());
+            userRepository.delete(user);
         }
         else if(!"update".equals(action)) {
             throw new RuntimeException("Action must be delete or update!");
         }
 
-        return user.get();
+        return user;
     }
 
-
-    public UserEntity deleteUserByUserId(Integer userId, Boolean isAdmin) {
-        return deleteAndUpdateByHelper(userId.toString(), "userId", isAdmin, "delete");
+    public void deleteUserByUserId(Integer userId, Boolean isAdmin) {
+        deleteAndUpdateByHelper(userId.toString(), "userId", isAdmin, "delete");
     }
 
-    public UserEntity deleteUserByUcn(String ucn, Boolean isAdmin) {
-        return deleteAndUpdateByHelper(ucn, "ucn", isAdmin, "delete");
+    public void deleteUserByUcn(String ucn, Boolean isAdmin) {
+        deleteAndUpdateByHelper(ucn, "ucn", isAdmin, "delete");
     }
 
-    public UserEntity updateUserBy(String identifier, String identifierType, Boolean isAdmin, UserEntity newUser) {
+    public void updateUserBy(String identifier, String identifierType, Boolean isAdmin, UserEntity newUser) {
         UserEntity user = deleteAndUpdateByHelper(identifier, identifierType, isAdmin, "update");
         user.updateUser(newUser);
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
-    public UserEntity updateUserByUserId(Integer userId, Boolean isAdmin, UserEntity newUser) {
-        return updateUserBy(userId.toString(), "userId", isAdmin, newUser);
+    public void updateUserByUserId(Integer userId, Boolean isAdmin, UserEntity newUser) {
+        updateUserBy(userId.toString(), "userId", isAdmin, newUser);
     }
 
-    public UserEntity updateUserByUcn(String ucn, Boolean isAdmin, UserEntity newUser) {
-        return updateUserBy(ucn, "ucn", isAdmin, newUser);
+    public void updateUserByUcn(String ucn, Boolean isAdmin, UserEntity newUser) {
+        updateUserBy(ucn, "ucn", isAdmin, newUser);
     }
+
 
 }

@@ -1,5 +1,8 @@
 package com.orienting.orienting.spring.configuration;
 
+import com.orienting.common.dto.CoachDto;
+import com.orienting.common.dto.UserDto;
+import com.orienting.common.entity.UserEntity;
 import com.orienting.common.repository.ClubRepository;
 import com.orienting.common.repository.CompetitionRepository;
 import com.orienting.common.repository.UserRepository;
@@ -33,7 +36,13 @@ public class BeanConfiguration {
 
     @Bean
     public ModelMapper modelMapper() {
-        return new ModelMapper();
+        ModelMapper modelMapper = new ModelMapper();
+
+        modelMapper.createTypeMap(UserEntity.class, UserDto.class)
+                .addMapping(src -> src.getClub().getCity(), UserDto::setCity);
+        modelMapper.createTypeMap(UserEntity.class, CoachDto.class)
+                .addMapping(src -> src.getClub().getCity(), CoachDto::setCity);
+        return modelMapper;
     }
    /* @Bean
     public PasswordEncoder encoder() {

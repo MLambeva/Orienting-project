@@ -14,6 +14,5 @@ public class ClubDto {
     private String city;
 
     public ClubDto() {}
+
 }
-
-

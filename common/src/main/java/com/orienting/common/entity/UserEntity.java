@@ -34,8 +34,8 @@ public class UserEntity {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "users_clubs", //
-            joinColumns = @JoinColumn(name = "user_id"), //
+            name = "users_clubs",
+            joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "club_id")
     )
     private ClubEntity club;
@@ -51,6 +51,9 @@ public class UserEntity {
         return "competitor".equals(role);
     }
 
+    public void addClub(ClubEntity club) {
+        this.club = club;
+    }
     public void updateUser(UserEntity newUser) {
         if (newUser != null) {
             if (newUser.getEmail() != null) {
@@ -64,9 +67,6 @@ public class UserEntity {
             }
             if (newUser.getLastName() != null) {
                 this.setLastName(newUser.getLastName());
-            }
-            if (newUser.getUcn() != null) {
-                this.setUcn(newUser.getUcn());
             }
             if (newUser.getPhoneNumber() != null) {
                 this.setPhoneNumber(newUser.getPhoneNumber());
@@ -82,7 +82,4 @@ public class UserEntity {
             }
         }
     }
-
-
-
 }

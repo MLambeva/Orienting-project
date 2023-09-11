@@ -1,5 +1,6 @@
 package com.orienting.orienting.spring.controller;
 
+import com.orienting.common.dto.CoachCreationDto;
 import com.orienting.common.dto.UserCreationDto;
 import com.orienting.common.entity.UserEntity;
 import com.orienting.common.services.UserClubService;
@@ -7,11 +8,9 @@ import jakarta.validation.Valid;
 import lombok.Getter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
@@ -32,5 +31,16 @@ public class UserClubController {
         return ResponseEntity.ok(String.format("User with id: %d was added!", user.getUserId()));
     }
 
+    @PostMapping("/addCoach/{clubId}")
+    public ResponseEntity<String> addCoach(@PathVariable("clubId") Integer clubId, @Valid @RequestBody CoachCreationDto coach) {
+        UserEntity user = userClubService.addCoach(clubId, modelMapper.map(coach, UserEntity.class));
+        return ResponseEntity.ok(String.format("Club with id %d has new coach with id %d!", clubId, user.getUserId()));
+    }
+
+    @PutMapping("/add/{userId}/{clubId}")
+    public ResponseEntity<String> addClubToUser(@PathVariable("userId") Integer userId, @PathVariable("clubId") Integer clubId) {
+        userClubService.addClubToUser(userId, clubId);
+        return ResponseEntity.ok(String.format("User with id %d belong to club with id %d!", userId, clubId));
+    }
 
 }

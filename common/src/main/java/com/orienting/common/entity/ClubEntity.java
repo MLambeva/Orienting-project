@@ -24,5 +24,17 @@ public class ClubEntity {
     @OneToMany(mappedBy = "club")
     private Set<UserEntity> users;
 
+    public ClubEntity() {}
+
+    public void updateClub(ClubEntity club) {
+        if(club != null) {
+            if(club.clubName != null) {
+                this.setClubName(club.getClubName());
+            }
+            if(club.city != null) {
+                this.setCity(club.getCity());
+            }
+        }
+    }
 
 }
