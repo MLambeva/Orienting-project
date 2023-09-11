@@ -52,7 +52,7 @@ public class UserService {
         if (userOptional.isPresent()) {
             return userOptional.get().getRole();
         } else {
-            throw new NoExistedUser(String.format("User with userId: %d not existed!", userId));
+            throw new NoExistedUser(String.format("User with userId: %d does not exist!", userId));
         }
     }
 
@@ -62,7 +62,7 @@ public class UserService {
         if (userOptional.isPresent()) {
             return userOptional.get().getRole();
         } else {
-            throw new NoExistedUser(String.format("User with unified civil number %s not existed!", ucn));
+            throw new NoExistedUser(String.format("User with unified civil number %s does not exist!", ucn));
         }
     }
 
@@ -78,9 +78,9 @@ public class UserService {
         UserEntity user;
         if ("userId".equals(identifierType)) {
             Integer userId = Integer.parseInt(identifier);
-            user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUser(String.format("User with userId: %d not existed!", identifier)));
+            user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUser(String.format("User with userId: %d does not exist!", identifier)));
         } else if ("ucn".equals(identifierType))
-            user = userRepository.findUserByUcn(identifier).orElseThrow(() -> new NoExistedUser(String.format("User with unified civil number %s not existed!", identifier)));
+            user = userRepository.findUserByUcn(identifier).orElseThrow(() -> new NoExistedUser(String.format("User with unified civil number %s does not exist!", identifier)));
         else
             throw new IllegalArgumentException("Invalid identifierType: " + identifierType);
 

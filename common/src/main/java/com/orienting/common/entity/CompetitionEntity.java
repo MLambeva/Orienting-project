@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -33,6 +34,9 @@ public class CompetitionEntity {
 
     @Column(name = "coordinates")
     private String coordinates;
+
+    @ManyToMany(mappedBy = "competitions")
+    private Set<UserEntity> users;
 
     public CompetitionEntity() {}
 }

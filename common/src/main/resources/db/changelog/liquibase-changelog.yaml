@@ -3,7 +3,7 @@ databaseChangeLog:
       file: db/changelog/changes/users-table.yaml
   - include:
       file: db/changelog/changes/club-table.yaml
-  #- include:
-   #   file: db/changelog/changes/competition-table.yaml
+  - include:
+      file: db/changelog/changes/competition-table.yaml
   #- include:
    #   file: db/changelog/changes/competitors-table.yaml

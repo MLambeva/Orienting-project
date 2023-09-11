@@ -1,6 +1,7 @@
 package com.orienting.common.services;
 
 import com.orienting.common.entity.CompetitionEntity;
+import com.orienting.common.exception.NoExistedCompetition;
 import com.orienting.common.repository.CompetitionRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.Getter;
@@ -25,19 +26,18 @@ public class CompetitionService {
     }
 
     public List<CompetitionEntity> getCompetitionByDate(LocalDate date) {
-        return competitionRepository.findCompetitionByDate(date);
+        return competitionRepository.findCompetitionByDate(date).orElseThrow(() -> new NoExistedCompetition(String.format("Competitions on %s do not exist!", date.toString())));
     }
 
     public void createCompetition(CompetitionEntity competition) {
         competitionRepository.save(competition);
     }
 
-    public CompetitionEntity deleteCompById(Integer compId) {
-        CompetitionEntity competition = competitionRepository.findCompetitionByCompId(compId);
+    public void deleteCompById(Integer compId) {
+        CompetitionEntity competition = competitionRepository.findCompetitionByCompId(compId).orElseThrow(() -> new NoExistedCompetition(String.format("Competition with id %d does not exist!", compId)));
         if(competition == null) {
             throw new EntityNotFoundException("Competition not found!");
         }
         competitionRepository.delete(competition);
-        return competition;
     }
 }

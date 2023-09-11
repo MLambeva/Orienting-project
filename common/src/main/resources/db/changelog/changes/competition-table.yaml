@@ -1,7 +1,7 @@
 databaseChangeLog:
 
   - changeSet:
-      id: 3
+      id: 8 #3
       author: monika
       changes:
         - createTable:
@@ -39,3 +39,26 @@ databaseChangeLog:
                   type: nvarchar(50)
                   constraints:
                     nullable: false
+        - createTable:
+            tableName: users_competitions
+            columns:
+              - column:
+                  name: user_id
+                  type: serial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    unique: false
+                    references: users(user_id)
+                    foreignKeyName: fk_users_contests_users
+                    deleteCascade: true
+              - column:
+                  name: comp_id
+                  type: serial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    unique: false
+                    references: competition(comp_id)
+                    foreignKeyName: fk_users_contests_contests
+                    deleteCascade: true

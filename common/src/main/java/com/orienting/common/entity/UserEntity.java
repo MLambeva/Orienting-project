@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Set;
+
 
 @Getter
 @Setter
@@ -40,6 +42,13 @@ public class UserEntity {
     )
     private ClubEntity club;
 
+    @ManyToMany
+    @JoinTable(
+            name = "users_competitions",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "comp_id")
+    )
+    private Set<CompetitionEntity> competitions;
 
     public UserEntity(){}
 
@@ -53,6 +62,10 @@ public class UserEntity {
 
     public void addClub(ClubEntity club) {
         this.club = club;
+    }
+
+    public void addCompetition(CompetitionEntity competition) {
+        this.competitions.add(competition);
     }
     public void updateUser(UserEntity newUser) {
         if (newUser != null) {

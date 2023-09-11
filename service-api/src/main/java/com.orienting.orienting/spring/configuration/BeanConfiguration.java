@@ -1,15 +1,13 @@
 package com.orienting.orienting.spring.configuration;
 
 import com.orienting.common.dto.CoachDto;
+import com.orienting.common.dto.CompetitorDto;
 import com.orienting.common.dto.UserDto;
 import com.orienting.common.entity.UserEntity;
 import com.orienting.common.repository.ClubRepository;
 import com.orienting.common.repository.CompetitionRepository;
 import com.orienting.common.repository.UserRepository;
-import com.orienting.common.services.ClubService;
-import com.orienting.common.services.CompetitionService;
-import com.orienting.common.services.UserClubService;
-import com.orienting.common.services.UserService;
+import com.orienting.common.services.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
@@ -35,6 +33,10 @@ public class BeanConfiguration {
     public CompetitionService competitionService(CompetitionRepository competitionRepository) { return new CompetitionService(competitionRepository); }
 
     @Bean
+    public UserCompetitionService userCompetitionService(UserRepository userRepository, CompetitionRepository competitionRepository) {
+        return new UserCompetitionService(userRepository, competitionRepository);
+    }
+    @Bean
     public ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
 
@@ -42,6 +44,8 @@ public class BeanConfiguration {
                 .addMapping(src -> src.getClub().getCity(), UserDto::setCity);
         modelMapper.createTypeMap(UserEntity.class, CoachDto.class)
                 .addMapping(src -> src.getClub().getCity(), CoachDto::setCity);
+        modelMapper.createTypeMap(UserEntity.class, CompetitorDto.class)
+                .addMapping(src -> src.getClub().getCity(), CompetitorDto::setCity);
         return modelMapper;
     }
    /* @Bean

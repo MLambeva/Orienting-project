@@ -1,7 +1,9 @@
 package com.orienting.orienting.spring.controller;
 
-import com.orienting.common.dto.CompetitionDto;
+import com.orienting.common.dto.*;
+import com.orienting.common.entity.ClubEntity;
 import com.orienting.common.entity.CompetitionEntity;
+import com.orienting.common.entity.UserEntity;
 import com.orienting.common.services.CompetitionService;
 import jakarta.validation.Valid;
 import lombok.Getter;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -28,6 +31,16 @@ public class CompetitionController {
         this.modelMapper = modelMapper;
     }
 
+    private CompetitionRequestDto mapToCompDtoWithUsers(CompetitionEntity competitionEntity) {
+        CompetitionRequestDto compDto = modelMapper.map(competitionEntity, CompetitionRequestDto.class);
+        Set<CompetitorDto> competitionsDto = competitionEntity.getUsers().stream()
+                .map(userEntity -> modelMapper.map(userEntity, CompetitorDto.class))
+                .collect(Collectors.toSet());
+
+        compDto.setUsers(competitionsDto);
+        return compDto;
+    }
+
     @GetMapping("/all")
     public ResponseEntity<List<CompetitionDto>> getAllCompetitions() {
         List<CompetitionDto> competitionDto = competitionService.getAllCompetitions().stream()
@@ -35,6 +48,13 @@ public class CompetitionController {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(competitionDto);
+    }
+
+    @GetMapping("/allWithParticipants")
+    public ResponseEntity<List<CompetitionRequestDto>> getAllCompetitionsWithParticipants() {
+        return ResponseEntity.ok(competitionService.getAllCompetitions().stream()
+                .map(this::mapToCompDtoWithUsers)
+                .collect(Collectors.toList()));
     }
 
     @GetMapping("/{date}")

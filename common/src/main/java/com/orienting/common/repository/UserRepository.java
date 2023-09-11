@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Integer> {
@@ -20,4 +21,5 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
 
     @Query("SELECT u FROM UserEntity u WHERE u.club.clubId = :clubId AND u.role = :role")
     Optional<List<UserEntity>> findAllUsersByRoleInClub(@Param("clubId") Integer clubId, @Param("role") String role);
+
 }
