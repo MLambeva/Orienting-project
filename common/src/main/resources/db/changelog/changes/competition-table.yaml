@@ -62,3 +62,12 @@ databaseChangeLog:
                     references: competition(comp_id)
                     foreignKeyName: fk_users_contests_contests
                     deleteCascade: true
+
+  - changeSet:
+      id: 9
+      author: monika
+      changes:
+        - addUniqueConstraint:
+            constraintName: unique_competition_name
+            tableName: competition
+            columnNames: name

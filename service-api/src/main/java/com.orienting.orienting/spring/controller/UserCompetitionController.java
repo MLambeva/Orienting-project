@@ -7,10 +7,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.relational.core.sql.In;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/competitions")
@@ -25,10 +22,16 @@ public class UserCompetitionController {
         this.modelMapper = modelMapper;
     }
 
-    @PostMapping("{userId}/{compId}")
+    @PostMapping("/request/{userId}/{compId}")
     public ResponseEntity<String> requestParticipation(@PathVariable("userId") Integer userId, @PathVariable("compId")Integer compId) {
         userCompetitionService.requestParticipation(userId, compId);
         return ResponseEntity.ok(String.format("User with id %d requests participant in competition with id %d", userId, compId));
+    }
+
+    @DeleteMapping("/remove/{userId}/{compId}")
+    public ResponseEntity<String> removeParticipation(@PathVariable("userId") Integer userId, @PathVariable("compId") Integer compId) {
+        userCompetitionService.removeParticipation(userId, compId);
+        return ResponseEntity.ok(String.format("User with id %d remove participant in competition with id %d", userId, compId));
     }
 
 }

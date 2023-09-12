@@ -2,6 +2,7 @@ package com.orienting.common.services;
 
 import com.orienting.common.entity.ClubEntity;
 import com.orienting.common.entity.UserEntity;
+import com.orienting.common.exception.InvalidRoleException;
 import com.orienting.common.exception.NoExistedClub;
 import com.orienting.common.exception.NoExistedUser;
 import com.orienting.common.repository.ClubRepository;
@@ -40,6 +41,23 @@ public class UserClubService {
         user.addClub(club);
         user.setRole("coach");
         return userRepository.save(user);
+    }
+
+    public void makeAndChangeCoach(Integer userId, Integer clubId) {
+        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUser(String.format("User with userId: %d does not exist!", userId)));;
+        addCoach(clubId, user);
+    }
+
+    public void makeCoach(Integer userId) {
+        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUser(String.format("User with userId: %d does not exist!", userId)));;
+        if(user.getClub() == null) {
+            throw new RuntimeException(String.format("User with id %d should belong to club and then to be coach!", userId));
+        }
+        if(user.isCoach()) {
+            throw new InvalidRoleException("Role must be competitor!");
+        }
+        user.setRole("coach");
+        userRepository.save(user);
     }
 
     public void addClubToUser(Integer userId, Integer clubId) {

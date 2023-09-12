@@ -24,8 +24,8 @@ public class UserCompetitionService {
     }
 
     public void requestParticipation(Integer userId, Integer compId) {
-        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUser(String.format("User with userId: %d does not exist!", userId)));;
-        CompetitionEntity competition = competitionRepository.findCompetitionByCompId(compId).orElseThrow(() -> new NoExistedCompetition(String.format("Competition with id %d does not exist!", compId)));;
+        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUser(String.format("User with userId: %d does not exist!", userId)));
+        CompetitionEntity competition = competitionRepository.findCompetitionByCompId(compId).orElseThrow(() -> new NoExistedCompetition(String.format("Competition with id %d does not exist!", compId)));
         if(user.getClub() != null) {
             user.addCompetition(competition);
             userRepository.save(user);
@@ -33,5 +33,12 @@ public class UserCompetitionService {
         else {
             throw new NoExistedClub("User does not have club!");
         }
+    }
+
+    public void removeParticipation(Integer userId, Integer compId) {
+        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUser(String.format("User with userId: %d does not exist!", userId)));
+        CompetitionEntity competition = competitionRepository.findCompetitionByCompId(compId).orElseThrow(() -> new NoExistedCompetition(String.format("Competition with id %d does not exist!", compId)));
+        user.removeCompetition(competition);
+        userRepository.save(user);
     }
 }

@@ -37,6 +37,18 @@ public class UserClubController {
         return ResponseEntity.ok(String.format("Club with id %d has new coach with id %d!", clubId, user.getUserId()));
     }
 
+    @PutMapping("/{userId}/{clubId}")
+    public ResponseEntity<String> makeOrChangeCoach(@PathVariable("userId") Integer userId, @PathVariable("clubId") Integer clubId) {
+        userClubService.makeAndChangeCoach(userId, clubId);
+        return ResponseEntity.ok(String.format("User with id %d belong to club with id %d!", userId, clubId));
+    }
+
+    @PutMapping("makeCoach/{userId}")
+    public ResponseEntity<String> makeCoach(@PathVariable("userId") Integer userId) {
+        userClubService.makeCoach(userId);
+        return ResponseEntity.ok(String.format("User with id %d is coach!", userId));
+    }
+
     @PutMapping("/add/{userId}/{clubId}")
     public ResponseEntity<String> addClubToUser(@PathVariable("userId") Integer userId, @PathVariable("clubId") Integer clubId) {
         userClubService.addClubToUser(userId, clubId);

@@ -67,6 +67,8 @@ public class UserEntity {
     public void addCompetition(CompetitionEntity competition) {
         this.competitions.add(competition);
     }
+
+    public void removeCompetition(CompetitionEntity competition) {this.competitions.remove(competition);}
     public void updateUser(UserEntity newUser) {
         if (newUser != null) {
             if (newUser.getEmail() != null) {
