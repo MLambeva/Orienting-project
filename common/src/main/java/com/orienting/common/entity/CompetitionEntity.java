@@ -39,4 +39,24 @@ public class CompetitionEntity {
     private Set<UserEntity> users;
 
     public CompetitionEntity() {}
+
+    public void update(CompetitionEntity competition) {
+        if(competition != null) {
+            if(competition.getName() != null) {
+                this.setName(competition.getName());
+            }
+            if(competition.getDate() != null) {
+                this.setDate(competition.getDate());
+            }
+            if(competition.getTime() != null) {
+                this.setTime(competition.getTime());
+            }
+            if(competition.getLocation() != null) {
+                this.setLocation(competition.getLocation());
+            }
+            if(competition.getCoordinates() != null) {
+                this.setCoordinates(competition.getCoordinates());
+            }
+        }
+    }
 }

@@ -68,8 +68,7 @@ public class CompetitionController {
 
     @PostMapping
     public ResponseEntity<String> createCompetition(@RequestBody @Valid CompetitionDto competition) {
-        CompetitionEntity competitionEntity = modelMapper.map(competition, CompetitionEntity.class);
-        competitionService.createCompetition(competitionEntity);
+        CompetitionEntity competitionEntity = competitionService.createCompetition(modelMapper.map(competition, CompetitionEntity.class));
         return ResponseEntity.ok(String.format("Competition with id: %d was added!", competitionEntity.getCompId()));
     }
 
@@ -77,6 +76,12 @@ public class CompetitionController {
     public ResponseEntity<String> deleteCompetitionById(@PathVariable("compId") Integer compId) {
         competitionService.deleteCompById(compId);
         return ResponseEntity.ok(String.format("Competition with id: %s was deleted!", compId));
+    }
+
+    @PutMapping("update/{compId}")
+    public ResponseEntity<String> updateCompetitionByCompId(@PathVariable("compId") Integer compId, @RequestBody @Valid CompetitionUpdateDto competition) {
+        competitionService.updateCompetition(compId, modelMapper.map(competition, CompetitionEntity.class));
+        return ResponseEntity.ok(String.format("Competition with id %d was updated!", compId));
     }
 
 }

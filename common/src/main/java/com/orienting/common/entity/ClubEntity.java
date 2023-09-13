@@ -26,6 +26,11 @@ public class ClubEntity {
 
     public ClubEntity() {}
 
+    public ClubEntity(String clubName, String city) {
+        this.clubName = clubName;
+        this.city = city;
+    }
+
     public void updateClub(ClubEntity club) {
         if(club != null) {
             if(club.clubName != null) {

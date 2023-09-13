@@ -2,11 +2,10 @@ package com.orienting.common.services;
 
 import com.orienting.common.entity.UserEntity;
 import com.orienting.common.exception.InvalidRoleException;
-import com.orienting.common.exception.NoExistedUser;
+import com.orienting.common.exception.NoExistedUserException;
 import com.orienting.common.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.Getter;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,15 +29,15 @@ public class UserService {
 
     public UserEntity getUserById(Integer userId) {
         return userRepository.findUserByUserId(userId).orElseThrow(() ->
-                new NoExistedUser(String.format("User with id: %d does not exist!", userId)));
+                new NoExistedUserException(String.format("User with id %d does not exist!", userId)));
     }
     public UserEntity getUserByUcn(String ucn) {
         return userRepository.findUserByUcn(ucn).orElseThrow(() ->
-                new NoExistedUser(String.format("User with unified civil number: %s does not exist!", ucn)));
+                new NoExistedUserException(String.format("User with unified civil number %s does not exist!", ucn)));
     }
     public List<UserEntity> getAllUsersByClubId(Integer clubId) {
         return userRepository.findAllUsersInClub(clubId).orElseThrow(() ->
-                new EntityNotFoundException(String.format("Club with id %d is empty!", clubId)));
+                new EntityNotFoundException(String.format("Club with id %d has no members!", clubId)));
     }
 
     public List<UserEntity> getAllCoachesByClubId(Integer clubId, String role) {
@@ -52,7 +51,7 @@ public class UserService {
         if (userOptional.isPresent()) {
             return userOptional.get().getRole();
         } else {
-            throw new NoExistedUser(String.format("User with userId: %d does not exist!", userId));
+            throw new NoExistedUserException(String.format("User with userId: %d does not exist!", userId));
         }
     }
 
@@ -62,7 +61,7 @@ public class UserService {
         if (userOptional.isPresent()) {
             return userOptional.get().getRole();
         } else {
-            throw new NoExistedUser(String.format("User with unified civil number %s does not exist!", ucn));
+            throw new NoExistedUserException(String.format("User with unified civil number %s does not exist!", ucn));
         }
     }
 
@@ -78,9 +77,9 @@ public class UserService {
         UserEntity user;
         if ("userId".equals(identifierType)) {
             Integer userId = Integer.parseInt(identifier);
-            user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUser(String.format("User with userId: %d does not exist!", identifier)));
+            user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with userId: %d does not exist!", identifier)));
         } else if ("ucn".equals(identifierType))
-            user = userRepository.findUserByUcn(identifier).orElseThrow(() -> new NoExistedUser(String.format("User with unified civil number %s does not exist!", identifier)));
+            user = userRepository.findUserByUcn(identifier).orElseThrow(() -> new NoExistedUserException(String.format("User with unified civil number %s does not exist!", identifier)));
         else
             throw new IllegalArgumentException("Invalid identifierType: " + identifierType);
 
@@ -119,6 +118,4 @@ public class UserService {
     public void updateUserByUcn(String ucn, Boolean isAdmin, UserEntity newUser) {
         updateUserBy(ucn, "ucn", isAdmin, newUser);
     }
-
-
 }

@@ -1,8 +1,7 @@
 package com.orienting.common.services;
 
 import com.orienting.common.entity.ClubEntity;
-import com.orienting.common.entity.UserEntity;
-import com.orienting.common.exception.NoExistedClub;
+import com.orienting.common.exception.NoExistedClubException;
 import com.orienting.common.repository.ClubRepository;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,26 +22,44 @@ public class ClubService {
         return clubRepository.findAllWithUsers();
     }
 
+
     public ClubEntity getClubById(Integer clubId) {
-        return clubRepository.findClubByClubId(clubId).orElseThrow(() -> new NoExistedClub(String.format("Club with clubId %d does not exist!", clubId)));
+        return clubRepository.findClubByClubId(clubId).orElseThrow(() -> new NoExistedClubException(String.format("Club with id %d does not exist!", clubId)));
+    }
+
+    public ClubEntity getClubByName(String clubName) {
+        return clubRepository.findClubByClubName(clubName).orElseThrow(() -> new NoExistedClubException(String.format("Club with name %s does not exist!", clubName)));
     }
 
     public ClubEntity createClub(ClubEntity club) {
-        clubRepository.save(club);
+        if (club == null) {
+            throw new IllegalArgumentException("Input club is null!");
+        }
+        ClubEntity clubEntity = new ClubEntity(club.getClubName(), club.getCity());
+        return clubRepository.save(clubEntity);
+    }
+
+    public ClubEntity deleteClubById(Integer clubId) {
+        ClubEntity club = clubRepository.findClubByClubId(clubId).orElseThrow(() -> new NoExistedClubException(String.format("Club with id %d does not exist!", clubId)));
+        clubRepository.delete(club);
         return club;
     }
 
-    public void deleteClub(Integer clubId) {
-        ClubEntity club = clubRepository.findClubByClubId(clubId).orElseThrow(() -> new NoExistedClub(String.format("Club with clubId %d does not exist!", clubId)));
+    public ClubEntity deleteClubByName(String clubName) {
+        ClubEntity club = clubRepository.findClubByClubName(clubName).orElseThrow(() -> new NoExistedClubException(String.format("Club with name %s does not exist!", clubName)));
         clubRepository.delete(club);
+        return club;
     }
 
-    public void updateClub(Integer clubId, ClubEntity newClub) {
-        ClubEntity club = clubRepository.findClubByClubId(clubId).orElseThrow(() -> new NoExistedClub(String.format("Club with clubId %d does not exist!", clubId)));
+    public ClubEntity updateClubById(Integer clubId, ClubEntity newClub) {
+        ClubEntity club = clubRepository.findClubByClubId(clubId).orElseThrow(() -> new NoExistedClubException(String.format("Club with id %d does not exist!", clubId)));
         club.updateClub(newClub);
-        clubRepository.save(club);
+        return clubRepository.save(club);
     }
 
-
-
+    public ClubEntity updateClubByName(String clubName, ClubEntity newClub) {
+        ClubEntity club = clubRepository.findClubByClubName(clubName).orElseThrow(() -> new NoExistedClubException(String.format("Club with name %s does not exist!", clubName)));
+        club.updateClub(newClub);
+        return clubRepository.save(club);
+    }
 }

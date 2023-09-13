@@ -71,3 +71,21 @@ databaseChangeLog:
             constraintName: unique_competition_name
             tableName: competition
             columnNames: name
+  - changeSet:
+      id: 10
+      author: monika
+      changes:
+        - addColumn:
+            tableName: competition
+            columns:
+              - column:
+                  name: pdf_file_path
+                  type: nvarchar(50)
+
+  - changeSet:
+      id: 11
+      author: monika
+      changes:
+        - dropColumn:
+            tableName: competition
+            columnName: pdf_file_path

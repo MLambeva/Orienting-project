@@ -10,9 +10,11 @@ import java.util.Optional;
 
 
 @Repository
-public interface ClubRepository  extends JpaRepository<ClubEntity, Integer> {
+public interface ClubRepository extends JpaRepository<ClubEntity, Integer> {
     Optional<ClubEntity> findClubByClubId(Integer clubId);
+
+    Optional<ClubEntity> findClubByClubName(String clubName);
+
     @Query("SELECT DISTINCT c FROM ClubEntity c LEFT JOIN FETCH c.users")
     List<ClubEntity> findAllWithUsers();
-
 }

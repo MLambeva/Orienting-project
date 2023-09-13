@@ -1,6 +1,6 @@
 package com.orienting.orienting.spring.configuration;
 
-import com.orienting.common.dto.CoachDto;
+import com.orienting.common.dto.CompetitorsAndCoachDto;
 import com.orienting.common.dto.CompetitorDto;
 import com.orienting.common.dto.UserDto;
 import com.orienting.common.entity.UserEntity;
@@ -42,8 +42,6 @@ public class BeanConfiguration {
 
         modelMapper.createTypeMap(UserEntity.class, UserDto.class)
                 .addMapping(src -> src.getClub().getCity(), UserDto::setCity);
-        modelMapper.createTypeMap(UserEntity.class, CoachDto.class)
-                .addMapping(src -> src.getClub().getCity(), CoachDto::setCity);
         modelMapper.createTypeMap(UserEntity.class, CompetitorDto.class)
                 .addMapping(src -> src.getClub().getCity(), CompetitorDto::setCity);
         return modelMapper;
