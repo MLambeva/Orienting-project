@@ -6,7 +6,6 @@ import com.orienting.common.repository.ClubRepository;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
@@ -21,7 +20,6 @@ public class ClubService {
     public List<ClubEntity> getAllClubs() {
         return clubRepository.findAllWithUsers();
     }
-
 
     public ClubEntity getClubById(Integer clubId) {
         return clubRepository.findClubByClubId(clubId).orElseThrow(() -> new NoExistedClubException(String.format("Club with id %d does not exist!", clubId)));

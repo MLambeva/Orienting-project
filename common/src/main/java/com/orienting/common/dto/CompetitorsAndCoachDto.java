@@ -12,5 +12,4 @@ public class CompetitorsAndCoachDto {
     private String lastName;
     private String phoneNumber;
     private String group;
-
 }

@@ -28,6 +28,7 @@ public class UserCreationDto {
     @Pattern(regexp = "^(?i)(coach|competitor)$", message = "Invalid role")
     private String role;
     private Integer clubId;
+    private String clubName;
 
     public UserCreationDto() {}
 }

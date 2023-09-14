@@ -1,11 +1,10 @@
 package com.orienting.orienting.spring.controller;
 
+import com.orienting.common.dto.UserDto;
 import com.orienting.common.services.UserCompetitionService;
-import jakarta.persistence.PostRemove;
 import lombok.Getter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.relational.core.sql.In;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,13 +24,11 @@ public class UserCompetitionController {
     @PostMapping("/request/{userId}/{compId}")
     public ResponseEntity<String> requestParticipation(@PathVariable("userId") Integer userId, @PathVariable("compId")Integer compId) {
         userCompetitionService.requestParticipation(userId, compId);
-        return ResponseEntity.ok(String.format("User with id %d requests participant in competition with id %d", userId, compId));
+        return ResponseEntity.ok(String.format("User with id %d requests participant in competition with id %d!", userId, compId));
     }
 
     @DeleteMapping("/remove/{userId}/{compId}")
-    public ResponseEntity<String> removeParticipation(@PathVariable("userId") Integer userId, @PathVariable("compId") Integer compId) {
-        userCompetitionService.removeParticipation(userId, compId);
-        return ResponseEntity.ok(String.format("User with id %d remove participant in competition with id %d", userId, compId));
+    public ResponseEntity<UserDto> removeParticipation(@PathVariable("userId") Integer userId, @PathVariable("compId") Integer compId) {
+        return ResponseEntity.ok(modelMapper.map(userCompetitionService.removeParticipation(userId, compId), UserDto.class));
     }
-
 }

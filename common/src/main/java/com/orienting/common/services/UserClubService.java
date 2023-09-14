@@ -30,47 +30,68 @@ public class UserClubService {
         if(user == null) {
             throw new IllegalArgumentException("Input user is null!");
         }
+        //if(user.getClub() == null && user.isCompetitor()) {
+        //    throw new RuntimeException("Competitor must belong to club!");
+        //}
         if (user.getClub() != null) {
             Integer clubId = user.getClub().getClubId();
-            ClubEntity club = clubRepository.findClubByClubId(clubId).orElseThrow(() ->
-                    new NoExistedClubException(String.format("Club with id: %d does not exist!", user.getClub().getClubId())));
+            String clubName = user.getClub().getClubName();
+            ClubEntity club;
+            if(clubId != null) {
+                club = clubRepository.findClubByClubId(clubId).orElseThrow(() ->
+                        new NoExistedClubException(String.format("Club with id %d does not exist!", clubId)));
+            }
+            else if(clubName != null) {
+                club = clubRepository.findClubByClubName(clubName).orElseThrow(() ->
+                        new NoExistedClubException(String.format("Club with name %s does not exist!", clubName)));
+            }
+            else {
+                throw new NoExistedClubException("");
+            }
             user.addClub(club);
         }
         return userRepository.save(user);
     }
 
-    public UserEntity addCoach(Integer clubId, UserEntity user) {
-        ClubEntity club = clubRepository.findClubByClubId(clubId).orElseThrow(() -> new NoExistedClubException(String.format("Club with clubId %d does not exist!", clubId)));
-        user.addClub(club);
-        user.setRole("coach");
-        return userRepository.save(user);
-    }
 
-    public void makeAndChangeCoach(Integer userId, Integer clubId) {
-        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with userId: %d does not exist!", userId)));;
-        addCoach(clubId, user);
-    }
-
-    public void makeCoach(Integer userId) {
-        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with userId: %d does not exist!", userId)));;
-        if(user.getClub() == null) {
-            throw new RuntimeException(String.format("User with id %d should belong to club and then to be coach!", userId));
-        }
+    public UserEntity makeCoach(Integer userId) {
+        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with id %d does not exist!", userId)));;
         if(user.isCoach()) {
             throw new InvalidRoleException("Role must be competitor!");
         }
         user.setRole("coach");
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
-    public void addClubToUser(Integer userId, Integer clubId) {
+    public UserEntity removeCoach(Integer userId) {
+        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with id %d does not exist!", userId)));;
+        if(user.isCompetitor()) {
+            throw new InvalidRoleException("Role must be coach!");
+        }
+        user.setRole("competitor");
+        return userRepository.save(user);
+    }
+
+    public UserEntity setCoachToClub(Integer userId, Integer clubId) {
+        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with id: %d does not exist!", userId)));;
+        if(user.getClub() == null) {
+            throw new RuntimeException(String.format("User with id %d should belong to club and then to be coach!", userId));
+        }
+        if(user.isCompetitor()) {
+            user.setRole("coach");
+        }
+        user.addClub(clubRepository.findClubByClubId(clubId).orElseThrow(() -> new NoExistedClubException(String.format("Club with id %d does not exist!", clubId))));
+        return userRepository.save(user);
+    }
+
+    public UserEntity addClubToUser(Integer userId, Integer clubId) {
         UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with userId: %d not existed!", userId)));
         ClubEntity club = clubRepository.findClubByClubId(clubId).orElseThrow(() -> new NoExistedClubException(String.format("Club with clubId %d does not exist!", clubId)));
         if(user.getClub() != null) {
-            throw new RuntimeException(String.format("User with user id: %d belong to club with club id: %d", userId, clubId));
+            throw new RuntimeException(String.format("User with user id %d belong to club with club id %d", userId, clubId));
         }
         user.addClub(club);
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
 }

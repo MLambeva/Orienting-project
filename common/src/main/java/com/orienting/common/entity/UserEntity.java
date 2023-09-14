@@ -3,9 +3,7 @@ package com.orienting.common.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
 import java.util.Set;
-
 
 @Getter
 @Setter
@@ -63,6 +61,8 @@ public class UserEntity {
     public void addClub(ClubEntity club) {
         this.club = club;
     }
+
+    public void leftClub() { this.club = null; }
 
     public void addCompetition(CompetitionEntity competition) {
         this.competitions.add(competition);

@@ -35,10 +35,10 @@ public class UserCompetitionService {
         }
     }
 
-    public void removeParticipation(Integer userId, Integer compId) {
+    public UserEntity removeParticipation(Integer userId, Integer compId) {
         UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with userId: %d does not exist!", userId)));
         CompetitionEntity competition = competitionRepository.findCompetitionByCompId(compId).orElseThrow(() -> new NoExistedCompetition(String.format("Competition with id %d does not exist!", compId)));
         user.removeCompetition(competition);
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 }

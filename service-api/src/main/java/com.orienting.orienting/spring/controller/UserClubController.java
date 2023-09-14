@@ -1,19 +1,18 @@
 package com.orienting.orienting.spring.controller;
 
-import com.orienting.common.dto.CoachCreationDto;
 import com.orienting.common.dto.UserCreationDto;
+import com.orienting.common.dto.UserDto;
 import com.orienting.common.entity.UserEntity;
 import com.orienting.common.services.UserClubService;
 import jakarta.validation.Valid;
 import lombok.Getter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.relational.core.sql.In;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/users")
 @Getter
 public class UserClubController {
     private final UserClubService userClubService;
@@ -25,34 +24,31 @@ public class UserClubController {
         this.modelMapper = modelMapper;
     }
 
-    @PostMapping("/users/add")
+    @PostMapping("/add")
     public ResponseEntity<String> addUser(@RequestBody @Valid UserCreationDto userDto) {
         UserEntity user = userClubService.createUser(modelMapper.map(userDto, UserEntity.class));
-        return ResponseEntity.ok(String.format("User with id: %d was added!", user.getUserId()));
-    }
-
-    @PostMapping("/addCoach/{clubId}")
-    public ResponseEntity<String> addCoach(@PathVariable("clubId") Integer clubId, @Valid @RequestBody CoachCreationDto coach) {
-        UserEntity user = userClubService.addCoach(clubId, modelMapper.map(coach, UserEntity.class));
-        return ResponseEntity.ok(String.format("Club with id %d has new coach with id %d!", clubId, user.getUserId()));
-    }
-
-    @PutMapping("/{userId}/{clubId}")
-    public ResponseEntity<String> makeOrChangeCoach(@PathVariable("userId") Integer userId, @PathVariable("clubId") Integer clubId) {
-        userClubService.makeAndChangeCoach(userId, clubId);
-        return ResponseEntity.ok(String.format("User with id %d belong to club with id %d!", userId, clubId));
+        return ResponseEntity.ok(String.format("User with id %d was added!", user.getUserId()));
     }
 
     @PutMapping("makeCoach/{userId}")
-    public ResponseEntity<String> makeCoach(@PathVariable("userId") Integer userId) {
-        userClubService.makeCoach(userId);
-        return ResponseEntity.ok(String.format("User with id %d is coach!", userId));
+    public ResponseEntity<UserDto> makeCoach(@PathVariable("userId") Integer userId) {
+        return ResponseEntity.ok(modelMapper.map(userClubService.makeCoach(userId), UserDto.class));
+    }
+
+    @PutMapping("removeCoach/{userId}")
+    public ResponseEntity<UserDto> removeCoach(@PathVariable("userId") Integer userId) {
+        return ResponseEntity.ok(modelMapper.map(userClubService.removeCoach(userId), UserDto.class));
+    }
+
+    //api/users/byId/{userId}
+    @PutMapping("setCoach/{userId}/{clubId}")
+    public ResponseEntity<UserDto> setCoachToClub(@PathVariable("userId") Integer userId, @PathVariable("clubId") Integer clubId) {
+        return ResponseEntity.ok(modelMapper.map(userClubService.setCoachToClub(userId, clubId), UserDto.class));
     }
 
     @PutMapping("/add/{userId}/{clubId}")
-    public ResponseEntity<String> addClubToUser(@PathVariable("userId") Integer userId, @PathVariable("clubId") Integer clubId) {
-        userClubService.addClubToUser(userId, clubId);
-        return ResponseEntity.ok(String.format("User with id %d belong to club with id %d!", userId, clubId));
+    public ResponseEntity<UserDto> addClubToUser(@PathVariable("userId") Integer userId, @PathVariable("clubId") Integer clubId) {
+        return ResponseEntity.ok(modelMapper.map(userClubService.addClubToUser(userId, clubId), UserDto.class));
     }
 
 }

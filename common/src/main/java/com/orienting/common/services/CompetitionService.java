@@ -36,19 +36,18 @@ public class CompetitionService {
         return competitionRepository.save(competition);
     }
 
-    public void deleteCompById(Integer compId) {
+    public CompetitionEntity deleteCompById(Integer compId) {
         CompetitionEntity competition = competitionRepository.findCompetitionByCompId(compId).orElseThrow(() -> new NoExistedCompetition(String.format("Competition with id %d does not exist!", compId)));
         if(competition == null) {
             throw new EntityNotFoundException("Competition not found!");
         }
         competitionRepository.delete(competition);
+        return competition;
     }
 
-    public void updateCompetition(Integer compId, CompetitionEntity competition) {
+    public CompetitionEntity updateCompetition(Integer compId, CompetitionEntity competition) {
         CompetitionEntity competitionEntity = competitionRepository.findCompetitionByCompId(compId).orElseThrow(() -> new NoExistedCompetition(String.format("Competition with id %d does not exist!", compId)));
         competitionEntity.update(competition);
-        competitionRepository.save(competitionEntity);
+        return competitionRepository.save(competitionEntity);
     }
-
-
 }

@@ -70,7 +70,7 @@ public class ClubController {
         return ResponseEntity.ok(mapToClubDtoWithUsers(clubService.getClubById(clubId)));
     }
 
-    @GetMapping("withUsersByName/{clubName}")
+    @GetMapping("/withUsersByName/{clubName}")
     public ResponseEntity<ClubWithUsersDto> getClubWithUsersByName(@PathVariable("clubName") String clubName) {
         return ResponseEntity.ok(mapToClubDtoWithUsers(clubService.getClubByName(clubName)));
     }

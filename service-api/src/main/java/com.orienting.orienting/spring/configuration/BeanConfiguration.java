@@ -1,8 +1,6 @@
 package com.orienting.orienting.spring.configuration;
 
-import com.orienting.common.dto.CompetitorsAndCoachDto;
-import com.orienting.common.dto.CompetitorDto;
-import com.orienting.common.dto.UserDto;
+import com.orienting.common.dto.*;
 import com.orienting.common.entity.UserEntity;
 import com.orienting.common.repository.ClubRepository;
 import com.orienting.common.repository.CompetitionRepository;
@@ -44,8 +42,14 @@ public class BeanConfiguration {
                 .addMapping(src -> src.getClub().getCity(), UserDto::setCity);
         modelMapper.createTypeMap(UserEntity.class, CompetitorDto.class)
                 .addMapping(src -> src.getClub().getCity(), CompetitorDto::setCity);
+        modelMapper.createTypeMap(UserEntity.class, CompetitorsWithCoachesDto.class)
+                .addMapping(src -> src.getClub().getCity(), CompetitorsWithCoachesDto::setCity);
+        modelMapper.createTypeMap(UserEntity.class, UsersWithRequestedCompetitionsDto.class)
+                .addMapping(src -> src.getClub().getCity(), UsersWithRequestedCompetitionsDto::setCity);
         return modelMapper;
     }
+
+
    /* @Bean
     public PasswordEncoder encoder() {
         return new BCryptPasswordEncoder();

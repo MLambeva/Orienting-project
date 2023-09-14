@@ -1,14 +1,12 @@
 package com.orienting.common.dto;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.orienting.common.entity.UserEntity;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Set;
 
 
 @Getter
