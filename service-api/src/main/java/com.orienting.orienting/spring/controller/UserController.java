@@ -134,4 +134,14 @@ public class UserController {
     public ResponseEntity<UserDto> leftClub(@PathVariable("userId") Integer userId) {
         return ResponseEntity.ok(modelMapper.map(userService.leftClub(userId), UserDto.class));
     }
+
+    @PutMapping("makeCoach/{userId}")
+    public ResponseEntity<UserDto> makeCoach(@PathVariable("userId") Integer userId) {
+        return ResponseEntity.ok(modelMapper.map(userService.makeCoach(userId), UserDto.class));
+    }
+
+    @PutMapping("removeCoach/{userId}")
+    public ResponseEntity<UserDto> removeCoach(@PathVariable("userId") Integer userId) {
+        return ResponseEntity.ok(modelMapper.map(userService.removeCoach(userId), UserDto.class));
+    }
 }

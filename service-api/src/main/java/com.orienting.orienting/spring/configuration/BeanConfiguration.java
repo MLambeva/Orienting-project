@@ -4,6 +4,7 @@ import com.orienting.common.dto.*;
 import com.orienting.common.entity.UserEntity;
 import com.orienting.common.repository.ClubRepository;
 import com.orienting.common.repository.CompetitionRepository;
+import com.orienting.common.repository.TokenRepository;
 import com.orienting.common.repository.UserRepository;
 import com.orienting.common.services.*;
 import org.modelmapper.ModelMapper;
@@ -11,6 +12,8 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableJpaRepositories(basePackages = { //
@@ -26,7 +29,7 @@ public class BeanConfiguration {
     @Bean
     public ClubService clubService(ClubRepository clubRepository) { return new ClubService(clubRepository); }
     @Bean
-    public UserClubService userClubService(UserRepository userRepository, ClubRepository clubRepository) { return new UserClubService(userRepository, clubRepository); }
+    public UserClubService userClubService(UserRepository userRepository, ClubRepository clubRepository, PasswordEncoder passwordEncoder, AuthenticationService authenticationService) { return new UserClubService(userRepository, clubRepository, passwordEncoder, authenticationService); }
     @Bean
     public CompetitionService competitionService(CompetitionRepository competitionRepository) { return new CompetitionService(competitionRepository); }
 
@@ -34,6 +37,9 @@ public class BeanConfiguration {
     public UserCompetitionService userCompetitionService(UserRepository userRepository, CompetitionRepository competitionRepository) {
         return new UserCompetitionService(userRepository, competitionRepository);
     }
+
+    @Bean
+    public AuthenticationService AuthenticationService(TokenRepository tokenRepository) { return new AuthenticationService(tokenRepository); }
     @Bean
     public ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
@@ -49,10 +55,9 @@ public class BeanConfiguration {
         return modelMapper;
     }
 
-
-   /* @Bean
+    @Bean
     public PasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
-    }*/
+    }
 
 }

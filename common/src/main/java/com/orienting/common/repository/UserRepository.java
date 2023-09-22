@@ -13,6 +13,7 @@ import java.util.Set;
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     Optional<UserEntity> findUserByUcn(String ucn);
+    Optional<UserEntity> findByEmail(String email);
 
     Optional<UserEntity> findUserByUserId(Integer userId);
 

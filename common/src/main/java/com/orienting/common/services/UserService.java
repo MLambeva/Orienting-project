@@ -1,17 +1,21 @@
 package com.orienting.common.services;
 
 import com.orienting.common.dto.UserDto;
+import com.orienting.common.entity.AuthenticationTokenEntity;
 import com.orienting.common.entity.ClubEntity;
 import com.orienting.common.entity.CompetitionEntity;
 import com.orienting.common.entity.UserEntity;
+import com.orienting.common.exception.InvalidInputException;
 import com.orienting.common.exception.InvalidRoleException;
 import com.orienting.common.exception.NoExistedUserException;
 import com.orienting.common.repository.UserRepository;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -139,4 +143,25 @@ public class UserService {
         user.leftClub();
         return userRepository.save(user);
     }
+
+    public UserEntity makeCoach(Integer userId) {
+        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with id %d does not exist!", userId)));
+        ;
+        if (user.isCoach()) {
+            throw new InvalidRoleException("Role must be competitor!");
+        }
+        user.setRole("coach");
+        return userRepository.save(user);
+    }
+
+    public UserEntity removeCoach(Integer userId) {
+        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with id %d does not exist!", userId)));
+        ;
+        if (user.isCompetitor()) {
+            throw new InvalidRoleException("Role must be coach!");
+        }
+        user.setRole("competitor");
+        return userRepository.save(user);
+    }
+
 }

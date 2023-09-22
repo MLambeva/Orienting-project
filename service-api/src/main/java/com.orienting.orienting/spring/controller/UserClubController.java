@@ -1,5 +1,7 @@
 package com.orienting.orienting.spring.controller;
 
+import com.orienting.common.dto.SignInDto;
+import com.orienting.common.dto.SignInOrUpResponseDto;
 import com.orienting.common.dto.UserCreationDto;
 import com.orienting.common.dto.UserDto;
 import com.orienting.common.entity.UserEntity;
@@ -25,19 +27,9 @@ public class UserClubController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<String> addUser(@RequestBody @Valid UserCreationDto userDto) {
+    public ResponseEntity<String> addUser(@RequestBody @Valid UserCreationDto userDto) throws Exception {
         UserEntity user = userClubService.createUser(modelMapper.map(userDto, UserEntity.class));
         return ResponseEntity.ok(String.format("User with id %d was added!", user.getUserId()));
-    }
-
-    @PutMapping("makeCoach/{userId}")
-    public ResponseEntity<UserDto> makeCoach(@PathVariable("userId") Integer userId) {
-        return ResponseEntity.ok(modelMapper.map(userClubService.makeCoach(userId), UserDto.class));
-    }
-
-    @PutMapping("removeCoach/{userId}")
-    public ResponseEntity<UserDto> removeCoach(@PathVariable("userId") Integer userId) {
-        return ResponseEntity.ok(modelMapper.map(userClubService.removeCoach(userId), UserDto.class));
     }
 
     //api/users/byId/{userId}
@@ -51,4 +43,9 @@ public class UserClubController {
         return ResponseEntity.ok(modelMapper.map(userClubService.addClubToUser(userId, clubId), UserDto.class));
     }
 
+    @PostMapping("/signIn")
+    public SignInOrUpResponseDto signIn(@RequestBody SignInDto signInDto) {
+        String token = userClubService.signIn(modelMapper.map(signInDto, UserEntity.class));
+        return new SignInOrUpResponseDto("success", token);
+    }
 }
