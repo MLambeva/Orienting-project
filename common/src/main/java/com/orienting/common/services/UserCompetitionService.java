@@ -7,21 +7,18 @@ import com.orienting.common.exception.NoExistedCompetition;
 import com.orienting.common.exception.NoExistedUserException;
 import com.orienting.common.repository.CompetitionRepository;
 import com.orienting.common.repository.UserRepository;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 @Getter
+@AllArgsConstructor
 public class UserCompetitionService {
     private final UserRepository userRepository;
     private final CompetitionRepository competitionRepository;
 
-    @Autowired
-    public UserCompetitionService(UserRepository userRepository, CompetitionRepository competitionRepository) {
-        this.userRepository = userRepository;
-        this.competitionRepository = competitionRepository;
-    }
 
     public void requestParticipation(Integer userId, Integer compId) {
         UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with userId: %d does not exist!", userId)));

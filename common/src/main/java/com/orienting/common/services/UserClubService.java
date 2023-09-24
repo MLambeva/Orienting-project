@@ -1,34 +1,24 @@
 package com.orienting.common.services;
-import com.orienting.common.entity.AuthenticationTokenEntity;
 import com.orienting.common.entity.ClubEntity;
+import com.orienting.common.entity.UserRole;
 import com.orienting.common.entity.UserEntity;
 import com.orienting.common.exception.InvalidInputException;
 import com.orienting.common.exception.NoExistedClubException;
 import com.orienting.common.exception.NoExistedUserException;
 import com.orienting.common.repository.ClubRepository;
 import com.orienting.common.repository.UserRepository;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
-
 @Service
 @Getter
+@AllArgsConstructor
 public class UserClubService {
     private final UserRepository userRepository;
     private final ClubRepository clubRepository;
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationService authenticationService;
-
-    @Autowired
-    public UserClubService(UserRepository userRepository, ClubRepository clubRepository, PasswordEncoder passwordEncoder, AuthenticationService authenticationService) {
-        this.userRepository = userRepository;
-        this.clubRepository = clubRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.authenticationService = authenticationService;
-    }
 
     public UserEntity createUser(UserEntity user) throws Exception {
         if (user == null) {
@@ -55,29 +45,7 @@ public class UserClubService {
             }
             user.addClub(club);
         }
-        try {
-            UserEntity newUser = userRepository.save(user);
-            final AuthenticationTokenEntity authenticationToken = new AuthenticationTokenEntity(newUser);
-            authenticationService.saveConfirmationToken(authenticationToken);
-            return newUser;
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
-        }
-    }
-
-    public String signIn(UserEntity inputUser) {
-        UserEntity user = userRepository.findByEmail(inputUser.getEmail()).orElseThrow(() -> new InvalidInputException(""));
-        if (!user.getPassword().equals(passwordEncoder.encode(inputUser.getPassword()))) {
-            throw new InvalidInputException("Wrong password!");
-        }
-
-        AuthenticationTokenEntity token = authenticationService.getToken(user);
-
-        if (!Objects.nonNull(token)) {
-            throw new InvalidInputException("Authentication token not present!");
-        }
-
-        return token.getToken();
+        return userRepository.save(user);
     }
 
     public UserEntity setCoachToClub(Integer userId, Integer clubId) {
@@ -87,7 +55,7 @@ public class UserClubService {
             throw new RuntimeException(String.format("User with id %d should belong to club and then to be coach!", userId));
         }
         if (user.isCompetitor()) {
-            user.setRole("coach");
+            user.setRole(UserRole.COACH);
         }
         user.addClub(clubRepository.findClubByClubId(clubId).orElseThrow(() -> new NoExistedClubException(String.format("Club with id %d does not exist!", clubId))));
         return userRepository.save(user);

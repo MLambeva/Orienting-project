@@ -1,5 +1,6 @@
 package com.orienting.common.dto;
 
+import com.orienting.common.entity.UserRole;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,7 +16,7 @@ public class CompetitorsWithCoachesDto {
     private String ucn;
     private String phoneNumber;
     private String group;
-    private String role;
+    private UserRole role;
     private Integer clubId;
     private String clubName;
     private String city;

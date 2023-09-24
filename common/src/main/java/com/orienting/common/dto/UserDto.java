@@ -1,9 +1,8 @@
 package com.orienting.common.dto;
 
+import com.orienting.common.entity.UserRole;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.Set;
 
 @Getter
 @Setter
@@ -19,7 +18,7 @@ public class UserDto {
     //@Pattern(regexp = "^(W|M)\\d{2}$", message = "Invalid format")
     private String group;
     //@Pattern(regexp = "^(?i)(coach|competitor)$", message = "Invalid role")
-    private String role;
+    private UserRole role;
     private Integer clubId;
     private String clubName;
     private String city;

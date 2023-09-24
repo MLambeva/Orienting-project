@@ -1,33 +1,22 @@
 package com.orienting.common.services;
 
-import com.orienting.common.dto.UserDto;
-import com.orienting.common.entity.AuthenticationTokenEntity;
-import com.orienting.common.entity.ClubEntity;
-import com.orienting.common.entity.CompetitionEntity;
-import com.orienting.common.entity.UserEntity;
-import com.orienting.common.exception.InvalidInputException;
+import com.orienting.common.entity.*;
 import com.orienting.common.exception.InvalidRoleException;
 import com.orienting.common.exception.NoExistedUserException;
 import com.orienting.common.repository.UserRepository;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
 @Getter
+@AllArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
-
-    @Autowired
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     public List<UserEntity> getUsers() {
         return userRepository.findAll();
@@ -47,7 +36,7 @@ public class UserService {
         Optional<UserEntity> userOptional = userRepository.findUserByUserId(userId);
 
         if (userOptional.isPresent()) {
-            return userOptional.get().getRole();
+            return userOptional.get().getRole().name();
         } else {
             throw new NoExistedUserException(String.format("User with userId: %d does not exist!", userId));
         }
@@ -57,7 +46,7 @@ public class UserService {
         Optional<UserEntity> userOptional = userRepository.findUserByUcn(ucn);
 
         if (userOptional.isPresent()) {
-            return userOptional.get().getRole();
+            return userOptional.get().getRole().name();
         } else {
             throw new NoExistedUserException(String.format("User with unified civil number %s does not exist!", ucn));
         }
@@ -150,18 +139,28 @@ public class UserService {
         if (user.isCoach()) {
             throw new InvalidRoleException("Role must be competitor!");
         }
-        user.setRole("coach");
+        user.setRole(UserRole.COACH);
         return userRepository.save(user);
     }
 
     public UserEntity removeCoach(Integer userId) {
         UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with id %d does not exist!", userId)));
-        ;
         if (user.isCompetitor()) {
             throw new InvalidRoleException("Role must be coach!");
         }
-        user.setRole("competitor");
+        user.setRole(UserRole.COMPETITOR);
         return userRepository.save(user);
     }
 
+    public List<UserEntity> getAllUsersInClub(Integer clubId) {
+        return userRepository.findAllUsersInClub(clubId).orElseThrow(() -> new NoExistedUserException("Club is empty!"));
+    }
+
+    public List<UserEntity> getAllCompetitorsInClub(Integer clubId) {
+        return userRepository.findAllUsersByRoleInClub(clubId, UserRole.COMPETITOR.name()).orElseThrow(() -> new NoExistedUserException("The club does not have competitors!"));
+    }
+
+    public List<UserEntity> getAllCoachesInClub(Integer clubId) {
+        return userRepository.findAllUsersByRoleInClub(clubId, UserRole.COACH.name()).orElseThrow(() -> new NoExistedUserException("The club does not have coaches!"));
+    }
 }

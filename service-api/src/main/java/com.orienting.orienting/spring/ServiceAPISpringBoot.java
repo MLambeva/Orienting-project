@@ -5,8 +5,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = { //
-        "com.orienting.orienting.spring.configuration", //
+@ComponentScan(basePackages = {
+        "com.orienting.orienting.spring.configuration",
         "com.orienting.orienting.spring.controller"
 })
 public class ServiceAPISpringBoot {

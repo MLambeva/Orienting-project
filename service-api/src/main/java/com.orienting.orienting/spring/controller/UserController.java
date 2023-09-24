@@ -144,4 +144,19 @@ public class UserController {
     public ResponseEntity<UserDto> removeCoach(@PathVariable("userId") Integer userId) {
         return ResponseEntity.ok(modelMapper.map(userService.removeCoach(userId), UserDto.class));
     }
+
+    @GetMapping("getAllUsersInClub/{clubId}")
+    public ResponseEntity<List<CompetitorsAndCoachDto>> getAllUsersInClub(@PathVariable("clubId") Integer clubId) {
+        return ResponseEntity.ok(userService.getAllUsersInClub(clubId).stream().map(user -> modelMapper.map(user, CompetitorsAndCoachDto.class)).toList());
+    }
+
+    @GetMapping("getAllCompetitorsInClub/{clubId}")
+    public ResponseEntity<List<CompetitorsAndCoachDto>> getAllCompetitorsInClub(@PathVariable("clubId") Integer clubId) {
+        return ResponseEntity.ok(userService.getAllCompetitorsInClub(clubId).stream().map(user -> modelMapper.map(user, CompetitorsAndCoachDto.class)).toList());
+    }
+
+    @GetMapping("getAllCoachesInClub/{clubId}")
+    public ResponseEntity<List<CompetitorsAndCoachDto>> getAllCoachesInClub(@PathVariable("clubId") Integer clubId) {
+        return ResponseEntity.ok(userService.getAllCoachesInClub(clubId).stream().map(user -> modelMapper.map(user, CompetitorsAndCoachDto.class)).toList());
+    }
 }

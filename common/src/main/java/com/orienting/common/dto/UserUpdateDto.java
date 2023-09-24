@@ -1,5 +1,6 @@
 package com.orienting.common.dto;
 
+import com.orienting.common.entity.UserRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
@@ -18,7 +19,7 @@ public class UserUpdateDto {
     @Pattern(regexp = "^(W|M)\\d{2}$", message = "Invalid format")
     private String group;
     @Pattern(regexp = "^(?i)(coach|competitor)$", message = "Invalid role")
-    private String role;
+    private UserRole role;
     private Integer clubId;
 
     public UserUpdateDto() {}
