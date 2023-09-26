@@ -5,3 +5,5 @@ databaseChangeLog:
       file: db/changelog/changes/club-table.yaml
   - include:
       file: db/changelog/changes/competition-table.yaml
+  - include:
+      file: db/changelog/changes/token.yaml

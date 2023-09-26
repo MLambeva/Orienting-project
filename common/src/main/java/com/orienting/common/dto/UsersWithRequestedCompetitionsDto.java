@@ -2,12 +2,14 @@ package com.orienting.common.dto;
 
 import com.orienting.common.entity.UserRole;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Set;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class UsersWithRequestedCompetitionsDto {
     private Integer userId;
     private String email;
@@ -18,6 +20,4 @@ public class UsersWithRequestedCompetitionsDto {
     private String clubName;
     private String city;
     private Set<CompetitionDto> competitions;
-
-    UsersWithRequestedCompetitionsDto() {}
 }

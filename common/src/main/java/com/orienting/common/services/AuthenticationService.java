@@ -1,23 +1,36 @@
 package com.orienting.common.services;
 
-import com.orienting.common.entity.AuthenticationTokenEntity;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.orienting.common.entity.AuthenticationResponseEntity;
+import com.orienting.common.entity.TokenEntity;
+import com.orienting.common.entity.TokenType;
 import com.orienting.common.entity.UserEntity;
+import com.orienting.common.repository.TokenRepository;
 import com.orienting.common.repository.UserRepository;
 import com.orienting.common.utils.JwtUtils;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+
 @Service
 @RequiredArgsConstructor
+@ComponentScan(basePackages = "com.orienting.common.utils")
 public class AuthenticationService {
     private final UserRepository userRepository;
+    private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtUtils jwtService;
+    private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
-    public AuthenticationTokenEntity register(UserEntity request) {
+
+    public AuthenticationResponseEntity register(UserEntity request) {
         UserEntity user = UserEntity.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -27,14 +40,16 @@ public class AuthenticationService {
                 .phoneNumber(request.getPhoneNumber())
                 .group(request.getGroup())
                 .role(request.getRole())
-                .club(request.getClub())
+                //.club(request.getClub())
                 .build();
-        userRepository.save(user);
-        String jwtToken = jwtService.generateToken(user);
-        return AuthenticationTokenEntity.builder().token(jwtToken).build();
+        UserEntity savedUser = userRepository.save(user);
+        String jwtToken = jwtUtils.generateToken(user);
+        String refreshToken = jwtUtils.generateRefreshToken(user);
+        saveUserToken(savedUser, jwtToken);
+        return AuthenticationResponseEntity.builder().accessToken(jwtToken).refreshToken(refreshToken).build();
     }
 
-    public AuthenticationTokenEntity authenticate(UserEntity request) {
+    public AuthenticationResponseEntity authenticate(UserEntity request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -42,8 +57,59 @@ public class AuthenticationService {
                 )
         );
         UserEntity user = userRepository.findByEmail(request.getEmail()).orElseThrow();
-        String jwtToken = jwtService.generateToken(user);
-        return AuthenticationTokenEntity.builder().token(jwtToken).build();
+        String jwtToken = jwtUtils.generateToken(user);
+        String refreshToken = jwtUtils.generateRefreshToken(user);
+        revokeAllUserTokens(user);
+        saveUserToken(user, jwtToken);
+        return AuthenticationResponseEntity.builder().accessToken(jwtToken).refreshToken(refreshToken).build();
     }
 
+
+    private void saveUserToken(UserEntity user, String jwtToken) {
+        var token = TokenEntity.builder()
+                .user(user)
+                .token(jwtToken)
+                .tokenType(TokenType.BEARER)
+                .expired(false)
+                .revoked(false)
+                .build();
+        tokenRepository.save(token);
+    }
+
+    private void revokeAllUserTokens(UserEntity user) {
+        var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getUserId());
+        if (validUserTokens.isEmpty())
+            return;
+        validUserTokens.forEach(token -> {
+            token.setExpired(true);
+            token.setRevoked(true);
+        });
+        tokenRepository.saveAll(validUserTokens);
+    }
+    public void refreshToken(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws IOException {
+        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+
+        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
+            return;
+        }
+        final String refreshToken = authHeader.substring(7);
+        final String userEmail = jwtUtils.extractEmail(refreshToken);
+        if (userEmail != null) {
+            UserEntity user = this.userRepository.findByEmail(userEmail)
+                    .orElseThrow();
+            if (jwtUtils.isTokenValid(refreshToken, user)) {
+                String accessToken = jwtUtils.generateToken(user);
+                revokeAllUserTokens(user);
+                saveUserToken(user, accessToken);
+                AuthenticationResponseEntity authResponse = AuthenticationResponseEntity.builder()
+                        .accessToken(accessToken)
+                        .refreshToken(refreshToken)
+                        .build();
+                new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
+            }
+        }
+    }
 }

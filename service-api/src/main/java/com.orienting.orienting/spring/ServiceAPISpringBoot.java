@@ -9,6 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
         "com.orienting.orienting.spring.configuration",
         "com.orienting.orienting.spring.controller"
 })
+
 public class ServiceAPISpringBoot {
 
     public static void main(String[] args) {

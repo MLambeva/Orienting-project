@@ -5,7 +5,9 @@ import com.orienting.common.dto.CompetitorsWithCoachesDto;
 import com.orienting.common.dto.UserDto;
 import com.orienting.common.dto.UsersWithRequestedCompetitionsDto;
 import com.orienting.common.entity.UserEntity;
+import com.orienting.common.repository.TokenRepository;
 import com.orienting.common.repository.UserRepository;
+import com.orienting.common.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -30,7 +32,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
         "com.orienting.common.entity"
 })
 @ComponentScan(basePackages = {"com.orienting.common.utils", "com.orienting.common.services"})
-
 @RequiredArgsConstructor
 public class ApplicationConfiguration {
     private final UserRepository repository;

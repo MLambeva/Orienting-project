@@ -58,6 +58,9 @@ public class UserEntity implements UserDetails {
     )
     private Set<CompetitionEntity> competitions;
 
+    @OneToMany(mappedBy = "user")
+    private List<TokenEntity> tokens;
+
     public boolean isCoach() {
         return this.role == UserRole.COACH;
     }

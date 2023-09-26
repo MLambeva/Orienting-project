@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -11,6 +12,7 @@ import java.time.LocalTime;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class CompetitionDto {
     private Integer compId;
     @NotBlank(message = "Name is mandatory!")
@@ -22,6 +24,4 @@ public class CompetitionDto {
     private LocalTime time;
     private String location;
     private String coordinates;
-
-    public CompetitionDto() {}
 }

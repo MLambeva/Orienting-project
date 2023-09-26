@@ -4,10 +4,12 @@ import com.orienting.common.entity.UserRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class UserUpdateDto {
     @Email(message = "Invalid email!")
     private String email;
@@ -21,6 +23,4 @@ public class UserUpdateDto {
     @Pattern(regexp = "^(?i)(coach|competitor)$", message = "Invalid role")
     private UserRole role;
     private Integer clubId;
-
-    public UserUpdateDto() {}
 }

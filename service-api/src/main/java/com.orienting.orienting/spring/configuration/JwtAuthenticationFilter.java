@@ -1,5 +1,6 @@
 package com.orienting.orienting.spring.configuration;
 
+import com.orienting.common.repository.TokenRepository;
 import com.orienting.common.utils.JwtUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -8,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,12 +22,15 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
+@ComponentScan(basePackages = "com.orienting.common.utils")
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
     @Autowired
     private final JwtUtils jwtUtils;
     @Autowired
     private final UserDetailsService userDetailsService;
+    @Autowired
+    private final TokenRepository tokenRepository;
+
 
     @Override
     protected void doFilterInternal(
@@ -33,6 +38,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
+        if(request.getServletPath().contains("/api/auth")) {
+            filterChain.doFilter(request, response);
+        }
         final String authHeader = request.getHeader("Authorization");
          if(authHeader == null || !authHeader.startsWith("Bearer")) {
              filterChain.doFilter(request, response);
@@ -42,7 +50,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
          final String userEmail = jwtUtils.extractEmail(jwt);
          if(userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) { //user is not connected yet
              UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
-            if(jwtUtils.isTokenValid(jwt, userDetails)) {
+             boolean isTokenValid = tokenRepository.findByToken(jwt)
+                     .map(t -> !t.isExpired() && !t.isRevoked())
+                     .orElse(false);
+             if(jwtUtils.isTokenValid(jwt, userDetails) && isTokenValid) {
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,

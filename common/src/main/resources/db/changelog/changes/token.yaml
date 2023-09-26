@@ -1,0 +1,34 @@
+databaseChangeLog:
+  - changeSet:
+      id: 12
+      author: monika
+      changes:
+        - createTable:
+            tableName: tokens
+            columns:
+              - column:
+                  name: id
+                  type: serial
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: token
+                  type: text
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: token_type
+                  type: nvarchar(50)
+              - column:
+                  name: revoked
+                  type: boolean
+                  constraints:
+                    nullable: false
+              - column:
+                  name: expired
+                  type: boolean
+                  constraints:
+                    nullable: false

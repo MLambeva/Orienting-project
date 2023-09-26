@@ -3,6 +3,7 @@ package com.orienting.common.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -11,6 +12,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
 @Table(name = "competition")
 public class CompetitionEntity {
     @Id
@@ -30,8 +32,6 @@ public class CompetitionEntity {
     private String coordinates;
     @ManyToMany(mappedBy = "competitions")
     private Set<UserEntity> users;
-
-    public CompetitionEntity() {}
 
     public void update(CompetitionEntity competition) {
         if(competition != null) {
