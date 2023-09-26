@@ -32,3 +32,13 @@ databaseChangeLog:
                   type: boolean
                   constraints:
                     nullable: false
+  - changeSet:
+      id: 13
+      author: monika
+      changes:
+        - addColumn:
+            tableName: tokens
+            columns:
+              - column:
+                  name: user_id
+                  type: integer

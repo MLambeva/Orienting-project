@@ -30,6 +30,16 @@ public class AuthenticationService {
     private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
 
+    private void saveUserToken(UserEntity user, String jwtToken) {
+        TokenEntity token = TokenEntity.builder()
+                .user(user)
+                .token(jwtToken)
+                .tokenType(TokenType.BEARER)
+                .expired(false)
+                .revoked(false)
+                .build();
+        tokenRepository.save(token);
+    }
     public AuthenticationResponseEntity register(UserEntity request) {
         UserEntity user = UserEntity.builder()
                 .email(request.getEmail())
@@ -40,10 +50,11 @@ public class AuthenticationService {
                 .phoneNumber(request.getPhoneNumber())
                 .group(request.getGroup())
                 .role(request.getRole())
-                //.club(request.getClub())
+                .club(request.getClub())
                 .build();
         UserEntity savedUser = userRepository.save(user);
         String jwtToken = jwtUtils.generateToken(user);
+        System.out.println(jwtToken);
         String refreshToken = jwtUtils.generateRefreshToken(user);
         saveUserToken(savedUser, jwtToken);
         return AuthenticationResponseEntity.builder().accessToken(jwtToken).refreshToken(refreshToken).build();
@@ -62,18 +73,6 @@ public class AuthenticationService {
         revokeAllUserTokens(user);
         saveUserToken(user, jwtToken);
         return AuthenticationResponseEntity.builder().accessToken(jwtToken).refreshToken(refreshToken).build();
-    }
-
-
-    private void saveUserToken(UserEntity user, String jwtToken) {
-        var token = TokenEntity.builder()
-                .user(user)
-                .token(jwtToken)
-                .tokenType(TokenType.BEARER)
-                .expired(false)
-                .revoked(false)
-                .build();
-        tokenRepository.save(token);
     }
 
     private void revokeAllUserTokens(UserEntity user) {

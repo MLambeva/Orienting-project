@@ -3,6 +3,7 @@ package com.orienting.common.dto;
 import com.orienting.common.entity.UserRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
@@ -27,8 +28,7 @@ public class UserCreationDto {
     private String phoneNumber;
     @Pattern(regexp = "^(W|M)\\d{2}$", message = "Invalid format")
     private String group;
-    @NotBlank(message = "The role is mandatory!")
-    @Pattern(regexp = "^(?i)(coach|competitor)$", message = "Invalid role")
+    @NotNull(message = "The role is mandatory!")
     private UserRole role;
     private Integer clubId;
     private String clubName;
