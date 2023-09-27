@@ -1,9 +1,8 @@
 package com.orienting.common.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.orienting.common.entity.AuthenticationResponseEntity;
+import com.orienting.common.dto.AuthenticationResponseDto;
 import com.orienting.common.entity.TokenEntity;
-import com.orienting.common.entity.TokenType;
 import com.orienting.common.entity.UserEntity;
 import com.orienting.common.repository.TokenRepository;
 import com.orienting.common.repository.UserRepository;
@@ -34,13 +33,12 @@ public class AuthenticationService {
         TokenEntity token = TokenEntity.builder()
                 .user(user)
                 .token(jwtToken)
-                .tokenType(TokenType.BEARER)
                 .expired(false)
                 .revoked(false)
                 .build();
         tokenRepository.save(token);
     }
-    public AuthenticationResponseEntity register(UserEntity request) {
+    public AuthenticationResponseDto register(UserEntity request) {
         UserEntity user = UserEntity.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -57,10 +55,10 @@ public class AuthenticationService {
         System.out.println(jwtToken);
         String refreshToken = jwtUtils.generateRefreshToken(user);
         saveUserToken(savedUser, jwtToken);
-        return AuthenticationResponseEntity.builder().accessToken(jwtToken).refreshToken(refreshToken).build();
+        return AuthenticationResponseDto.builder().accessToken(jwtToken).refreshToken(refreshToken).build();
     }
 
-    public AuthenticationResponseEntity authenticate(UserEntity request) {
+    public AuthenticationResponseDto authenticate(UserEntity request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -72,7 +70,7 @@ public class AuthenticationService {
         String refreshToken = jwtUtils.generateRefreshToken(user);
         revokeAllUserTokens(user);
         saveUserToken(user, jwtToken);
-        return AuthenticationResponseEntity.builder().accessToken(jwtToken).refreshToken(refreshToken).build();
+        return AuthenticationResponseDto.builder().accessToken(jwtToken).refreshToken(refreshToken).build();
     }
 
     private void revokeAllUserTokens(UserEntity user) {
@@ -103,7 +101,7 @@ public class AuthenticationService {
                 String accessToken = jwtUtils.generateToken(user);
                 revokeAllUserTokens(user);
                 saveUserToken(user, accessToken);
-                AuthenticationResponseEntity authResponse = AuthenticationResponseEntity.builder()
+                AuthenticationResponseDto authResponse = AuthenticationResponseDto.builder()
                         .accessToken(accessToken)
                         .refreshToken(refreshToken)
                         .build();

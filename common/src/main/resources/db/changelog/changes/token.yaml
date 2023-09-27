@@ -42,3 +42,13 @@ databaseChangeLog:
               - column:
                   name: user_id
                   type: integer
+
+  - changeSet:
+      id: 14
+      author: monika
+      changes:
+        - dropColumn:
+            tableName: tokens
+            columns:
+              - column:
+                  name: token_type

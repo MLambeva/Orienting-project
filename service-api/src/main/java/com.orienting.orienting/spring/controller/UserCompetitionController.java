@@ -7,6 +7,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("api/competitions")
@@ -22,9 +25,25 @@ public class UserCompetitionController {
     }
 
     @PostMapping("/request/{userId}/{compId}")
-    public ResponseEntity<String> requestParticipation(@PathVariable("userId") Integer userId, @PathVariable("compId")Integer compId) {
-        userCompetitionService.requestParticipation(userId, compId);
-        return ResponseEntity.ok(String.format("User with id %d requests participant in competition with id %d!", userId, compId));
+    public ResponseEntity<UserDto> requestParticipation(@PathVariable("userId") Integer userId, @PathVariable("compId")Integer compId) {
+        UserDto user = modelMapper.map(userCompetitionService.requestParticipation(userId, compId), UserDto.class);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri()
+                .path("/{userId}" + "/{compId}")
+                .buildAndExpand(userId, compId)
+                .toUri();
+        return ResponseEntity.created(uri)
+                .body(user);
+    }
+
+    @PostMapping("/request/{compId}")
+    public ResponseEntity<UserDto> requestParticipation(@PathVariable("compId")Integer compId) {
+        UserDto user = modelMapper.map(userCompetitionService.userRequestParticipation(compId), UserDto.class);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri()
+                .path("/{userId}" + "/{compId}")
+                .buildAndExpand(user.getUserId(), compId)
+                .toUri();
+        return ResponseEntity.created(uri)
+                .body(user);
     }
 
     @DeleteMapping("/remove/{userId}/{compId}")

@@ -4,12 +4,15 @@ import com.orienting.common.dto.CompetitorDto;
 import com.orienting.common.dto.CompetitorsWithCoachesDto;
 import com.orienting.common.dto.UserDto;
 import com.orienting.common.dto.UsersWithRequestedCompetitionsDto;
+import com.orienting.common.entity.TokenEntity;
 import com.orienting.common.entity.UserEntity;
 import com.orienting.common.repository.TokenRepository;
 import com.orienting.common.repository.UserRepository;
+import com.orienting.common.services.LogoutService;
 import com.orienting.common.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -66,6 +69,7 @@ public class ApplicationConfiguration {
                 .addMapping(src -> src.getClub().getCity(), CompetitorsWithCoachesDto::setCity);
         modelMapper.createTypeMap(UserEntity.class, UsersWithRequestedCompetitionsDto.class)
                 .addMapping(src -> src.getClub().getCity(), UsersWithRequestedCompetitionsDto::setCity);
+
         return modelMapper;
     }
 
@@ -73,6 +77,5 @@ public class ApplicationConfiguration {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 
 }

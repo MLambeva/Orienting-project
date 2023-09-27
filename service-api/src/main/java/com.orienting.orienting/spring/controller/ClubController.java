@@ -9,7 +9,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -76,9 +78,14 @@ public class ClubController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<String> addClub(@RequestBody @Valid ClubDto clubDto) {
+    public ResponseEntity<ClubDto> addClub(@RequestBody @Valid ClubDto clubDto) {
         ClubEntity club = clubService.createClub(modelMapper.map(clubDto, ClubEntity.class));
-        return ResponseEntity.ok(String.format("Club with id: %d was created successfully", club.getClubId()));
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri()
+                .path("/{clubId}")
+                .buildAndExpand(clubDto.getClubId())
+                .toUri();
+        return ResponseEntity.created(uri)
+                .body(modelMapper.map(club, ClubDto.class));
     }
 
     @DeleteMapping("/deleteById/{clubId}")

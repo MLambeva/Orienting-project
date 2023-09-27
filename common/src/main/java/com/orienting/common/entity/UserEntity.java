@@ -62,11 +62,13 @@ public class UserEntity implements UserDetails {
     private List<TokenEntity> tokens;
 
     public boolean isCoach() {
-        return this.role == UserRole.COACH;
+        return this.role.equals(UserRole.COACH);
+        //return UserRole.isEqualIgnoreCase(role, UserRole.COACH);
     }
 
     public boolean isCompetitor() {
-        return this.role == UserRole.COMPETITOR;
+        return this.role.equals(UserRole.COMPETITOR);
+        //return UserRole.isEqualIgnoreCase(role, UserRole.COMPETITOR);
     }
 
     public void addClub(ClubEntity club) {

@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
@@ -64,9 +67,13 @@ public class CompetitionController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createCompetition(@RequestBody @Valid CompetitionDto competition) {
+    public ResponseEntity<CompetitionDto> createCompetition(@RequestBody @Valid CompetitionDto competition) {
         CompetitionEntity competitionEntity = competitionService.createCompetition(modelMapper.map(competition, CompetitionEntity.class));
-        return ResponseEntity.ok(String.format("Competition with id: %d was added!", competitionEntity.getCompId()));
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri()
+                .path("/{compId}")
+                .buildAndExpand(competition.getCompId())
+                .toUri();
+        return ResponseEntity.created(uri).body(modelMapper.map(competitionEntity, CompetitionDto.class));
     }
 
     @DeleteMapping("/{compId}")
@@ -78,5 +85,4 @@ public class CompetitionController {
     public ResponseEntity<CompetitionDto> updateCompetitionByCompId(@PathVariable("compId") Integer compId, @RequestBody @Valid CompetitionUpdateDto competition) {
         return ResponseEntity.ok(modelMapper.map(competitionService.updateCompetition(compId, modelMapper.map(competition, CompetitionEntity.class)), CompetitionDto.class));
     }
-
 }

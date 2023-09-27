@@ -2,13 +2,12 @@ package com.orienting.orienting.spring.controller;
 
 import com.orienting.common.dto.SignInDto;
 import com.orienting.common.dto.UserCreationDto;
-import com.orienting.common.entity.AuthenticationResponseEntity;
+import com.orienting.common.dto.AuthenticationResponseDto;
 import com.orienting.common.entity.UserEntity;
 import com.orienting.common.services.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,12 +31,12 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponseEntity> register (@RequestBody @Valid UserCreationDto request) {
+    public ResponseEntity<AuthenticationResponseDto> register (@RequestBody @Valid UserCreationDto request) {
         return ResponseEntity.ok(authService.register(modelMapper.map(request, UserEntity.class)));
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponseEntity> signIn(@RequestBody SignInDto request) {
+    public ResponseEntity<AuthenticationResponseDto> signIn(@RequestBody SignInDto request) {
         return ResponseEntity.ok(authService.authenticate(modelMapper.map(request, UserEntity.class)));
     }
 

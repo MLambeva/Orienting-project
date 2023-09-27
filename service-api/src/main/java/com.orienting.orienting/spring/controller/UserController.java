@@ -106,13 +106,13 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @PutMapping("/byId/{userId}")
+    @PutMapping("/byUserId/{userId}")
     public ResponseEntity<UserDto> updateUserByUserId(@PathVariable("userId") Integer userId, @Valid @RequestBody UserUpdateDto newUser) {
         UserDto user =  modelMapper.map(userService.updateUserByUserId(userId, false, modelMapper.map(newUser, UserEntity.class)),  UserDto.class);
         return ResponseEntity.ok(user);
     }
 
-    @PutMapping("/byIdAdmin/{userId}")
+    @PutMapping("/byUserIdAdmin/{userId}")
     public ResponseEntity<UserDto> updateUserByUserIdAdmin(@PathVariable("userId") Integer userId, @Valid @RequestBody UserUpdateDto newUser) {
         UserDto user =  modelMapper.map(userService.updateUserByUserId(userId, true, modelMapper.map(newUser, UserEntity.class)), UserDto.class);
         return ResponseEntity.ok(user);

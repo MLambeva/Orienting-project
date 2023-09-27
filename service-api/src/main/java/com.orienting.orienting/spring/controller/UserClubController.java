@@ -40,14 +40,13 @@ public class UserClubController {
     }
 
     @PostMapping("/addUser")
-    public ResponseEntity<UserEntity> addUser(@RequestBody @Valid UserCreationDto userDto) throws URISyntaxException, Exception {
+    public ResponseEntity<UserDto> addUser(@RequestBody @Valid UserCreationDto userDto) throws URISyntaxException, Exception {
         UserEntity user = userClubService.createUser(modelMapper.map(userDto, UserEntity.class));
         URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri()
                 .path("/{id}")
                 .buildAndExpand(user.getUserId())
                 .toUri();
         return ResponseEntity.created(uri)
-                .body(user);
+                .body(modelMapper.map(user, UserDto.class));
     }
-
 }

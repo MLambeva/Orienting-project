@@ -20,7 +20,6 @@ public class UserUpdateDto {
     private String phoneNumber;
     @Pattern(regexp = "^(W|M)\\d{2}$", message = "Invalid format")
     private String group;
-    @Pattern(regexp = "^(?i)(coach|competitor)$", message = "Invalid role")
     private UserRole role;
     private Integer clubId;
 }

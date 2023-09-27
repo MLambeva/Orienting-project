@@ -1,4 +1,4 @@
-package com.orienting.common.entity;
+package com.orienting.common.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
@@ -6,7 +6,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthenticationResponseEntity {
+public class AuthenticationResponseDto {
         @JsonProperty("access_token")
         private String accessToken;
         @JsonProperty("refresh_token")
