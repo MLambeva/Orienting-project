@@ -1,5 +1,6 @@
 package com.orienting.orienting.spring.configuration;
 
+import com.orienting.common.entity.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.Customizer;
@@ -33,7 +34,38 @@ public class SecurityConfiguration {
         httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/*").permitAll()
+                        .requestMatchers("/api/users/all").hasAuthority(UserRole.ADMIN.name())
+                        .requestMatchers("/api/users/byId/*").hasAuthority(UserRole.ADMIN.name())
+                        .requestMatchers("/api/users/me").hasAnyAuthority(UserRole.ADMIN.name(), UserRole.COACH.name(), UserRole.COMPETITOR.name())
+                        .requestMatchers("/api/users/byUcn/*").hasAuthority(UserRole.ADMIN.name())
+                        .requestMatchers("/api/users/role/**").hasAuthority(UserRole.ADMIN.name())
+                        .requestMatchers("/api/users/role").hasAnyAuthority(UserRole.ADMIN.name(), UserRole.COACH.name(), UserRole.COMPETITOR.name())
+                        .requestMatchers("/api/users/allCoaches").hasAnyAuthority(UserRole.ADMIN.name(), UserRole.COACH.name(), UserRole.COMPETITOR.name())
+                        .requestMatchers("/api/users/allCompetitors").hasAnyAuthority(UserRole.ADMIN.name(), UserRole.COMPETITOR.name())
+                        .requestMatchers("/api/users/withCoaches/*").hasAuthority(UserRole.ADMIN.name())
+                        .requestMatchers("/api/users/withCoaches").hasAuthority(UserRole.COMPETITOR.name())
+                        .requestMatchers("/api/users/competition/*").hasAuthority(UserRole.ADMIN.name())
+                        .requestMatchers("/api/users/competition").hasAnyAuthority(UserRole.COACH.name(), UserRole.COMPETITOR.name())
+                        .requestMatchers("/api/users/allUsersInClub/**").hasAuthority(UserRole.ADMIN.name())
+                        .requestMatchers("/api/users/allCompetitorsInClub/**").hasAuthority(UserRole.ADMIN.name())
+                        .requestMatchers("/api/users/allCoachesInClub/**").hasAuthority(UserRole.ADMIN.name())
+                        .requestMatchers("/api/users/coaches").hasAnyAuthority(UserRole.COACH.name(), UserRole.COMPETITOR.name())
+                        .requestMatchers("/api/users/competitors").hasAnyAuthority(UserRole.COACH.name(), UserRole.COMPETITOR.name())
+                        .requestMatchers("/api/users/club").hasAnyAuthority(UserRole.COACH.name(), UserRole.COMPETITOR.name())
+                        .requestMatchers("/api/users/remove/*/*").hasAnyAuthority(UserRole.ADMIN.name(), UserRole.COACH.name())
+                        .requestMatchers("/api/users/remove/*/Admin/*").hasAuthority(UserRole.ADMIN.name())
+                        .requestMatchers("/api/users/update/*/*").hasAnyAuthority(UserRole.ADMIN.name(), UserRole.COACH.name())
+                        .requestMatchers("/api/users/update/*/Admin/*").hasAuthority(UserRole.ADMIN.name())
+                        .requestMatchers("/api/users/update").hasAnyAuthority(UserRole.COACH.name(), UserRole.COMPETITOR.name(), UserRole.ADMIN.name())
+                        .requestMatchers("/api/users/leftClub/*").hasAuthority(UserRole.ADMIN.name())
+                        .requestMatchers("/api/users/leftClub").hasAuthority(UserRole.COMPETITOR.name())
+                        .requestMatchers("/api/users/makeCoach/*").hasAuthority(UserRole.ADMIN.name())
+                        .requestMatchers("/api/users/removeCoach/*").hasAuthority(UserRole.ADMIN.name())
+                        .requestMatchers("/api/users/setCoach/**").hasAuthority(UserRole.ADMIN.name())
+                        .requestMatchers("/api/users/add/**").hasAuthority(UserRole.ADMIN.name())
+                        .requestMatchers("/api/users/add/*").hasAnyAuthority(UserRole.COACH.name(), UserRole.COMPETITOR.name())
+
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

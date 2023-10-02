@@ -8,7 +8,9 @@ import jakarta.validation.Valid;
 import lombok.Getter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -16,7 +18,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping(value = "/api/users", produces = MediaType.APPLICATION_JSON_VALUE)
 @Getter
 public class UserClubController {
     private final UserClubService userClubService;
@@ -28,7 +30,6 @@ public class UserClubController {
         this.modelMapper = modelMapper;
     }
 
-    //api/users/byId/{userId}
     @PutMapping("setCoach/{userId}/{clubId}")
     public ResponseEntity<UserDto> setCoachToClub(@PathVariable("userId") Integer userId, @PathVariable("clubId") Integer clubId) {
         return ResponseEntity.ok(modelMapper.map(userClubService.setCoachToClub(userId, clubId), UserDto.class));
@@ -39,14 +40,8 @@ public class UserClubController {
         return ResponseEntity.ok(modelMapper.map(userClubService.addClubToUser(userId, clubId), UserDto.class));
     }
 
-    @PostMapping("/addUser")
-    public ResponseEntity<UserDto> addUser(@RequestBody @Valid UserCreationDto userDto) throws URISyntaxException, Exception {
-        UserEntity user = userClubService.createUser(modelMapper.map(userDto, UserEntity.class));
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri()
-                .path("/{id}")
-                .buildAndExpand(user.getUserId())
-                .toUri();
-        return ResponseEntity.created(uri)
-                .body(modelMapper.map(user, UserDto.class));
+    @PutMapping("/add/{clubId}")
+    public ResponseEntity<UserDto> addClubToMe(@PathVariable("clubId") Integer clubId, Authentication authentication) {
+        return addClubToUser(userClubService.findAuthenticatedUser(authentication.getName()).getUserId(), clubId);
     }
 }

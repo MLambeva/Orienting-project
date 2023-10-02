@@ -8,6 +8,7 @@ import lombok.Getter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -19,7 +20,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("api/competitions")
+@RequestMapping(value = "api/competitions", produces = MediaType.APPLICATION_JSON_VALUE)
 @Getter
 public class CompetitionController {
     private final CompetitionService competitionService;

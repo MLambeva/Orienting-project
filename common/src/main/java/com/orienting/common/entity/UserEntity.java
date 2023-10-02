@@ -1,5 +1,6 @@
 package com.orienting.common.entity;
 
+import com.orienting.common.exception.NoExistedCompetition;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -63,25 +64,31 @@ public class UserEntity implements UserDetails {
 
     public boolean isCoach() {
         return this.role.equals(UserRole.COACH);
-        //return UserRole.isEqualIgnoreCase(role, UserRole.COACH);
     }
 
     public boolean isCompetitor() {
         return this.role.equals(UserRole.COMPETITOR);
-        //return UserRole.isEqualIgnoreCase(role, UserRole.COMPETITOR);
     }
 
     public void addClub(ClubEntity club) {
         this.club = club;
     }
 
-    public void leftClub() { this.club = null; }
+    public void leftClub() {
+        this.club = null;
+    }
 
     public void addCompetition(CompetitionEntity competition) {
         this.competitions.add(competition);
     }
 
-    public void removeCompetition(CompetitionEntity competition) {this.competitions.remove(competition);}
+    public void removeCompetition(CompetitionEntity competition) {
+        if (!competitions.contains(competition)) {
+            throw new NoExistedCompetition("");
+        }
+        this.competitions.remove(competition);
+    }
+
     public void updateUser(UserEntity newUser) {
         if (newUser != null) {
             if (newUser.getEmail() != null) {

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.orienting.common.dto.AuthenticationResponseDto;
 import com.orienting.common.entity.TokenEntity;
 import com.orienting.common.entity.UserEntity;
+import com.orienting.common.exception.InvalidInputException;
 import com.orienting.common.repository.TokenRepository;
 import com.orienting.common.repository.UserRepository;
 import com.orienting.common.utils.JwtUtils;
@@ -39,6 +40,12 @@ public class AuthenticationService {
         tokenRepository.save(token);
     }
     public AuthenticationResponseDto register(UserEntity request) {
+        if (request == null) {
+            throw new IllegalArgumentException("Input user is null!");
+        }
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new InvalidInputException(String.format("User with email %s already exist!", request.getEmail()));
+        }
         UserEntity user = UserEntity.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -52,7 +59,6 @@ public class AuthenticationService {
                 .build();
         UserEntity savedUser = userRepository.save(user);
         String jwtToken = jwtUtils.generateToken(user);
-        System.out.println(jwtToken);
         String refreshToken = jwtUtils.generateRefreshToken(user);
         saveUserToken(savedUser, jwtToken);
         return AuthenticationResponseDto.builder().accessToken(jwtToken).refreshToken(refreshToken).build();

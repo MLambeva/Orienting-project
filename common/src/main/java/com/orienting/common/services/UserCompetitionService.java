@@ -5,8 +5,10 @@ import com.orienting.common.entity.UserEntity;
 import com.orienting.common.exception.NoExistedClubException;
 import com.orienting.common.exception.NoExistedCompetition;
 import com.orienting.common.exception.NoExistedUserException;
+import com.orienting.common.exception.UnauthorizedException;
 import com.orienting.common.repository.CompetitionRepository;
 import com.orienting.common.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.security.auth.message.AuthException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,6 +26,10 @@ public class UserCompetitionService {
     private final UserRepository userRepository;
     private final CompetitionRepository competitionRepository;
 
+    public UserEntity findAuthenticatedUser(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() ->
+                new EntityNotFoundException(String.format("User with email %s does not exist", email)));
+    }
 
     public UserEntity requestParticipation(Integer userId, Integer compId) {
         UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with userId: %d does not exist!", userId)));
@@ -33,19 +39,6 @@ public class UserCompetitionService {
             return userRepository.save(user);
         } else {
             throw new NoExistedClubException("User does not have club!");
-        }
-    }
-
-    public UserEntity userRequestParticipation(Integer compId) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated() && authentication.getPrincipal() instanceof UserDetails userDetails) {
-            String email = userDetails.getUsername();
-            UserEntity user = userRepository.findByEmail(email).orElseThrow();
-            requestParticipation(user.getUserId(), compId);
-            return user;
-        }
-        else {
-            throw new NoExistedUserException("User not logged!");
         }
     }
 

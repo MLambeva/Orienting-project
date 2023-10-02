@@ -4,8 +4,10 @@ import com.orienting.common.entity.*;
 import com.orienting.common.exception.InvalidRoleException;
 import com.orienting.common.exception.NoExistedUserException;
 import com.orienting.common.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +20,10 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    public UserEntity findAuthenticatedUser(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() ->
+                new EntityNotFoundException(String.format("User with email %s does not exist", email)));
+    }
     public List<UserEntity> getUsers() {
         return userRepository.findAll();
     }
@@ -62,13 +68,14 @@ public class UserService {
                 .filter(UserEntity::isCompetitor).toList();
     }
 
+
     public List<UserEntity> getCoachesByUserId(Integer userId) {
         UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with userId: %d does not exist!", userId)));
         ClubEntity club = user.getClub();
-        if(club == null) {
+        if (club == null) {
             throw new RuntimeException(String.format("User with id %d does not belong to club!", userId));
         }
-        if(user.isCoach()) {
+        if (user.isCoach()) {
             throw new RuntimeException("User must be competitor!");
         }
         return club.getUsers().stream().filter(UserEntity::isCoach).toList();
@@ -77,6 +84,29 @@ public class UserService {
     public List<CompetitionEntity> getCompetitionsByUserId(Integer userId) {
         UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with userId: %d does not exist!", userId)));
         return user.getCompetitions().stream().toList();
+    }
+    public List<UserEntity> getAllUsersInClubByClubId(Integer clubId) {
+        return userRepository.findAllUsersInClubByClubId(clubId).orElseThrow(() -> new NoExistedUserException("Club is empty!"));
+    }
+
+    public List<UserEntity> getAllCompetitorsInClubByClubId(Integer clubId) {
+        return userRepository.findAllUsersInClubByClubId(clubId).orElseThrow(() -> new NoExistedUserException("The club does not have competitors!")).stream().filter(UserEntity::isCompetitor).toList();
+    }
+
+    public List<UserEntity> getAllCoachesInClubByClubId(Integer clubId) {
+        return userRepository.findAllUsersInClubByClubId(clubId).orElseThrow(() -> new NoExistedUserException("The club does not have coaches!")).stream().filter(UserEntity::isCoach).toList();
+    }
+
+    public List<UserEntity> getAllUsersInClubByClubName(String clubName) {
+        return userRepository.findAllUsersInClubByName(clubName).orElseThrow(() -> new NoExistedUserException("Club is empty!"));
+    }
+
+    public List<UserEntity> getAllCompetitorsInClubByClubName(String clubName) {
+        return userRepository.findAllUsersInClubByName(clubName).orElseThrow(() -> new NoExistedUserException("The club does not have competitors!")).stream().filter(UserEntity::isCompetitor).toList();
+    }
+
+    public List<UserEntity> getAllCoachesInClubByClubName(String clubName) {
+        return userRepository.findAllUsersInClubByName(clubName).orElseThrow(() -> new NoExistedUserException("The club does not have coaches!")).stream().filter(UserEntity::isCoach).toList();
     }
 
     public UserEntity deleteAndUpdateByHelper(String identifier, String identifierType, Boolean isAdmin, String action) {
@@ -150,17 +180,5 @@ public class UserService {
         }
         user.setRole(UserRole.COMPETITOR);
         return userRepository.save(user);
-    }
-
-    public List<UserEntity> getAllUsersInClub(Integer clubId) {
-        return userRepository.findAllUsersInClub(clubId).orElseThrow(() -> new NoExistedUserException("Club is empty!"));
-    }
-
-    public List<UserEntity> getAllCompetitorsInClub(Integer clubId) {
-        return userRepository.findAllUsersByRoleInClub(clubId, UserRole.COMPETITOR.name()).orElseThrow(() -> new NoExistedUserException("The club does not have competitors!"));
-    }
-
-    public List<UserEntity> getAllCoachesInClub(Integer clubId) {
-        return userRepository.findAllUsersByRoleInClub(clubId, UserRole.COACH.name()).orElseThrow(() -> new NoExistedUserException("The club does not have coaches!"));
     }
 }

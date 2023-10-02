@@ -1,6 +1,7 @@
 package com.orienting.common.repository;
 
 import com.orienting.common.entity.UserEntity;
+import com.orienting.common.entity.UserRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,9 +19,9 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     Optional<UserEntity> findUserByUserId(Integer userId);
 
     @Query("SELECT u FROM UserEntity u WHERE u.club.clubId = :clubId")
-    Optional<List<UserEntity>> findAllUsersInClub(@Param("clubId") Integer clubId);
+    Optional<List<UserEntity>> findAllUsersInClubByClubId(@Param("clubId") Integer clubId);
 
-    @Query("SELECT u FROM UserEntity u WHERE u.club.clubId = :clubId AND u.role = :role")
-    Optional<List<UserEntity>> findAllUsersByRoleInClub(@Param("clubId") Integer clubId, @Param("role") String role);
+    @Query("SELECT u FROM UserEntity u WHERE u.club.clubName = :clubName")
+    Optional<List<UserEntity>> findAllUsersInClubByName(@Param("clubName") String clubName);
 
 }

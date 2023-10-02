@@ -7,6 +7,7 @@ import com.orienting.common.exception.NoExistedClubException;
 import com.orienting.common.exception.NoExistedUserException;
 import com.orienting.common.repository.ClubRepository;
 import com.orienting.common.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,32 +21,9 @@ public class UserClubService {
     private final ClubRepository clubRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserEntity createUser(UserEntity user) throws Exception {
-        if (user == null) {
-            throw new IllegalArgumentException("Input user is null!");
-        }
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            throw new InvalidInputException(String.format("User with email %s already exist!", user.getEmail()));
-        }
-        String hashPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(hashPassword);
-
-        if (user.getClub() != null) {
-            Integer clubId = user.getClub().getClubId();
-            String clubName = user.getClub().getClubName();
-            ClubEntity club;
-            if (clubId != null) {
-                club = clubRepository.findClubByClubId(clubId).orElseThrow(() ->
-                        new NoExistedClubException(String.format("Club with id %d does not exist!", clubId)));
-            } else if (clubName != null) {
-                club = clubRepository.findClubByClubName(clubName).orElseThrow(() ->
-                        new NoExistedClubException(String.format("Club with name %s does not exist!", clubName)));
-            } else {
-                throw new NoExistedClubException("");
-            }
-            user.addClub(club);
-        }
-        return userRepository.save(user);
+    public UserEntity findAuthenticatedUser(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() ->
+                new EntityNotFoundException(String.format("User with email %s does not exist", email)));
     }
 
     public UserEntity setCoachToClub(Integer userId, Integer clubId) {

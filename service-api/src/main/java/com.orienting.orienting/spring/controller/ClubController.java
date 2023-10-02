@@ -7,7 +7,9 @@ import com.orienting.common.services.ClubService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -17,7 +19,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/clubs")
+@RequestMapping(value = "/api/clubs", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ClubController {
     private final ClubService clubService;
     private final ModelMapper modelMapper;
@@ -61,7 +63,7 @@ public class ClubController {
     public ResponseEntity<ClubDto> getClubById(@PathVariable("clubId") Integer clubId) {
         return ResponseEntity.ok(modelMapper.map(clubService.getClubById(clubId), ClubDto.class));
     }
-
+    
     @GetMapping("/byName/{clubName}")
     public ResponseEntity<ClubDto> getClubByName(@PathVariable("clubName") String clubName) {
         return ResponseEntity.ok(modelMapper.map(clubService.getClubByName(clubName), ClubDto.class));
