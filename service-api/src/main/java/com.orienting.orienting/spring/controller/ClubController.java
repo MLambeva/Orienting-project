@@ -9,7 +9,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -69,12 +68,12 @@ public class ClubController {
         return ResponseEntity.ok(modelMapper.map(clubService.getClubByName(clubName), ClubDto.class));
     }
 
-    @GetMapping("/withUsersById/{clubId}")
+    @GetMapping("/withUsers/byId/{clubId}")
     public ResponseEntity<ClubWithUsersDto> getClubWithUsersById(@PathVariable("clubId") Integer clubId) {
         return ResponseEntity.ok(mapToClubDtoWithUsers(clubService.getClubById(clubId)));
     }
 
-    @GetMapping("/withUsersByName/{clubName}")
+    @GetMapping("/withUsers/byName/{clubName}")
     public ResponseEntity<ClubWithUsersDto> getClubWithUsersByName(@PathVariable("clubName") String clubName) {
         return ResponseEntity.ok(mapToClubDtoWithUsers(clubService.getClubByName(clubName)));
     }
@@ -90,23 +89,23 @@ public class ClubController {
                 .body(modelMapper.map(club, ClubDto.class));
     }
 
-    @DeleteMapping("/deleteById/{clubId}")
+    @DeleteMapping("/delete/byId/{clubId}")
     public ResponseEntity<ClubDto> deleteClubById(@PathVariable("clubId") Integer clubId) {
         return ResponseEntity.ok(modelMapper.map(clubService.deleteClubById(clubId), ClubDto.class));
     }
 
-    @DeleteMapping("/deleteByName/{clubName}")
+    @DeleteMapping("/delete/byName/{clubName}")
     public ResponseEntity<ClubDto> deleteClubByName(@PathVariable("clubName") String clubName) {
         return ResponseEntity.ok(modelMapper.map(clubService.deleteClubByName(clubName), ClubDto.class));
     }
 
-    @PutMapping("/updateById/{clubId}")
+    @PutMapping("/update/byId/{clubId}")
     public ResponseEntity<ClubDto> updateClubById(@PathVariable("clubId") Integer clubId, @RequestBody ClubDto newClub) {
         ClubEntity club = modelMapper.map(newClub, ClubEntity.class);
         return ResponseEntity.ok(modelMapper.map(clubService.updateClubById(clubId, club), ClubDto.class));
     }
 
-    @PutMapping("/updateByName/{clubName}")
+    @PutMapping("/update/byName/{clubName}")
     public ResponseEntity<ClubDto> updateClubByName(@PathVariable("clubName") String clubName, @RequestBody ClubDto newClub) {
         ClubEntity club = modelMapper.map(newClub, ClubEntity.class);
         return ResponseEntity.ok(modelMapper.map(clubService.updateClubByName(clubName, club), ClubDto.class));

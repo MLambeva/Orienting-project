@@ -58,7 +58,7 @@ public class CompetitionController {
                 .collect(Collectors.toList()));
     }
 
-    @GetMapping("/{date}")
+    @GetMapping("/byDate/{date}")
     public ResponseEntity<List<CompetitionDto>> getCompetitionByDate(@PathVariable("date") @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate date) {
         List<CompetitionDto> competitionDto = competitionService.getCompetitionByDate(date).stream()
                 .map(competition -> modelMapper.map(competition, CompetitionDto.class))
@@ -67,7 +67,42 @@ public class CompetitionController {
         return ResponseEntity.ok(competitionDto);
     }
 
-    @PostMapping
+    @GetMapping("/byDate/withUsers/{date}")
+    public ResponseEntity<List<CompetitionRequestDto>> getCompetitionByDateWithParticipants(@PathVariable("date") @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate date) {
+        List<CompetitionRequestDto> competitionDto =  competitionService.getCompetitionByDate(date).stream()
+                .map(this::mapToCompDtoWithUsers)
+                .toList();
+        return ResponseEntity.ok(competitionDto);
+    }
+
+    @GetMapping("/byName/{name}")
+    public ResponseEntity<CompetitionDto> getCompetitionByName(@PathVariable("name") String name) {
+        CompetitionDto competitionDto = modelMapper.map(competitionService.getCompetitionByName(name), CompetitionDto.class);
+
+        return ResponseEntity.ok(competitionDto);
+    }
+
+    @GetMapping("/withUsers/byName/{name}")
+    public ResponseEntity<CompetitionRequestDto> getCompetitionByNameWithParticipants(@PathVariable("name") String name) {
+        CompetitionRequestDto competitionDto = modelMapper.map(competitionService.getCompetitionByName(name), CompetitionRequestDto.class);
+
+        return ResponseEntity.ok(competitionDto);
+    }
+
+    @GetMapping("/byCompId/{compId}")
+    public ResponseEntity<CompetitionDto> getCompetitionByName(@PathVariable("compId") Integer compId) {
+        CompetitionDto competitionDto = modelMapper.map(competitionService.getCompetitionByCompId(compId), CompetitionDto.class);
+
+        return ResponseEntity.ok(competitionDto);
+    }
+    @GetMapping("/withUsers/byCompId/{compId}")
+    public ResponseEntity<CompetitionRequestDto> getCompetitionByNameWithParticipants(@PathVariable("compId") Integer compId) {
+        CompetitionRequestDto competitionDto = modelMapper.map(competitionService.getCompetitionByCompId(compId), CompetitionRequestDto.class);
+
+        return ResponseEntity.ok(competitionDto);
+    }
+
+    @PostMapping("/add")
     public ResponseEntity<CompetitionDto> createCompetition(@RequestBody @Valid CompetitionDto competition) {
         CompetitionEntity competitionEntity = competitionService.createCompetition(modelMapper.map(competition, CompetitionEntity.class));
         URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri()
@@ -77,13 +112,23 @@ public class CompetitionController {
         return ResponseEntity.created(uri).body(modelMapper.map(competitionEntity, CompetitionDto.class));
     }
 
-    @DeleteMapping("/{compId}")
+    @DeleteMapping("delete/byCompId/{compId}")
     public ResponseEntity<CompetitionDto> deleteCompetitionById(@PathVariable("compId") Integer compId) {
         return ResponseEntity.ok(modelMapper.map(competitionService.deleteCompById(compId), CompetitionDto.class));
     }
 
-    @PutMapping("update/{compId}")
+    @DeleteMapping("delete/byName/{name}")
+    public ResponseEntity<CompetitionDto> deleteCompetitionByName(@PathVariable("name") String name) {
+        return ResponseEntity.ok(modelMapper.map(competitionService.deleteCompByName(name), CompetitionDto.class));
+    }
+
+    @PutMapping("update/byCompId/{compId}")
     public ResponseEntity<CompetitionDto> updateCompetitionByCompId(@PathVariable("compId") Integer compId, @RequestBody @Valid CompetitionUpdateDto competition) {
-        return ResponseEntity.ok(modelMapper.map(competitionService.updateCompetition(compId, modelMapper.map(competition, CompetitionEntity.class)), CompetitionDto.class));
+        return ResponseEntity.ok(modelMapper.map(competitionService.updateCompetitionById(compId, modelMapper.map(competition, CompetitionEntity.class)), CompetitionDto.class));
+    }
+
+    @PutMapping("update/byName/{name}")
+    public ResponseEntity<CompetitionDto> updateCompetitionByName(@PathVariable("name") String name, @RequestBody @Valid CompetitionUpdateDto competition) {
+        return ResponseEntity.ok(modelMapper.map(competitionService.updateCompetitionByName(name, modelMapper.map(competition, CompetitionEntity.class)), CompetitionDto.class));
     }
 }

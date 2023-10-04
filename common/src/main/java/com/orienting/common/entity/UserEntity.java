@@ -109,9 +109,6 @@ public class UserEntity implements UserDetails {
             if (newUser.getGroup() != null) {
                 this.setGroup(newUser.getGroup());
             }
-            if (newUser.getRole() != null) {
-                this.setRole(newUser.getRole());
-            }
             if (newUser.getClub() != null) {
                 this.setClub(newUser.getClub());
             }

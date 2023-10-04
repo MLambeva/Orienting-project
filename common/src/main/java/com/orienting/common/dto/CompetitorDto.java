@@ -8,7 +8,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class CompetitorDto {
-    private Integer userId;
     private String firstName;
     private String lastName;
     private String group;

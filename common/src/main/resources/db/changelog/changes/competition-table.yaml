@@ -72,3 +72,25 @@ databaseChangeLog:
             tableName: competition
             columnNames: name
 
+  - changeSet:
+      id: 15
+      author: monika
+      changes:
+        - addColumn:
+            tableName: competition
+            columns:
+              - column:
+                  name: deadline
+                  type: date
+
+
+  - changeSet:
+      id: 16
+      author: monika
+      changes:
+        - modifyDataType:
+            tableName: competition
+            columnName: deadline
+            newDataType: date
+            constraints:
+              nullable: false

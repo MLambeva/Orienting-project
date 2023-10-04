@@ -31,7 +31,7 @@ public class ClubService {
 
     public ClubEntity createClub(ClubEntity club) {
         if (club == null) {
-            throw new IllegalArgumentException("Input club is null!");
+            throw new IllegalArgumentException("Club is null!");
         }
         ClubEntity clubEntity = new ClubEntity(club.getClubName(), club.getCity());
         return clubRepository.save(clubEntity);

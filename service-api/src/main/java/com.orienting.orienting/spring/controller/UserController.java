@@ -2,9 +2,7 @@ package com.orienting.orienting.spring.controller;
 
 import com.orienting.common.dto.*;
 import com.orienting.common.entity.UserEntity;
-import com.orienting.common.services.AuthenticationService;
 import com.orienting.common.services.UserService;
-import jakarta.validation.Valid;
 import lombok.Getter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,14 +137,27 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllCoachesInClubByClubName(clubName).stream().map(user -> modelMapper.map(user, CompetitorsAndCoachDto.class)).toList());
     }
 
+    @GetMapping("competitorsAndCoaches")
+    public ResponseEntity<AllUsersInClubDto> getAllUsersInClub(Authentication authentication) {
+        if(userService.findAuthenticatedUser(authentication.getName()).getClub() == null) {
+            throw new IllegalArgumentException("User does not belong to club!");
+        }
+        Integer clubId = userService.findAuthenticatedUser(authentication.getName()).getClub().getClubId();
+        AllUsersInClubDto result = new AllUsersInClubDto();
+        result.setCompetitors(userService.getAllCompetitorsInClubByClubId(clubId).stream().map(coach -> modelMapper.map(coach, CompetitorsAndCoachDto.class)).collect(Collectors.toSet()));
+        result.setCoaches(userService.getAllCoachesInClubByClubId(clubId).stream().map(coach -> modelMapper.map(coach, CompetitorsAndCoachDto.class)).collect(Collectors.toSet()));
+
+        return ResponseEntity.ok(result);
+    }
+
     @GetMapping("/coaches")
     public ResponseEntity<List<CompetitorsAndCoachDto>> getAllCoachesInClub(Authentication authentication) {
-        return ResponseEntity.ok(userService.getAllCoachesInClubByClubId(userService.findAuthenticatedUser(authentication.getName()).getClub().getClubId()).stream().map(user -> modelMapper.map(user, CompetitorsAndCoachDto.class)).toList());
+        return getAllCoachesInClubById(userService.findAuthenticatedUser(authentication.getName()).getClub().getClubId());
     }
 
     @GetMapping("/competitors")
     public ResponseEntity<List<CompetitorsAndCoachDto>> getAllCompetitorsInClub(Authentication authentication) {
-        return ResponseEntity.ok(userService.getAllCompetitorsInClubByClubId(userService.findAuthenticatedUser(authentication.getName()).getClub().getClubId()).stream().map(user -> modelMapper.map(user, CompetitorsAndCoachDto.class)).toList());
+        return getAllCompetitorsInClubById(userService.findAuthenticatedUser(authentication.getName()).getClub().getClubId());
     }
 
     @GetMapping("/club")
@@ -154,62 +165,16 @@ public class UserController {
         return ResponseEntity.ok(modelMapper.map(userService.findAuthenticatedUser(authentication.getName()).getClub(), ClubDto.class));
     }
 
-    @DeleteMapping("/remove/byId/{userId}")
-    public ResponseEntity<UserDto> deleteUserByUserId(@PathVariable("userId") Integer userId) {
-        UserDto user = modelMapper.map(userService.deleteUserByUserId(userId, false), UserDto.class);
+    @DeleteMapping("/remove/byId/{userId}") // Admins & coaches
+    public ResponseEntity<UserDto> deleteUserByUserId(@PathVariable("userId") Integer userId, Authentication authentication) {
+        UserDto user = modelMapper.map(userService.deleteUserByUserId(userId, authentication.getName()), UserDto.class);
         return ResponseEntity.ok(user);
     }
 
-    @DeleteMapping("/remove/byId/Admin/{userId}")
-    public ResponseEntity<UserDto> deleteUserByUserIdAdmin(@PathVariable("userId") Integer userId) {
-        UserDto user = modelMapper.map(userService.deleteUserByUserId(userId, true), UserDto.class);
+    @DeleteMapping("/remove/byUcn/{ucn}") // Admins & coaches
+    public ResponseEntity<UserDto> deleteUserByUcn(@PathVariable("ucn") String ucn, Authentication authentication) {
+        UserDto user = modelMapper.map(userService.deleteUserByUcn(ucn, authentication.getName()), UserDto.class);
         return ResponseEntity.ok(user);
-    }
-
-    @DeleteMapping("/remove/byUcn/{ucn}")
-    public ResponseEntity<UserDto> deleteUserByUcn(@PathVariable("ucn") String ucn) {
-        UserDto user = modelMapper.map(userService.deleteUserByUcn(ucn, false), UserDto.class);
-        return ResponseEntity.ok(user);
-    }
-
-    @DeleteMapping("/remove/byUcn/Admin/{ucn}")
-    public ResponseEntity<UserDto> deleteUserByUcnAdmin(@PathVariable("ucn") String ucn) {
-        UserDto user = modelMapper.map(userService.deleteUserByUcn(ucn, true), UserDto.class);
-        return ResponseEntity.ok(user);
-    }
-
-    @PutMapping("/update/byUserId/{userId}")
-    public ResponseEntity<UserDto> updateUserByUserId(@PathVariable("userId") Integer userId, @Valid @RequestBody UserUpdateDto newUser) {
-        UserDto user = modelMapper.map(userService.updateUserByUserId(userId, false, modelMapper.map(newUser, UserEntity.class)), UserDto.class);
-        return ResponseEntity.ok(user);
-    }
-
-    @PutMapping("/update/byUserId/Admin/{userId}")
-    public ResponseEntity<UserDto> updateUserByUserIdAdmin(@PathVariable("userId") Integer userId, @Valid @RequestBody UserUpdateDto newUser) {
-        UserDto user = modelMapper.map(userService.updateUserByUserId(userId, true, modelMapper.map(newUser, UserEntity.class)), UserDto.class);
-        return ResponseEntity.ok(user);
-    }
-
-    @PutMapping("/update/byUserId")
-    public ResponseEntity<UserDto> updateMeByUserId(@Valid @RequestBody UserUpdateDto newUser, Authentication authentication) {
-        return updateUserByUserId(userService.findAuthenticatedUser(authentication.getName()).getUserId(), newUser);
-    }
-
-    @PutMapping("/update/byUcn/{ucn}")
-    public ResponseEntity<UserDto> updateUserByUcn(@PathVariable("ucn") String ucn, @Valid @RequestBody UserUpdateDto newUser) {
-        UserDto user = modelMapper.map(userService.updateUserByUcn(ucn, false, modelMapper.map(newUser, UserEntity.class)), UserDto.class);
-        return ResponseEntity.ok(user);
-    }
-
-    @PutMapping("/update/byUcn/Admin/{ucn}")
-    public ResponseEntity<UserDto> updateUserByUcnAdmin(@PathVariable("ucn") String ucn, @Valid @RequestBody UserUpdateDto newUser) {
-        UserDto user = modelMapper.map(userService.updateUserByUcn(ucn, true, modelMapper.map(newUser, UserEntity.class)), UserDto.class);
-        return ResponseEntity.ok(user);
-    }
-
-    @PutMapping("/update")
-    public ResponseEntity<UserDto> updateMe(@Valid @RequestBody UserUpdateDto newUser, Authentication authentication) {
-        return updateUserByUcn(userService.findAuthenticatedUser(authentication.getName()).getUcn(), newUser);
     }
 
     @PutMapping("/leftClub/{userId}")

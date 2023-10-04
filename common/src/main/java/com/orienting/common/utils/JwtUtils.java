@@ -1,5 +1,6 @@
 package com.orienting.common.utils;
 
+import com.orienting.common.entity.UserEntity;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -23,7 +24,7 @@ import java.util.function.Function;
 public class JwtUtils {
 
     @Value("${security.jwt.secret-key}")
-    private String secretKey; // = "Ohd3ywbl7z4u7TJBbqLmJlwY5gqzG87a";
+    private String secretKey;
     @Value("${security.jwt.expiration}")
     private long jwtExpiration; // = 6 * 60 * 60 * 1000;
     @Value("${security.jwt.refresh-token.expiration}")
@@ -33,33 +34,24 @@ public class JwtUtils {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+    public String generateToken(UserEntity user) {
+        return generateToken(new HashMap<>(), user);
     }
 
-
-    public String generateToken(
-            Map<String, Object> extraClaims,
-            UserDetails userDetails
-    ) {
-        return buildToken(extraClaims, userDetails, jwtExpiration);
+    public String generateToken(Map<String, Object> extraClaims, UserEntity user) {
+        return buildToken(extraClaims, user, jwtExpiration);
     }
 
-    public String generateRefreshToken(
-            UserDetails userDetails
-    ) {
-        return buildToken(new HashMap<>(), userDetails, refreshExpiration);
+    public String generateRefreshToken(UserEntity user) {
+        return buildToken(new HashMap<>(), user, refreshExpiration);
     }
 
-    private String buildToken(
-            Map<String, Object> extraClaims,
-            UserDetails userDetails,
-            long expiration
-    ) {
+    private String buildToken(Map<String, Object> extraClaims, UserEntity user, long expiration) {
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
-                .setSubject(userDetails.getUsername())
+                .setSubject(user.getUsername())
+                .claim("clubId", user.getClub() != null ? user.getClub().getClubId() : null)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
@@ -78,7 +70,6 @@ public class JwtUtils {
     private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
-
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);

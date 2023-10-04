@@ -10,5 +10,4 @@ import lombok.Setter;
 public class SignInDto {
     private String email;
     private String password;
-
 }

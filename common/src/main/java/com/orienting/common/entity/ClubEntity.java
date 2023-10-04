@@ -26,7 +26,6 @@ public class ClubEntity {
     @OneToMany(mappedBy = "club")
     private Set<UserEntity> users;
 
-
     public ClubEntity(String clubName, String city) {
         this.clubName = clubName;
         this.city = city;
@@ -42,5 +41,4 @@ public class ClubEntity {
             }
         }
     }
-
 }

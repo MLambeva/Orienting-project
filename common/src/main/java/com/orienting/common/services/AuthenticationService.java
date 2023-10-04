@@ -5,6 +5,7 @@ import com.orienting.common.dto.AuthenticationResponseDto;
 import com.orienting.common.entity.TokenEntity;
 import com.orienting.common.entity.UserEntity;
 import com.orienting.common.exception.InvalidInputException;
+import com.orienting.common.exception.NoExistedUserException;
 import com.orienting.common.repository.TokenRepository;
 import com.orienting.common.repository.UserRepository;
 import com.orienting.common.utils.JwtUtils;
@@ -39,6 +40,18 @@ public class AuthenticationService {
                 .build();
         tokenRepository.save(token);
     }
+
+    private void revokeAllUserTokens(UserEntity user) {
+        var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getUserId());
+        if (validUserTokens.isEmpty())
+            return;
+        validUserTokens.forEach(token -> {
+            token.setExpired(true);
+            token.setRevoked(true);
+        });
+        tokenRepository.saveAll(validUserTokens);
+    }
+
     public AuthenticationResponseDto register(UserEntity request) {
         if (request == null) {
             throw new IllegalArgumentException("Input user is null!");
@@ -79,16 +92,6 @@ public class AuthenticationService {
         return AuthenticationResponseDto.builder().accessToken(jwtToken).refreshToken(refreshToken).build();
     }
 
-    private void revokeAllUserTokens(UserEntity user) {
-        var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getUserId());
-        if (validUserTokens.isEmpty())
-            return;
-        validUserTokens.forEach(token -> {
-            token.setExpired(true);
-            token.setRevoked(true);
-        });
-        tokenRepository.saveAll(validUserTokens);
-    }
     public void refreshToken(
             HttpServletRequest request,
             HttpServletResponse response
@@ -102,7 +105,7 @@ public class AuthenticationService {
         final String userEmail = jwtUtils.extractEmail(refreshToken);
         if (userEmail != null) {
             UserEntity user = this.userRepository.findByEmail(userEmail)
-                    .orElseThrow();
+                    .orElseThrow(() -> new NoExistedUserException(String.format("User with email %s does not exist!", userEmail)));
             if (jwtUtils.isTokenValid(refreshToken, user)) {
                 String accessToken = jwtUtils.generateToken(user);
                 revokeAllUserTokens(user);

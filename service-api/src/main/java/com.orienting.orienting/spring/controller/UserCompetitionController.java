@@ -27,7 +27,7 @@ public class UserCompetitionController {
         this.modelMapper = modelMapper;
     }
 
-    @PostMapping("/request/{userId}/{compId}")
+    @PutMapping("/request/{userId}/{compId}")
     public ResponseEntity<UserDto> requestParticipation(@PathVariable("userId") Integer userId, @PathVariable("compId")Integer compId) {
         UserDto user = modelMapper.map(userCompetitionService.requestParticipation(userId, compId), UserDto.class);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri()
@@ -38,17 +38,17 @@ public class UserCompetitionController {
                 .body(user);
     }
 
-    @PostMapping("/request/{compId}")
+    @PutMapping("/request/{compId}")
     public ResponseEntity<UserDto> requestParticipation(@PathVariable("compId")Integer compId, Authentication authentication) throws UnauthorizedException {
         return requestParticipation(userCompetitionService.findAuthenticatedUser(authentication.getName()).getUserId(), compId);
     }
 
-    @DeleteMapping("/remove/{userId}/{compId}")
+    @PutMapping("/remove/{userId}/{compId}")
     public ResponseEntity<UserDto> removeParticipation(@PathVariable("userId") Integer userId, @PathVariable("compId") Integer compId) {
         return ResponseEntity.ok(modelMapper.map(userCompetitionService.removeParticipation(userId, compId), UserDto.class));
     }
 
-    @DeleteMapping("/remove/{compId}")
+    @PutMapping("/remove/{compId}")
     public ResponseEntity<UserDto> removeParticipation(@PathVariable("compId") Integer compId, Authentication authentication) {
         return removeParticipation(userCompetitionService.findAuthenticatedUser(authentication.getName()).getUserId(), compId);
     }

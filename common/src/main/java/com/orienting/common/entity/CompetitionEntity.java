@@ -26,6 +26,8 @@ public class CompetitionEntity {
     private LocalDate date;
     @Column(name = "time")
     private LocalTime time;
+    @Column(name = "deadline")
+    private LocalDate deadline;
     @Column(name = "location")
     private String location;
     @Column(name = "coordinates")
@@ -43,6 +45,9 @@ public class CompetitionEntity {
             }
             if(competition.getTime() != null) {
                 this.setTime(competition.getTime());
+            }
+            if(competition.getDeadline() != null) {
+                this.setDeadline(competition.getDeadline());
             }
             if(competition.getLocation() != null) {
                 this.setLocation(competition.getLocation());

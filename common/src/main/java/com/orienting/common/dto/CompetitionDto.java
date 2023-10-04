@@ -2,6 +2,7 @@ package com.orienting.common.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,9 @@ public class CompetitionDto {
     private LocalDate date;
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime time;
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    @FutureOrPresent
+    private LocalDate deadline;
     private String location;
     private String coordinates;
 }

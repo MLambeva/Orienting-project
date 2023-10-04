@@ -2,28 +2,29 @@ package com.orienting.common.services;
 
 import com.orienting.common.entity.*;
 import com.orienting.common.exception.InvalidRoleException;
+import com.orienting.common.exception.NoExistedClubException;
 import com.orienting.common.exception.NoExistedUserException;
 import com.orienting.common.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.apache.catalina.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 
 @Service
 @Getter
 @AllArgsConstructor
 public class UserService {
-
     private final UserRepository userRepository;
 
     public UserEntity findAuthenticatedUser(String email) {
         return userRepository.findByEmail(email).orElseThrow(() ->
                 new EntityNotFoundException(String.format("User with email %s does not exist", email)));
     }
+
     public List<UserEntity> getUsers() {
         return userRepository.findAll();
     }
@@ -39,23 +40,13 @@ public class UserService {
     }
 
     public String getRoleByUserId(Integer userId) {
-        Optional<UserEntity> userOptional = userRepository.findUserByUserId(userId);
-
-        if (userOptional.isPresent()) {
-            return userOptional.get().getRole().name();
-        } else {
-            throw new NoExistedUserException(String.format("User with userId: %d does not exist!", userId));
-        }
+        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with userId: %d does not exist!", userId)));
+        return user.getRole().name();
     }
 
     public String getRoleByUcn(String ucn) {
-        Optional<UserEntity> userOptional = userRepository.findUserByUcn(ucn);
-
-        if (userOptional.isPresent()) {
-            return userOptional.get().getRole().name();
-        } else {
-            throw new NoExistedUserException(String.format("User with unified civil number %s does not exist!", ucn));
-        }
+        UserEntity user = userRepository.findUserByUcn(ucn).orElseThrow(() -> new NoExistedUserException(String.format("User with unified civil number %s does not exist!", ucn)));
+        return user.getRole().name();
     }
 
     public List<UserEntity> getAllCoaches() {
@@ -67,7 +58,6 @@ public class UserService {
         return userRepository.findAll().stream()
                 .filter(UserEntity::isCompetitor).toList();
     }
-
 
     public List<UserEntity> getCoachesByUserId(Integer userId) {
         UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with userId: %d does not exist!", userId)));
@@ -85,6 +75,7 @@ public class UserService {
         UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with userId: %d does not exist!", userId)));
         return user.getCompetitions().stream().toList();
     }
+
     public List<UserEntity> getAllUsersInClubByClubId(Integer clubId) {
         return userRepository.findAllUsersInClubByClubId(clubId).orElseThrow(() -> new NoExistedUserException("Club is empty!"));
     }
@@ -109,52 +100,29 @@ public class UserService {
         return userRepository.findAllUsersInClubByName(clubName).orElseThrow(() -> new NoExistedUserException("The club does not have coaches!")).stream().filter(UserEntity::isCoach).toList();
     }
 
-    public UserEntity deleteAndUpdateByHelper(String identifier, String identifierType, Boolean isAdmin, String action) {
-        if (identifier == null || identifierType == null) {
-            throw new IllegalArgumentException("Identifier and identifierType cannot be null.");
+    private void validate(UserEntity user, String email) {
+        UserEntity del = findAuthenticatedUser(email);
+        if (del.isCoach() && user.isCoach()) {
+            throw new InvalidRoleException(String.format("Cannot delete coach with id %d!", user.getUserId()));
         }
-        UserEntity user;
-        if ("userId".equals(identifierType)) {
-            Integer userId = Integer.parseInt(identifier);
-            user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with userId: %s does not exist!", identifier)));
-        } else if ("ucn".equals(identifierType))
-            user = userRepository.findUserByUcn(identifier).orElseThrow(() -> new NoExistedUserException(String.format("User with unified civil number %s does not exist!", identifier)));
-        else
-            throw new IllegalArgumentException("Invalid identifierType: " + identifierType);
-
-        if (user.isCoach() && !isAdmin) {
-            throw new InvalidRoleException("Role must be competitor!");
+        if (del.isCoach() && (del.getClub() == null || user.getClub() == null)
+        || (del.getClub() != null && user.getClub() != null && !Objects.equals(del.getClub().getClubId(), user.getClub().getClubId()))) {
+                throw new NoExistedClubException(String.format("Cannot delete user with id %d!", user.getUserId()));
         }
+    }
 
-        if ("delete".equals(action)) {
-            userRepository.delete(user);
-        } else if (!"update".equals(action)) {
-            throw new RuntimeException("Action must be delete or update!");
-        }
-
+    public UserEntity deleteUserByUserId(Integer userId, String email) {
+        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with userId: %d does not exist!", userId)));
+        validate(user, email);
+        userRepository.delete(user);
         return user;
     }
 
-    public UserEntity deleteUserByUserId(Integer userId, Boolean isAdmin) {
-        return deleteAndUpdateByHelper(userId.toString(), "userId", isAdmin, "delete");
-    }
-
-    public UserEntity deleteUserByUcn(String ucn, Boolean isAdmin) {
-        return deleteAndUpdateByHelper(ucn, "ucn", isAdmin, "delete");
-    }
-
-    public UserEntity updateUserBy(String identifier, String identifierType, Boolean isAdmin, UserEntity newUser) {
-        UserEntity user = deleteAndUpdateByHelper(identifier, identifierType, isAdmin, "update");
-        user.updateUser(newUser);
-        return userRepository.save(user);
-    }
-
-    public UserEntity updateUserByUserId(Integer userId, Boolean isAdmin, UserEntity newUser) {
-        return updateUserBy(userId.toString(), "userId", isAdmin, newUser);
-    }
-
-    public UserEntity updateUserByUcn(String ucn, Boolean isAdmin, UserEntity newUser) {
-        return updateUserBy(ucn, "ucn", isAdmin, newUser);
+    public UserEntity deleteUserByUcn(String ucn, String email) {
+        UserEntity user = userRepository.findUserByUcn(ucn).orElseThrow(() -> new NoExistedUserException(String.format("User with ucn: %s does not exist!", ucn)));
+        validate(user, email);
+        userRepository.delete(user);
+        return user;
     }
 
     public UserEntity leftClub(Integer userId) {
@@ -165,7 +133,6 @@ public class UserService {
 
     public UserEntity makeCoach(Integer userId) {
         UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with id %d does not exist!", userId)));
-        ;
         if (user.isCoach()) {
             throw new InvalidRoleException("Role must be competitor!");
         }
