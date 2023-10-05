@@ -51,7 +51,6 @@ public class JwtUtils {
                 .builder()
                 .setClaims(extraClaims)
                 .setSubject(user.getUsername())
-                .claim("clubId", user.getClub() != null ? user.getClub().getClubId() : null)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)

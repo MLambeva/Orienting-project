@@ -7,7 +7,8 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 @ComponentScan(basePackages = {
         "com.orienting.orienting.spring.configuration",
-        "com.orienting.orienting.spring.controller"
+        "com.orienting.orienting.spring.controller",
+        "com.orienting.orienting.spring.test"
 })
 
 public class ServiceAPISpringBoot {

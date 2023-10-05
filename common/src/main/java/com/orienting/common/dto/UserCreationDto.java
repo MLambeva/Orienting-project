@@ -32,4 +32,15 @@ public class UserCreationDto {
     private UserRole role;
     private Integer clubId;
     private String clubName;
+
+    public UserCreationDto(String email, String password, String firstName, String lastName, String ucn, String phoneNumber, String group, UserRole role) {
+        this.email = email;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.ucn = ucn;
+        this.phoneNumber = phoneNumber;
+        this.group = group;
+        this.role = role;
+    }
 }

@@ -42,7 +42,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/users/role/**").hasAuthority(UserRole.ADMIN.name())
                         .requestMatchers("/api/users/role").hasAnyAuthority(UserRole.ADMIN.name(), UserRole.COACH.name(), UserRole.COMPETITOR.name())
                         .requestMatchers("/api/users/allCoaches").hasAnyAuthority(UserRole.ADMIN.name(), UserRole.COACH.name(), UserRole.COMPETITOR.name())
-                        .requestMatchers("/api/users/allCompetitors").hasAnyAuthority(UserRole.ADMIN.name(), UserRole.COMPETITOR.name())
+                        .requestMatchers("/api/users/allCompetitors").hasAnyAuthority(UserRole.ADMIN.name(), UserRole.COACH.name())
                         .requestMatchers("/api/users/withCoaches/*").hasAuthority(UserRole.ADMIN.name())
                         .requestMatchers("/api/users/withCoaches").hasAuthority(UserRole.COMPETITOR.name())
                         .requestMatchers("/api/users/competition/*").hasAuthority(UserRole.ADMIN.name())

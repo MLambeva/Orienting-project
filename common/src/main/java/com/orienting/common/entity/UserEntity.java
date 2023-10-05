@@ -62,6 +62,19 @@ public class UserEntity implements UserDetails {
     @OneToMany(mappedBy = "user")
     private List<TokenEntity> tokens;
 
+    public UserEntity(Integer userId, String email, String password, String firstName, String lastName, String ucn, String phoneNumber, String group, UserRole role, ClubEntity club) {
+        this.userId = userId;
+        this.email = email;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.ucn = ucn;
+        this.phoneNumber = phoneNumber;
+        this.group = group;
+        this.role = role;
+        this.club = club;
+    }
+
     public boolean isCoach() {
         return this.role.equals(UserRole.COACH);
     }
