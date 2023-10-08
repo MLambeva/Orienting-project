@@ -48,33 +48,3 @@ databaseChangeLog:
                     references: clubs(club_id)
                     foreignKeyName: fk_clubs_users
                     deleteCascade: true
-        - createTable:
-            tableName: coaches
-            columns:
-              - column:
-                  name: id
-                  type: serial
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: user_id
-                  type: serial
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-                    unique: true
-                    references: users(user_id)
-                    foreignKeyName: fk_users_coaches
-                    deleteCascade: true
-              - column:
-                  name: club_id
-                  type: serial
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-                    unique: false
-                    references: clubs(club_id)
-                    foreignKeyName: fk_clubs_coaches
-                    deleteCascade: true
-

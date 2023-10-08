@@ -33,7 +33,7 @@ public class UserCreationDto {
     private Integer clubId;
     private String clubName;
 
-    public UserCreationDto(String email, String password, String firstName, String lastName, String ucn, String phoneNumber, String group, UserRole role) {
+    public UserCreationDto(String email, String password, String firstName, String lastName, String ucn, String phoneNumber, String group, UserRole role, Integer clubId) {
         this.email = email;
         this.password = password;
         this.firstName = firstName;
@@ -42,5 +42,8 @@ public class UserCreationDto {
         this.phoneNumber = phoneNumber;
         this.group = group;
         this.role = role;
+        if(clubId != null) this.clubId = clubId;
     }
+
+
 }

@@ -31,6 +31,10 @@ public class ClubEntity {
         this.city = city;
     }
 
+    public ClubEntity(Integer clubId) {
+        this.clubId = clubId;
+    }
+
     public void updateClub(ClubEntity club) {
         if(club != null) {
             if(club.clubName != null) {

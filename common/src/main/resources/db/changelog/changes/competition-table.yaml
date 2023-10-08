@@ -1,7 +1,7 @@
 databaseChangeLog:
 
   - changeSet:
-      id: 8 #3
+      id: 3
       author: monika
       changes:
         - createTable:
@@ -64,7 +64,7 @@ databaseChangeLog:
                     deleteCascade: true
 
   - changeSet:
-      id: 9
+      id: 4
       author: monika
       changes:
         - addUniqueConstraint:
@@ -73,7 +73,7 @@ databaseChangeLog:
             columnNames: name
 
   - changeSet:
-      id: 15
+      id: 5
       author: monika
       changes:
         - addColumn:
@@ -85,7 +85,7 @@ databaseChangeLog:
 
 
   - changeSet:
-      id: 16
+      id: 6
       author: monika
       changes:
         - modifyDataType:

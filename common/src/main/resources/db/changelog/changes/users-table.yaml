@@ -22,8 +22,8 @@ databaseChangeLog:
               - column:
                   name: password
                   type: nvarchar(256)
-                  #constraints:
-                   # nullable: false
+                  constraints:
+                    nullable: false
               - column:
                   name: first_name
                   type: nvarchar(50)

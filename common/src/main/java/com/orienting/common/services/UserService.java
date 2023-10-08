@@ -101,14 +101,20 @@ public class UserService {
     }
 
     private void validate(UserEntity user, String email) {
-        UserEntity del = findAuthenticatedUser(email);
-        if (del.isCoach() && user.isCoach()) {
+        UserEntity deletingUser = findAuthenticatedUser(email);
+        if (deletingUser.isCoach() && user.isCoach()) {
             throw new InvalidRoleException(String.format("Cannot delete coach with id %d!", user.getUserId()));
         }
-        if (del.isCoach() && (del.getClub() == null || user.getClub() == null)
-        || (del.getClub() != null && user.getClub() != null && !Objects.equals(del.getClub().getClubId(), user.getClub().getClubId()))) {
+        if (deletingUser.isCoach() && (deletingUser.getClub() == null || user.getClub() == null)
+        || (deletingUser.getClub() != null && user.getClub() != null && !Objects.equals(deletingUser.getClub().getClubId(), user.getClub().getClubId()))) {
                 throw new NoExistedClubException(String.format("Cannot delete user with id %d!", user.getUserId()));
         }
+    }
+
+    public UserEntity deleteUser(Integer userId) {
+        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with userId: %d does not exist!", userId)));
+        userRepository.delete(user);
+        return user;
     }
 
     public UserEntity deleteUserByUserId(Integer userId, String email) {

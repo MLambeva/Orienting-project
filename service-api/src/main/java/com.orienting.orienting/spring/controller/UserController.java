@@ -165,6 +165,12 @@ public class UserController {
         return ResponseEntity.ok(modelMapper.map(userService.findAuthenticatedUser(authentication.getName()).getClub(), ClubDto.class));
     }
 
+    @DeleteMapping("/remove/{userId}") // Admins & coaches
+    public ResponseEntity<UserDto> deleteUser(@PathVariable("userId") Integer userId) {
+        UserDto user = modelMapper.map(userService.deleteUser(userId), UserDto.class);
+        return ResponseEntity.ok(user);
+    }
+
     @DeleteMapping("/remove/byId/{userId}") // Admins & coaches
     public ResponseEntity<UserDto> deleteUserByUserId(@PathVariable("userId") Integer userId, Authentication authentication) {
         UserDto user = modelMapper.map(userService.deleteUserByUserId(userId, authentication.getName()), UserDto.class);

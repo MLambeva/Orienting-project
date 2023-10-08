@@ -62,8 +62,7 @@ public class UserEntity implements UserDetails {
     @OneToMany(mappedBy = "user")
     private List<TokenEntity> tokens;
 
-    public UserEntity(Integer userId, String email, String password, String firstName, String lastName, String ucn, String phoneNumber, String group, UserRole role, ClubEntity club) {
-        this.userId = userId;
+    public UserEntity(String email, String password, String firstName, String lastName, String ucn, String phoneNumber, String group, UserRole role, Integer clubId) {
         this.email = email;
         this.password = password;
         this.firstName = firstName;
@@ -72,7 +71,16 @@ public class UserEntity implements UserDetails {
         this.phoneNumber = phoneNumber;
         this.group = group;
         this.role = role;
-        this.club = club;
+        if (clubId != null) this.club = new ClubEntity(clubId);
+    }
+
+    public UserEntity(String email, String password, String firstName, String lastName, String ucn, UserRole role) {
+        this.email = email;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.ucn = ucn;
+        this.role = role;
     }
 
     public boolean isCoach() {
@@ -97,7 +105,7 @@ public class UserEntity implements UserDetails {
 
     public void removeCompetition(CompetitionEntity competition) {
         if (!competitions.contains(competition)) {
-            throw new NoExistedCompetition("");
+            throw new NoExistedCompetition("User does not have request for this competition!");
         }
         this.competitions.remove(competition);
     }

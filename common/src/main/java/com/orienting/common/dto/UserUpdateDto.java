@@ -22,4 +22,5 @@ public class UserUpdateDto {
     private String group;
     private UserRole role;
     private Integer clubId;
+    private String clubName;
 }

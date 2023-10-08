@@ -1,5 +1,6 @@
 package com.orienting.common.services;
 
+import com.orienting.common.entity.TokenEntity;
 import com.orienting.common.repository.TokenRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,7 +28,7 @@ public class LogoutService implements LogoutHandler {
             return;
         }
         jwt = authHeader.substring(7);
-        var storedToken = tokenRepository.findByToken(jwt)
+        TokenEntity storedToken = tokenRepository.findByToken(jwt)
                 .orElse(null);
         if (storedToken != null) {
             storedToken.setExpired(true);

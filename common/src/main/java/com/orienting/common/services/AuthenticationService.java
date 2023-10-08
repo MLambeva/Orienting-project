@@ -2,10 +2,13 @@ package com.orienting.common.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.orienting.common.dto.AuthenticationResponseDto;
+import com.orienting.common.entity.ClubEntity;
 import com.orienting.common.entity.TokenEntity;
 import com.orienting.common.entity.UserEntity;
 import com.orienting.common.exception.InvalidInputException;
+import com.orienting.common.exception.NoExistedClubException;
 import com.orienting.common.exception.NoExistedUserException;
+import com.orienting.common.repository.ClubRepository;
 import com.orienting.common.repository.TokenRepository;
 import com.orienting.common.repository.UserRepository;
 import com.orienting.common.utils.JwtUtils;
@@ -26,6 +29,7 @@ import java.io.IOException;
 @ComponentScan(basePackages = "com.orienting.common.utils")
 public class AuthenticationService {
     private final UserRepository userRepository;
+    private final ClubRepository clubRepository;
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
@@ -59,6 +63,15 @@ public class AuthenticationService {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new InvalidInputException(String.format("User with email %s already exist!", request.getEmail()));
         }
+        ClubEntity newClub = null;
+        if(request.getClub() != null) {
+            if(request.getClub().getClubId() != null) {
+                newClub = clubRepository.findClubByClubId(request.getClub().getClubId()).orElseThrow(() -> new NoExistedClubException(String.format("Club with id %d does not exist!", request.getClub().getClubId())));
+            }
+            else if(request.getClub().getClubName() != null){
+                newClub = clubRepository.findClubByClubName(request.getClub().getClubName()).orElseThrow(() -> new NoExistedClubException(String.format("Club with name %s does not exist!", request.getClub().getClubName())));
+            }
+        }
         UserEntity user = UserEntity.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -68,7 +81,7 @@ public class AuthenticationService {
                 .phoneNumber(request.getPhoneNumber())
                 .group(request.getGroup())
                 .role(request.getRole())
-                .club(request.getClub())
+                .club(newClub)
                 .build();
         UserEntity savedUser = userRepository.save(user);
         String jwtToken = jwtUtils.generateToken(user);

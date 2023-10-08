@@ -74,7 +74,10 @@ public class SecurityConfiguration {
                         //Competitions
                         .requestMatchers("/api/competitions/all").permitAll()
                         .requestMatchers("/api/competitions/allWithParticipants").hasAnyAuthority(UserRole.COACH.name(), UserRole.COMPETITOR.name(), UserRole.ADMIN.name())
-                        .requestMatchers("/api/competitions/*/*").hasAnyAuthority(UserRole.COACH.name(), UserRole.COMPETITOR.name(), UserRole.ADMIN.name())
+                        .requestMatchers("/api/competitions/request/*/*/*").hasAnyAuthority(UserRole.COACH.name(), UserRole.ADMIN.name())
+                        .requestMatchers("/api/competitions/request/*/*").hasAnyAuthority(UserRole.COACH.name(), UserRole.COMPETITOR.name())
+                        .requestMatchers("/api/competitions/remove/*/*/*").hasAnyAuthority(UserRole.COACH.name(), UserRole.ADMIN.name())
+                        .requestMatchers("/api/competitions/remove/*/*").hasAnyAuthority(UserRole.COACH.name(), UserRole.COMPETITOR.name())
                         .requestMatchers("/api/competitions/withUsers/*/*").hasAnyAuthority(UserRole.COACH.name(), UserRole.COMPETITOR.name(), UserRole.ADMIN.name())
                         .requestMatchers("/api/competitions/add").hasAuthority(UserRole.ADMIN.name())
                         .requestMatchers("/api/competitions/delete/*/*").hasAuthority(UserRole.ADMIN.name())

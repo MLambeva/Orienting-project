@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 12
+      id: 7
       author: monika
       changes:
         - createTable:
@@ -20,9 +20,6 @@ databaseChangeLog:
                     nullable: false
                     unique: true
               - column:
-                  name: token_type
-                  type: nvarchar(50)
-              - column:
                   name: revoked
                   type: boolean
                   constraints:
@@ -32,23 +29,11 @@ databaseChangeLog:
                   type: boolean
                   constraints:
                     nullable: false
-  - changeSet:
-      id: 13
-      author: monika
-      changes:
-        - addColumn:
-            tableName: tokens
-            columns:
               - column:
                   name: user_id
                   type: integer
+                  constraints:
+                    references: users(user_id)
+                    foreignKeyName: fk_users_tokens
+                    deleteCascade: true
 
-  - changeSet:
-      id: 14
-      author: monika
-      changes:
-        - dropColumn:
-            tableName: tokens
-            columns:
-              - column:
-                  name: token_type

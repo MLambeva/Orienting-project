@@ -27,29 +27,44 @@ public class UserCompetitionController {
         this.modelMapper = modelMapper;
     }
 
-    @PutMapping("/request/{userId}/{compId}")
-    public ResponseEntity<UserDto> requestParticipation(@PathVariable("userId") Integer userId, @PathVariable("compId")Integer compId) {
-        UserDto user = modelMapper.map(userCompetitionService.requestParticipation(userId, compId), UserDto.class);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri()
-                .path("/{userId}" + "/{compId}")
-                .buildAndExpand(userId, compId)
-                .toUri();
-        return ResponseEntity.created(uri)
-                .body(user);
+    @PutMapping("/request/byId/{userId}/{compId}")
+    public ResponseEntity<UserDto> requestParticipationById(@PathVariable("userId") Integer userId, @PathVariable("compId")Integer compId, Authentication authentication) {
+        UserDto user = modelMapper.map(userCompetitionService.requestParticipation(userId, compId, authentication.getName()), UserDto.class);
+        return ResponseEntity.ok(user);
     }
 
-    @PutMapping("/request/{compId}")
-    public ResponseEntity<UserDto> requestParticipation(@PathVariable("compId")Integer compId, Authentication authentication) throws UnauthorizedException {
-        return requestParticipation(userCompetitionService.findAuthenticatedUser(authentication.getName()).getUserId(), compId);
+    @PutMapping("/request/byName/{userId}/{name}")
+    public ResponseEntity<UserDto> requestParticipationByName(@PathVariable("userId") Integer userId, @PathVariable("name")String name, Authentication authentication) {
+        UserDto user = modelMapper.map(userCompetitionService.requestParticipationByName(userId, name, authentication.getName()), UserDto.class);
+        return ResponseEntity.ok(user);
+    }
+    @PutMapping("/request/byId/{compId}")
+    public ResponseEntity<UserDto> requestParticipationById(@PathVariable("compId")Integer compId, Authentication authentication) throws UnauthorizedException {
+        return requestParticipationById(userCompetitionService.findAuthenticatedUser(authentication.getName()).getUserId(), compId, authentication);
     }
 
-    @PutMapping("/remove/{userId}/{compId}")
-    public ResponseEntity<UserDto> removeParticipation(@PathVariable("userId") Integer userId, @PathVariable("compId") Integer compId) {
-        return ResponseEntity.ok(modelMapper.map(userCompetitionService.removeParticipation(userId, compId), UserDto.class));
+    @PutMapping("/request/byName/{name}")
+    public ResponseEntity<UserDto> requestParticipationByName(@PathVariable("name")String name, Authentication authentication) throws UnauthorizedException {
+        return requestParticipationByName(userCompetitionService.findAuthenticatedUser(authentication.getName()).getUserId(), name, authentication);
     }
 
-    @PutMapping("/remove/{compId}")
-    public ResponseEntity<UserDto> removeParticipation(@PathVariable("compId") Integer compId, Authentication authentication) {
-        return removeParticipation(userCompetitionService.findAuthenticatedUser(authentication.getName()).getUserId(), compId);
+    @PutMapping("/remove/byId/{userId}/{compId}")
+    public ResponseEntity<UserDto> removeParticipationById(@PathVariable("userId") Integer userId, @PathVariable("compId") Integer compId, Authentication authentication) {
+        return ResponseEntity.ok(modelMapper.map(userCompetitionService.removeParticipationById(userId, compId, authentication.getName()), UserDto.class));
+    }
+
+    @PutMapping("/remove/byName/{userId}/{name}")
+    public ResponseEntity<UserDto> removeParticipationByName(@PathVariable("userId") Integer userId, @PathVariable("name") String name, Authentication authentication) {
+        return ResponseEntity.ok(modelMapper.map(userCompetitionService.removeParticipationByName(userId, name, authentication.getName()), UserDto.class));
+    }
+
+    @PutMapping("/remove/byId/{compId}")
+    public ResponseEntity<UserDto> removeParticipationById(@PathVariable("compId") Integer compId, Authentication authentication) {
+        return removeParticipationById(userCompetitionService.findAuthenticatedUser(authentication.getName()).getUserId(), compId, authentication);
+    }
+
+    @PutMapping("/remove/byName/{name}")
+    public ResponseEntity<UserDto> removeParticipationByName(@PathVariable("name") String name, Authentication authentication) {
+        return removeParticipationByName(userCompetitionService.findAuthenticatedUser(authentication.getName()).getUserId(), name, authentication);
     }
 }

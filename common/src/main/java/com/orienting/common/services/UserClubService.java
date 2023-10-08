@@ -75,9 +75,23 @@ public class UserClubService {
         }
     }
 
+    private ClubEntity find(UserEntity user) {
+        ClubEntity newClub = null;
+        if(user.getClub() != null) {
+            if(user.getClub().getClubId() != null) {
+                newClub = clubRepository.findClubByClubId(user.getClub().getClubId()).orElseThrow(() -> new NoExistedClubException(String.format("Club with id %d does not exist!", user.getClub().getClubId())));
+            }
+            else if(user.getClub().getClubName() != null){
+                newClub = clubRepository.findClubByClubName(user.getClub().getClubName()).orElseThrow(() -> new NoExistedClubException(String.format("Club with name %s does not exist!", user.getClub().getClubName())));
+            }
+        }
+        return newClub;
+    }
+
     public UserEntity updateUserByUserId(Integer userId, String email, UserEntity newUser) {
         UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with userId: %d does not exist!", userId)));
         validate(user, email, newUser);
+        newUser.addClub(find(newUser));
         encodePassword(newUser);
         user.updateUser(newUser);
         return userRepository.save(user);
@@ -86,6 +100,7 @@ public class UserClubService {
     public UserEntity updateUserByUcn(String ucn, String email, UserEntity newUser) {
         UserEntity user = userRepository.findUserByUcn(ucn).orElseThrow(() -> new NoExistedUserException(String.format("User with ucn: %s does not exist!", ucn)));
         validate(user, email, newUser);
+        newUser.addClub(find(newUser));
         encodePassword(newUser);
         user.updateUser(newUser);
         return userRepository.save(user);
@@ -95,10 +110,7 @@ public class UserClubService {
         if(newUser.getRole() != null) {
             throw new InvalidRoleException("Cannot change role!");
         }
-        if(newUser.getClub() != null && newUser.getClub().getClubId() != null) {
-            ClubEntity club = clubRepository.findClubByClubId(newUser.getClub().getClubId()).orElseThrow();
-            newUser.addClub(club);
-        }
+        newUser.addClub(find(newUser));
         UserEntity user = findAuthenticatedUser(email);
         encodePassword(newUser);
         user.updateUser(newUser);

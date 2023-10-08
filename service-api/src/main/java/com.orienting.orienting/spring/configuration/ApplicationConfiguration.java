@@ -1,5 +1,8 @@
 package com.orienting.orienting.spring.configuration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.orienting.common.dto.CompetitorDto;
 import com.orienting.common.dto.CompetitorsWithCoachesDto;
 import com.orienting.common.dto.UserDto;
@@ -21,6 +24,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 @Configuration
 @EnableJpaRepositories(basePackages = {
@@ -66,6 +72,20 @@ public class ApplicationConfiguration {
                 .addMapping(src -> src.getClub().getCity(), UsersWithRequestedCompetitionsDto::setCity);
 
         return modelMapper;
+    }
+    @Bean
+    public ObjectMapper objectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        // Register the JSR-310 module for Java 8 date/time types
+        objectMapper.registerModule(new JavaTimeModule());
+
+        // Configure custom date and time format patterns
+        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        objectMapper.setDateFormat(new SimpleDateFormat("dd-MM-yyyy"));
+        objectMapper.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        return objectMapper;
     }
 
     @Bean
