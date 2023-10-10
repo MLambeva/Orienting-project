@@ -1,0 +1,17 @@
+package com.orienting.service.dto;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+public class CompetitorDto {
+    private Integer userId;
+    private String firstName;
+    private String lastName;
+    private String group;
+    private String clubName;
+    private String city;
+}

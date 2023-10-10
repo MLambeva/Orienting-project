@@ -1,8 +1,11 @@
 package com.orienting.service.controller;
 
-import com.orienting.common.dto.*;
-import com.orienting.common.entity.CompetitionEntity;
-import com.orienting.common.services.CompetitionService;
+import com.orienting.service.dto.CompetitionDto;
+import com.orienting.service.dto.CompetitionRequestDto;
+import com.orienting.service.dto.CompetitionUpdateDto;
+import com.orienting.service.dto.CompetitorDto;
+import com.orienting.service.entity.CompetitionEntity;
+import com.orienting.service.services.CompetitionService;
 import jakarta.validation.Valid;
 import lombok.Getter;
 import org.modelmapper.ModelMapper;

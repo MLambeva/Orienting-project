@@ -1,9 +1,9 @@
 package com.orienting.service.controller;
 
-import com.orienting.common.dto.UserDto;
-import com.orienting.common.dto.UserUpdateDto;
-import com.orienting.common.entity.UserEntity;
-import com.orienting.common.services.UserClubService;
+import com.orienting.service.dto.UserDto;
+import com.orienting.service.dto.UserUpdateDto;
+import com.orienting.service.entity.UserEntity;
+import com.orienting.service.services.UserClubService;
 import jakarta.validation.Valid;
 import lombok.Getter;
 import org.modelmapper.ModelMapper;

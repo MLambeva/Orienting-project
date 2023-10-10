@@ -1,8 +1,8 @@
 package com.orienting.service.controller;
 
-import com.orienting.common.dto.UserDto;
-import com.orienting.common.exception.UnauthorizedException;
-import com.orienting.common.services.UserCompetitionService;
+import com.orienting.service.dto.UserDto;
+import com.orienting.service.exception.UnauthorizedException;
+import com.orienting.service.services.UserCompetitionService;
 import lombok.Getter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ public class UserCompetitionController {
 
     @PutMapping("/request/byId/{userId}/{compId}")
     public ResponseEntity<UserDto> requestParticipationById(@PathVariable("userId") Integer userId, @PathVariable("compId")Integer compId, Authentication authentication) {
-        UserDto user = modelMapper.map(userCompetitionService.requestParticipation(userId, compId, authentication.getName()), UserDto.class);
+        UserDto user = modelMapper.map(userCompetitionService.requestParticipationById(userId, compId, authentication.getName()), UserDto.class);
         return ResponseEntity.ok(user);
     }
 

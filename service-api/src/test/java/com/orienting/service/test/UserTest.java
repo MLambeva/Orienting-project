@@ -3,9 +3,9 @@ package com.orienting.service.test;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.orienting.common.dto.CompetitionDto;
-import com.orienting.common.dto.UserCreationDto;
-import com.orienting.common.entity.UserRole;
+import com.orienting.service.dto.CompetitionDto;
+import com.orienting.service.dto.UserCreationDto;
+import com.orienting.service.entity.UserRole;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
@@ -156,7 +156,7 @@ public class UserTest {
     }
 
     @Test
-    public void addClubsAndUsers() throws URISyntaxException, IOException, InterruptedException {
+    public void addInputData() throws URISyntaxException, IOException, InterruptedException {
         String token = singInAdmin();
 
         String club = addClub("Bacho Kiro", "Dryanovo", token);
@@ -247,7 +247,7 @@ public class UserTest {
     }
 
     @Test
-    public void removeClubsAndUsers() throws URISyntaxException, IOException, InterruptedException {
+    public void removeInputData() throws URISyntaxException, IOException, InterruptedException {
         String token = singInAdmin();
 
         removeClub("Bacho%20Kiro", token);
@@ -268,6 +268,4 @@ public class UserTest {
         removeCompetition("Dryanovo%20cup", token);
         removeCompetition("Sofia%20cup", token);
     }
-
-
 }

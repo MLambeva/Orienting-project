@@ -1,6 +1,6 @@
 package com.orienting.service.configuration;
 
-import com.orienting.common.entity.UserRole;
+import com.orienting.service.entity.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -39,7 +39,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/users/byId/*").hasAuthority(UserRole.ADMIN.name())
                         .requestMatchers("/api/users/me").hasAnyAuthority(UserRole.ADMIN.name(), UserRole.COACH.name(), UserRole.COMPETITOR.name())
                         .requestMatchers("/api/users/byUcn/*").hasAuthority(UserRole.ADMIN.name())
-                        .requestMatchers("/api/users/role/**").hasAuthority(UserRole.ADMIN.name())
+                        .requestMatchers("/api/users/role/*/*").hasAuthority(UserRole.ADMIN.name())
                         .requestMatchers("/api/users/role").hasAnyAuthority(UserRole.ADMIN.name(), UserRole.COACH.name(), UserRole.COMPETITOR.name())
                         .requestMatchers("/api/users/allCoaches").hasAnyAuthority(UserRole.ADMIN.name(), UserRole.COACH.name(), UserRole.COMPETITOR.name())
                         .requestMatchers("/api/users/allCompetitors").hasAnyAuthority(UserRole.ADMIN.name(), UserRole.COACH.name())

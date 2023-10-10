@@ -1,9 +1,11 @@
 package com.orienting.service.controller;
 
-import com.orienting.common.dto.*;
-import com.orienting.common.entity.ClubEntity;
-import com.orienting.common.entity.UserEntity;
-import com.orienting.common.services.ClubService;
+import com.orienting.service.dto.ClubDto;
+import com.orienting.service.dto.ClubWithUsersDto;
+import com.orienting.service.dto.CompetitorsAndCoachDto;
+import com.orienting.service.entity.ClubEntity;
+import com.orienting.service.entity.UserEntity;
+import com.orienting.service.services.ClubService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

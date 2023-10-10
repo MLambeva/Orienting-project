@@ -1,7 +1,7 @@
 package com.orienting.service.configuration;
 
-import com.orienting.common.repository.TokenRepository;
-import com.orienting.common.utils.JwtUtils;
+import com.orienting.service.repository.TokenRepository;
+import com.orienting.service.utils.JwtUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,7 +21,6 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
-@ComponentScan(basePackages = "com.orienting.common.utils")
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private final JwtUtils jwtUtils;

@@ -1,8 +1,8 @@
 package com.orienting.service.controller;
 
-import com.orienting.common.dto.*;
-import com.orienting.common.entity.UserEntity;
-import com.orienting.common.services.UserService;
+import com.orienting.service.dto.*;
+import com.orienting.service.entity.UserEntity;
+import com.orienting.service.services.UserService;
 import lombok.Getter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

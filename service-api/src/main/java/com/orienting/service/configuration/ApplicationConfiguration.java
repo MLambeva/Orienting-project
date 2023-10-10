@@ -3,19 +3,16 @@ package com.orienting.service.configuration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.orienting.common.dto.CompetitorDto;
-import com.orienting.common.dto.CompetitorsWithCoachesDto;
-import com.orienting.common.dto.UserDto;
-import com.orienting.common.dto.UsersWithRequestedCompetitionsDto;
-import com.orienting.common.entity.UserEntity;
-import com.orienting.common.repository.UserRepository;
+import com.orienting.service.dto.CompetitorDto;
+import com.orienting.service.dto.CompetitorsWithCoachesDto;
+import com.orienting.service.dto.UserDto;
+import com.orienting.service.dto.UsersWithRequestedCompetitionsDto;
+import com.orienting.service.entity.UserEntity;
+import com.orienting.service.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -29,13 +26,6 @@ import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
 @Configuration
-@EnableJpaRepositories(basePackages = {
-        "com.orienting.common.repository"
-})
-@EntityScan(basePackages = {
-        "com.orienting.common.entity"
-})
-@ComponentScan(basePackages = {"com.orienting.common.utils", "com.orienting.common.services"})
 @RequiredArgsConstructor
 public class ApplicationConfiguration {
     private final UserRepository repository;

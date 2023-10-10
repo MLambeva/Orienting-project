@@ -1,6 +1,6 @@
 package com.orienting.service.controller;
 
-import com.orienting.common.services.LogoutService;
+import com.orienting.service.services.LogoutService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;

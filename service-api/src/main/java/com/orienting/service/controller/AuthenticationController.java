@@ -1,10 +1,10 @@
 package com.orienting.service.controller;
 
-import com.orienting.common.dto.SignInDto;
-import com.orienting.common.dto.UserCreationDto;
-import com.orienting.common.dto.AuthenticationResponseDto;
-import com.orienting.common.entity.UserEntity;
-import com.orienting.common.services.AuthenticationService;
+import com.orienting.service.dto.SignInDto;
+import com.orienting.service.dto.UserCreationDto;
+import com.orienting.service.dto.AuthenticationResponseDto;
+import com.orienting.service.entity.UserEntity;
+import com.orienting.service.services.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;

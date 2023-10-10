@@ -15,12 +15,6 @@
 	<packaging>pom</packaging>
 	<name>Orienting Application</name>
 
-	<modules>
-		<module>common</module>
-		<module>service-api</module>
-        <module>client</module>
-    </modules>
-
 	<properties>
 		<java.version>17</java.version>
 		<lombok.version>1.18.28</lombok.version>
