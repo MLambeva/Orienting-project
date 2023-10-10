@@ -1,4 +1,4 @@
-package com.orienting.orienting.spring.controller;
+package com.orienting.service.controller;
 
 import com.orienting.common.dto.*;
 import com.orienting.common.entity.CompetitionEntity;
@@ -67,7 +67,7 @@ public class CompetitionController {
         return ResponseEntity.ok(competitionDto);
     }
 
-    @GetMapping("/byDate/withUsers/{date}")
+    @GetMapping("/withUsers/byDate/{date}")
     public ResponseEntity<List<CompetitionRequestDto>> getCompetitionByDateWithParticipants(@PathVariable("date") @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate date) {
         List<CompetitionRequestDto> competitionDto =  competitionService.getCompetitionByDate(date).stream()
                 .map(this::mapToCompDtoWithUsers)

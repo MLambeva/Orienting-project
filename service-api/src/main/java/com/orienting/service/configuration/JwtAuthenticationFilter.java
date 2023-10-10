@@ -1,4 +1,4 @@
-package com.orienting.orienting.spring.configuration;
+package com.orienting.service.configuration;
 
 import com.orienting.common.repository.TokenRepository;
 import com.orienting.common.utils.JwtUtils;
@@ -38,23 +38,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-        if(request.getServletPath().contains("/api/auth")) {
+        if (request.getServletPath().contains("/api/auth")) {
             filterChain.doFilter(request, response);
             return;
         }
         final String authHeader = request.getHeader("Authorization");
-         if(authHeader == null || !authHeader.startsWith("Bearer ")) {
-             filterChain.doFilter(request, response);
-             return;
-         }
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         final String jwt = authHeader.substring(7);
-         final String userEmail = jwtUtils.extractEmail(jwt);
-         if(userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) { //user is not connected yet
-             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
-             boolean isTokenValid = tokenRepository.findByToken(jwt)
-                     .map(t -> !t.isExpired() && !t.isRevoked())
-                     .orElse(false);
-             if(jwtUtils.isTokenValid(jwt, userDetails) && isTokenValid) {
+        final String userEmail = jwtUtils.extractEmail(jwt);
+
+        if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) { //user is not connected yet
+
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
+            boolean isTokenValid = tokenRepository.findByToken(jwt)
+                    .map(t -> !t.isExpired() && !t.isRevoked())
+                    .orElse(false);
+
+            if (jwtUtils.isTokenValid(jwt, userDetails) && isTokenValid) {
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,
@@ -66,6 +69,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
             filterChain.doFilter(request, response);
-         }
+        }
     }
 }

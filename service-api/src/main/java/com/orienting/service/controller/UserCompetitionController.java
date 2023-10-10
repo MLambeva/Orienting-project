@@ -1,4 +1,4 @@
-package com.orienting.orienting.spring.controller;
+package com.orienting.service.controller;
 
 import com.orienting.common.dto.UserDto;
 import com.orienting.common.exception.UnauthorizedException;
@@ -10,9 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.net.URI;
 
 @RestController
 @RequestMapping(value = "api/competitions", produces = MediaType.APPLICATION_JSON_VALUE)

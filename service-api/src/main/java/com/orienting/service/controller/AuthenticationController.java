@@ -1,4 +1,4 @@
-package com.orienting.orienting.spring.controller;
+package com.orienting.service.controller;
 
 import com.orienting.common.dto.SignInDto;
 import com.orienting.common.dto.UserCreationDto;

@@ -1,9 +1,8 @@
-package com.orienting.orienting.spring.configuration;
+package com.orienting.service.configuration;
 
 import com.orienting.common.entity.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Customizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -35,6 +34,7 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/*").permitAll()
+                        .requestMatchers("/api/tokens/logout").hasAnyAuthority(UserRole.ADMIN.name(), UserRole.COACH.name(), UserRole.COMPETITOR.name())
                         .requestMatchers("/api/users/all").hasAuthority(UserRole.ADMIN.name())
                         .requestMatchers("/api/users/byId/*").hasAuthority(UserRole.ADMIN.name())
                         .requestMatchers("/api/users/me").hasAnyAuthority(UserRole.ADMIN.name(), UserRole.COACH.name(), UserRole.COMPETITOR.name())
@@ -57,7 +57,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/users/update/*/*").hasAnyAuthority(UserRole.ADMIN.name(), UserRole.COACH.name())
                         .requestMatchers("/api/users/update").hasAnyAuthority(UserRole.COACH.name(), UserRole.COMPETITOR.name(), UserRole.ADMIN.name())
                         .requestMatchers("/api/users/leftClub/*").hasAuthority(UserRole.ADMIN.name())
-                        .requestMatchers("/api/users/leftClub").hasAuthority(UserRole.COMPETITOR.name())
+                        .requestMatchers("/api/users/leftClub").hasAnyAuthority(UserRole.COACH.name(), UserRole.COMPETITOR.name())
                         .requestMatchers("/api/users/makeCoach/*").hasAuthority(UserRole.ADMIN.name())
                         .requestMatchers("/api/users/removeCoach/*").hasAuthority(UserRole.ADMIN.name())
                         .requestMatchers("/api/users/setCoach/*/*").hasAuthority(UserRole.ADMIN.name())
@@ -72,12 +72,14 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/clubs/delete/*/*").hasAuthority(UserRole.ADMIN.name())
                         .requestMatchers("/api/clubs/update/*/*").hasAuthority(UserRole.ADMIN.name())
                         //Competitions
-                        .requestMatchers("/api/competitions/all").permitAll()
-                        .requestMatchers("/api/competitions/allWithParticipants").hasAnyAuthority(UserRole.COACH.name(), UserRole.COMPETITOR.name(), UserRole.ADMIN.name())
                         .requestMatchers("/api/competitions/request/*/*/*").hasAnyAuthority(UserRole.COACH.name(), UserRole.ADMIN.name())
                         .requestMatchers("/api/competitions/request/*/*").hasAnyAuthority(UserRole.COACH.name(), UserRole.COMPETITOR.name())
                         .requestMatchers("/api/competitions/remove/*/*/*").hasAnyAuthority(UserRole.COACH.name(), UserRole.ADMIN.name())
                         .requestMatchers("/api/competitions/remove/*/*").hasAnyAuthority(UserRole.COACH.name(), UserRole.COMPETITOR.name())
+
+                        .requestMatchers("/api/competitions/all").permitAll()
+                        .requestMatchers("/api/competitions/allWithParticipants").hasAnyAuthority(UserRole.COACH.name(), UserRole.COMPETITOR.name(), UserRole.ADMIN.name())
+                        .requestMatchers("/api/competitions/*/*").permitAll()
                         .requestMatchers("/api/competitions/withUsers/*/*").hasAnyAuthority(UserRole.COACH.name(), UserRole.COMPETITOR.name(), UserRole.ADMIN.name())
                         .requestMatchers("/api/competitions/add").hasAuthority(UserRole.ADMIN.name())
                         .requestMatchers("/api/competitions/delete/*/*").hasAuthority(UserRole.ADMIN.name())
@@ -88,7 +90,7 @@ public class SecurityConfiguration {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .logout((logout) -> logout.logoutUrl("api/auth/logout")
+                .logout((logout) -> logout.logoutUrl("/api/tokens/logout")
                         .addLogoutHandler(logoutHandler)
                         .logoutSuccessHandler(((request, response, authentication) -> SecurityContextHolder.clearContext())));
 

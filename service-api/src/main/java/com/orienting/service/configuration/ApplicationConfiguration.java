@@ -1,4 +1,4 @@
-package com.orienting.orienting.spring.configuration;
+package com.orienting.service.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -77,10 +77,8 @@ public class ApplicationConfiguration {
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        // Register the JSR-310 module for Java 8 date/time types
         objectMapper.registerModule(new JavaTimeModule());
 
-        // Configure custom date and time format patterns
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         objectMapper.setDateFormat(new SimpleDateFormat("dd-MM-yyyy"));
         objectMapper.setTimeZone(TimeZone.getTimeZone("UTC"));

@@ -47,9 +47,6 @@ public class UserClubService {
         if (user.getClub() != null) {
             throw new RuntimeException(String.format("User with user id %d belong to club with club id %d", userId, clubId));
         }
-        if(user.isCoach()) {
-            throw new RuntimeException(String.format("User with id %d is coach!", userId));
-        }
         user.addClub(club);
         return userRepository.save(user);
     }

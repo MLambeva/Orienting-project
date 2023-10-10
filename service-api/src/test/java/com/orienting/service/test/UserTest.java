@@ -1,4 +1,4 @@
-package com.orienting.orienting.spring.test;
+package com.orienting.service.test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,11 +25,9 @@ public class UserTest {
     private final String USERS_API = "http://localhost:8080/api/users/";
     private final String CLUBS_API = "http://localhost:8080/api/clubs/";
     private final String AUTH_URI = "http://localhost:8080/api/auth/";
-
     private final String COMP_URI = "http://localhost:8080/api/competitions/";
 
-
-    private HttpResponse<String> sendHttpRequest(HttpRequest request) throws IOException, InterruptedException {
+    private HttpResponse<String> getHttpResponse(HttpRequest request) throws IOException, InterruptedException {
         return HttpClient
                 .newHttpClient()
                 .send(request, HttpResponse.BodyHandlers.ofString());
@@ -43,7 +41,7 @@ public class UserTest {
                 .header("Content-Type", "application/json")
                 .build();
 
-        HttpResponse<String> response = sendHttpRequest(request);
+        HttpResponse<String> response = getHttpResponse(request);
         if (response.statusCode() >= 400) {
             Assertions.fail(String.format("Unsuccessful Login [%d]", response.statusCode()));
         }
@@ -69,7 +67,7 @@ public class UserTest {
                 .header("Authorization", "Bearer " + token)
                 .build();
 
-        HttpResponse<String> usersResponse = sendHttpRequest(request);
+        HttpResponse<String> usersResponse = getHttpResponse(request);
 
         if (usersResponse.statusCode() >= 400) {
             Assertions.fail(String.format("Unsuccessful getting of %s [%d]", getting, usersResponse.statusCode()));
@@ -87,7 +85,7 @@ public class UserTest {
                 .header("Authorization", "Bearer " + token)
                 .build();
 
-        HttpResponse<String> usersResponse = sendHttpRequest(request);
+        HttpResponse<String> usersResponse = getHttpResponse(request);
 
         if (usersResponse.statusCode() >= 400) {
             Assertions.fail(String.format("Unsuccessful adding of %s [%d]", adding, usersResponse.statusCode()));
@@ -121,7 +119,7 @@ public class UserTest {
                 .header("Authorization", "Bearer " + token)
                 .build();
 
-        HttpResponse<String> usersResponse = sendHttpRequest(request);
+        HttpResponse<String> usersResponse = getHttpResponse(request);
 
         if (usersResponse.statusCode() >= 400) {
             Assertions.fail(String.format("Unsuccessful updating [%d]", usersResponse.statusCode()));
@@ -138,7 +136,7 @@ public class UserTest {
                 .header("Authorization", "Bearer " + token)
                 .build();
 
-        HttpResponse<String> usersResponse = sendHttpRequest(request);
+        HttpResponse<String> usersResponse = getHttpResponse(request);
 
         if (usersResponse.statusCode() >= 400) {
             Assertions.fail(String.format("Unsuccessful deleting of %s [%d]", deletion, usersResponse.statusCode()));
@@ -184,6 +182,7 @@ public class UserTest {
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
         addCompetition(new CompetitionDto("Turnovo cup", LocalDate.parse("16-03-2024", dateFormatter), LocalTime.parse("13:00:00", timeFormatter), LocalDate.parse("13-03-2024", dateFormatter), "Veliko Turnovo", "245N651E"), token);
+        addCompetition(new CompetitionDto("Ruse cup", LocalDate.parse("16-03-2024", dateFormatter), LocalTime.parse("16:00:00", timeFormatter), LocalDate.parse("13-03-2024", dateFormatter), "Ruse", "245N661E"), token);
         addCompetition(new CompetitionDto("Dryanovo cup", LocalDate.parse("13-11-2023", dateFormatter), LocalTime.parse("10:00:00", timeFormatter), LocalDate.parse("09-11-2023", dateFormatter), "Dryanovo", "255N651E"), token);
         addCompetition(new CompetitionDto("Sofia cup", LocalDate.parse("02-02-2024", dateFormatter), LocalTime.parse("16:00:00", timeFormatter), LocalDate.parse("31-01-2024", dateFormatter), "Sofia", "265N651E"), token);
 

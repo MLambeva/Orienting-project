@@ -1,6 +1,7 @@
 package com.orienting.common.services;
 
 import com.orienting.common.entity.TokenEntity;
+import com.orienting.common.exception.NoExistedUserException;
 import com.orienting.common.repository.TokenRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,13 +24,11 @@ public class LogoutService implements LogoutHandler {
             Authentication authentication
     ) {
         final String authHeader = request.getHeader("Authorization");
-        final String jwt;
         if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
             return;
         }
-        jwt = authHeader.substring(7);
-        TokenEntity storedToken = tokenRepository.findByToken(jwt)
-                .orElse(null);
+        final String jwt = authHeader.substring(7);
+        TokenEntity storedToken = tokenRepository.findByToken(jwt).orElseThrow(() -> new NoExistedUserException("Invalid token!"));
         if (storedToken != null) {
             storedToken.setExpired(true);
             storedToken.setRevoked(true);

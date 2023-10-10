@@ -1,4 +1,4 @@
-package com.orienting.orienting.spring.controller;
+package com.orienting.service.controller;
 
 import com.orienting.common.dto.*;
 import com.orienting.common.entity.UserEntity;
@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 
 @RestController
 @RequestMapping(value = "/api/users", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -26,7 +26,7 @@ import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
-@ComponentScan(basePackages = "com.orienting.common.utils")
+@ComponentScan(basePackages = "com.orienting.service.utils")
 public class AuthenticationService {
     private final UserRepository userRepository;
     private final ClubRepository clubRepository;
