@@ -28,10 +28,10 @@ import java.util.TimeZone;
 @Configuration
 @RequiredArgsConstructor
 public class ApplicationConfiguration {
-    private final UserRepository repository;
+    private final UserRepository userRepository;
     @Bean
     public UserDetailsService userDetailsService() {
-        return email -> repository.findByEmail(email)
+        return email -> userRepository.findUserByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found!"));
     }
 

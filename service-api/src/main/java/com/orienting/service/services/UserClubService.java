@@ -8,7 +8,6 @@ import com.orienting.service.exception.NoExistedClubException;
 import com.orienting.service.exception.NoExistedUserException;
 import com.orienting.service.repository.ClubRepository;
 import com.orienting.service.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,7 +24,7 @@ public class UserClubService {
     private final PasswordEncoder passwordEncoder;
 
     public UserEntity findAuthenticatedUser(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() ->
+        return userRepository.findUserByEmail(email).orElseThrow(() ->
                 new NoExistedUserException(String.format("User with email %s does not exist", email)));
     }
 
@@ -58,13 +57,13 @@ public class UserClubService {
         }
     }
 
-    private void validate(UserEntity user, String email, UserEntity newUser) {
-        UserEntity del = findAuthenticatedUser(email);
-        if (del.isCoach() && user.isCoach()) {
+    private void validateAccessUserForUpdate(UserEntity user, String email, UserEntity newUser) {
+        UserEntity authUser = findAuthenticatedUser(email);
+        if (authUser.isCoach() && user.isCoach()) {
             throw new InvalidRoleException(String.format("Cannot update coach with id %d!", user.getUserId()));
         }
-        if (del.isCoach() && (del.getClub() == null || user.getClub() == null)
-                || (del.getClub() != null && user.getClub() != null && !Objects.equals(del.getClub().getClubId(), user.getClub().getClubId()))) {
+        if (authUser.isCoach() && (authUser.getClub() == null || user.getClub() == null)
+                || (authUser.getClub() != null && user.getClub() != null && !Objects.equals(authUser.getClub().getClubId(), user.getClub().getClubId()))) {
             throw new NoExistedClubException(String.format("Cannot update user with id %d!", user.getUserId()));
         }
         if(newUser.getClub() != null && newUser.getClub().getClubId() != null) {
@@ -88,7 +87,7 @@ public class UserClubService {
 
     public UserEntity updateUserByUserId(Integer userId, String email, UserEntity newUser) {
         UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with userId: %d does not exist!", userId)));
-        validate(user, email, newUser);
+        validateAccessUserForUpdate(user, email, newUser);
         newUser.addClub(find(newUser));
         encodePassword(newUser);
         user.updateUser(newUser);
@@ -97,7 +96,7 @@ public class UserClubService {
 
     public UserEntity updateUserByUcn(String ucn, String email, UserEntity newUser) {
         UserEntity user = userRepository.findUserByUcn(ucn).orElseThrow(() -> new NoExistedUserException(String.format("User with ucn: %s does not exist!", ucn)));
-        validate(user, email, newUser);
+        validateAccessUserForUpdate(user, email, newUser);
         newUser.addClub(find(newUser));
         encodePassword(newUser);
         user.updateUser(newUser);

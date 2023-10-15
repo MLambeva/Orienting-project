@@ -9,6 +9,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.io.IOException;
+import java.util.Properties;
+
 @SpringBootApplication
 public class ServiceAPISpringBoot implements CommandLineRunner {
 
@@ -23,8 +26,16 @@ public class ServiceAPISpringBoot implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) {
-        UserEntity admin = new UserEntity("admin@abv.bg", "Password1", "Admin", "Admin", "8005203124", UserRole.ADMIN);
+    public void run(String... args) throws IOException {
+        Properties properties = new Properties();
+        properties.load(getClass().getResourceAsStream("/application.properties"));
+
+        String email = properties.getProperty("api.auth.email");
+        String password = properties.getProperty("api.auth.password");
+        String name = properties.getProperty("api.auth.name");
+        String ucn = properties.getProperty("api.auth.ucn");
+
+        UserEntity admin = new UserEntity(email, password, name, name, ucn, UserRole.ADMIN);
         if(userService.getUsers().isEmpty()) authenticationService.register(admin);
     }
 }

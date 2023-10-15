@@ -32,7 +32,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponseDto> register (@RequestBody @Valid UserCreationDto request) {
+    public ResponseEntity<AuthenticationResponseDto> register(@RequestBody @Valid UserCreationDto request) {
         return ResponseEntity.ok(authService.register(modelMapper.map(request, UserEntity.class)));
     }
 
@@ -42,10 +42,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/refresh-token")
-    public void refreshToken(
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) throws IOException {
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         authService.refreshToken(request, response);
     }
 }

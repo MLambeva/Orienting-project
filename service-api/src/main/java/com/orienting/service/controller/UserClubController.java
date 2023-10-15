@@ -37,7 +37,7 @@ public class UserClubController {
     }
 
     @PutMapping("/addClub/{clubId}")
-    public ResponseEntity<UserDto> addClub(@PathVariable("clubId") Integer clubId, Authentication authentication) {
+    public ResponseEntity<UserDto> addClubToLoggedInUser(@PathVariable("clubId") Integer clubId, Authentication authentication) {
         return addClubToUser(userClubService.findAuthenticatedUser(authentication.getName()).getUserId(), clubId);
     }
 
@@ -54,7 +54,7 @@ public class UserClubController {
     }
 
     @PutMapping("/update") // for all
-    public ResponseEntity<UserDto> update(@Valid @RequestBody UserUpdateDto newUser, Authentication authentication) {
+    public ResponseEntity<UserDto> updateLoggedInUser(@Valid @RequestBody UserUpdateDto newUser, Authentication authentication) {
         UserDto user = modelMapper.map(userClubService.update(authentication.getName(), modelMapper.map(newUser, UserEntity.class)), UserDto.class);
         return ResponseEntity.ok(user);
     }

@@ -5,7 +5,6 @@ import com.orienting.service.exception.InvalidInputException;
 import com.orienting.service.exception.NoExistedCompetitionException;
 import com.orienting.service.repository.CompetitionRepository;
 import jakarta.persistence.EntityExistsException;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
@@ -74,7 +73,7 @@ public class CompetitionService {
         if ((competition.getDeadline() != null && competition.getDate() == null && competitionEntity.getDate().isBefore(competition.getDeadline()))
                 || (competition.getDate() != null && competition.getDeadline() == null && competition.getDate().isBefore(competitionEntity.getDeadline()))
                 || (competition.getDate() != null && competition.getDeadline() != null && competition.getDate().isBefore(competition.getDeadline()))) {
-            throw new InvalidInputException("Deadline must be after the date of the competition!");
+            throw new InvalidInputException("Deadline must be before the date of the competition!");
         }
         competitionEntity.update(competition);
     }

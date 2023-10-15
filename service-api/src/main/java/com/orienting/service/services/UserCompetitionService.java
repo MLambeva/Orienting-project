@@ -20,28 +20,28 @@ public class UserCompetitionService {
     private final CompetitionRepository competitionRepository;
 
     public UserEntity findAuthenticatedUser(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() ->
+        return userRepository.findUserByEmail(email).orElseThrow(() ->
                 new NoExistedUserException(String.format("User with email %s does not exist", email)));
     }
 
-    private void validate(UserEntity user, String email) {
-        UserEntity deletingUser = findAuthenticatedUser(email);
-        if (deletingUser.isCoach() && user.isCoach() && !Objects.equals(deletingUser.getUserId(), user.getUserId())) {
+    private void validateAccessToUser(UserEntity user, String email) {
+        UserEntity authUser = findAuthenticatedUser(email);
+        if (authUser.isCoach() && user.isCoach() && !Objects.equals(authUser.getUserId(), user.getUserId())) {
             throw new InvalidRoleException(String.format("Cannot manage coach with id %d!", user.getUserId()));
         }
-        if (deletingUser.isCoach() && (deletingUser.getClub() == null || user.getClub() == null)
-                || (deletingUser.getClub() != null && user.getClub() != null && !Objects.equals(deletingUser.getClub().getClubId(), user.getClub().getClubId()))) {
+        if (authUser.isCoach() && (authUser.getClub() == null || user.getClub() == null)
+                || (authUser.getClub() != null && user.getClub() != null && !Objects.equals(authUser.getClub().getClubId(), user.getClub().getClubId()))) {
             throw new InvalidRoleException(String.format("Cannot manage user with id %d!", user.getUserId()));
         }
     }
 
     private UserEntity request(UserEntity user, CompetitionEntity competition, String email) {
-        validate(user, email);
+        validateAccessToUser(user, email);
         if(user.isRequestedInCompetition(competition)) {
             throw new InvalidInputException("User has already request!");
         }
         if(LocalDate.now().isAfter(competition.getDeadline())) {
-            throw new InvalidInputException("Cannot request participation!");
+            throw new InvalidInputException(String.format("Cannot request participation! The deadline is %s!", competition.getDeadline()));
         }
         if (user.getClub() != null) {
             user.addCompetition(competition);
@@ -65,7 +65,7 @@ public class UserCompetitionService {
     }
 
     private UserEntity removeParticipant(UserEntity user, CompetitionEntity competition, String email) {
-        validate(user, email);
+        validateAccessToUser(user, email);
         if(LocalDate.now().isAfter(competition.getDeadline())) {
             throw new InvalidInputException("Cannot remove participation!");
         }

@@ -23,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -46,7 +47,7 @@ public class AuthenticationService {
     }
 
     private void revokeAllUserTokens(UserEntity user) {
-        var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getUserId());
+        List<TokenEntity> validUserTokens = tokenRepository.findAllValidTokenByUser(user.getUserId());
         if (validUserTokens.isEmpty())
             return;
         validUserTokens.forEach(token -> {
@@ -60,7 +61,7 @@ public class AuthenticationService {
         if (request == null) {
             throw new InvalidInputException("Input user is null!");
         }
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+        if (userRepository.findUserByEmail(request.getEmail()).isPresent()) {
             throw new InvalidInputException(String.format("User with email %s already exist!", request.getEmail()));
         }
         ClubEntity newClub = null;
@@ -97,7 +98,7 @@ public class AuthenticationService {
                         request.getPassword()
                 )
         );
-        UserEntity user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new NoExistedUserException(String.format("User with email %s does not exist!", request.getEmail())));
+        UserEntity user = userRepository.findUserByEmail(request.getEmail()).orElseThrow(() -> new NoExistedUserException(String.format("User with email %s does not exist!", request.getEmail())));
         String jwtToken = jwtUtils.generateToken(user);
         String refreshToken = jwtUtils.generateRefreshToken(user);
         revokeAllUserTokens(user);
@@ -105,10 +106,7 @@ public class AuthenticationService {
         return AuthenticationResponseDto.builder().accessToken(jwtToken).refreshToken(refreshToken).build();
     }
 
-    public void refreshToken(
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) throws IOException {
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
@@ -117,7 +115,7 @@ public class AuthenticationService {
         final String refreshToken = authHeader.substring(7);
         final String userEmail = jwtUtils.extractEmail(refreshToken);
         if (userEmail != null) {
-            UserEntity user = this.userRepository.findByEmail(userEmail)
+            UserEntity user = this.userRepository.findUserByEmail(userEmail)
                     .orElseThrow(() -> new NoExistedUserException(String.format("User with email %s does not exist!", userEmail)));
             if (jwtUtils.isTokenValid(refreshToken, user)) {
                 String accessToken = jwtUtils.generateToken(user);

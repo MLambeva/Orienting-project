@@ -4,6 +4,7 @@ import com.orienting.service.entity.ClubEntity;
 import com.orienting.service.entity.CompetitionEntity;
 import com.orienting.service.entity.UserEntity;
 import com.orienting.service.entity.UserRole;
+import com.orienting.service.exception.InvalidInputException;
 import com.orienting.service.exception.InvalidRoleException;
 import com.orienting.service.exception.NoExistedClubException;
 import com.orienting.service.exception.NoExistedUserException;
@@ -22,7 +23,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     public UserEntity findAuthenticatedUser(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() ->
+        return userRepository.findUserByEmail(email).orElseThrow(() ->
                 new NoExistedUserException(String.format("User with email %s does not exist", email)));
     }
 
@@ -101,33 +102,30 @@ public class UserService {
         return userRepository.findAllUsersInClubByName(clubName).orElseThrow(() -> new NoExistedUserException("The club does not have coaches!")).stream().filter(UserEntity::isCoach).toList();
     }
 
-    private void validate(UserEntity user, String email) {
-        UserEntity deletingUser = findAuthenticatedUser(email);
-        if (deletingUser.isCoach() && user.isCoach()) {
+    private void validateAccessUser(UserEntity user, String email) {
+        UserEntity authUser = findAuthenticatedUser(email);
+        if(Objects.equals(user.getUserId(), authUser.getUserId())) {
+            throw new InvalidInputException("User cannot delete yourself!");
+        }
+        if (authUser.isCoach() && user.isCoach()) {
             throw new InvalidRoleException(String.format("Cannot delete coach with id %d!", user.getUserId()));
         }
-        if (deletingUser.isCoach() && (deletingUser.getClub() == null || user.getClub() == null)
-        || (deletingUser.getClub() != null && user.getClub() != null && !Objects.equals(deletingUser.getClub().getClubId(), user.getClub().getClubId()))) {
+        if (authUser.isCoach() && (authUser.getClub() == null || user.getClub() == null)
+        || (authUser.getClub() != null && user.getClub() != null && !Objects.equals(authUser.getClub().getClubId(), user.getClub().getClubId()))) {
                 throw new InvalidRoleException(String.format("Cannot delete user with id %d!", user.getUserId()));
         }
     }
 
-    public UserEntity deleteUser(Integer userId) {
-        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with userId: %d does not exist!", userId)));
-        userRepository.delete(user);
-        return user;
-    }
-
     public UserEntity deleteUserByUserId(Integer userId, String email) {
         UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with userId: %d does not exist!", userId)));
-        validate(user, email);
+        validateAccessUser(user, email);
         userRepository.delete(user);
         return user;
     }
 
     public UserEntity deleteUserByUcn(String ucn, String email) {
         UserEntity user = userRepository.findUserByUcn(ucn).orElseThrow(() -> new NoExistedUserException(String.format("User with ucn: %s does not exist!", ucn)));
-        validate(user, email);
+        validateAccessUser(user, email);
         userRepository.delete(user);
         return user;
     }

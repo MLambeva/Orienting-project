@@ -17,6 +17,7 @@ public class UserCreationDto {
     @Email(message = "Invalid email!")
     private String email;
     @NotBlank(message = "The password is mandatory!")
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d).{8,}$", message = "Invalid password!")
     private String password;
     @NotBlank(message = "First name is mandatory!")
     private String firstName;
@@ -24,9 +25,9 @@ public class UserCreationDto {
     private String lastName;
     @NotBlank(message = "Unified Civil number is mandatory!")
     private String ucn;
-    @Pattern(regexp = "^(\\+\\d{1,2})?\\s?\\(?\\d{3}\\)?[-.\\s]?\\d{3}[-.\\s]?\\d{4}$", message = "Invalid phone number")
+    @Pattern(regexp = "^(\\+\\d{1,2})?\\s?\\(?\\d{3}\\)?[-.\\s]?\\d{3}[-.\\s]?\\d{4}$", message = "Invalid phone number!")
     private String phoneNumber;
-    @Pattern(regexp = "^(W|M)\\d{2}$", message = "Invalid format")
+    @Pattern(regexp = "^(W|M)\\d{2}$", message = "Invalid format!")
     private String group;
     @NotNull(message = "The role is mandatory!")
     private UserRole role;

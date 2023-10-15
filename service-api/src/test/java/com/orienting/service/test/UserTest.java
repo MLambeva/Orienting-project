@@ -24,8 +24,8 @@ public class UserTest {
 
     private final String USERS_API = "http://localhost:8080/api/users/";
     private final String CLUBS_API = "http://localhost:8080/api/clubs/";
-    private final String AUTH_URI = "http://localhost:8080/api/auth/";
-    private final String COMP_URI = "http://localhost:8080/api/competitions/";
+    private final String AUTH_API = "http://localhost:8080/api/auth/";
+    private final String COMP_API = "http://localhost:8080/api/competitions/";
 
     private HttpResponse<String> getHttpResponse(HttpRequest request) throws IOException, InterruptedException {
         return HttpClient
@@ -36,7 +36,7 @@ public class UserTest {
     private String getToken(String email, String password) throws IOException, URISyntaxException, InterruptedException {
         HttpRequest request = HttpRequest
                 .newBuilder()
-                .uri(new URI(AUTH_URI + "authenticate"))
+                .uri(new URI(AUTH_API + "authenticate"))
                 .POST(HttpRequest.BodyPublishers.ofString("{\"email\":\"" + email + "\",\"password\":\"" + password + "\"}"))
                 .header("Content-Type", "application/json")
                 .build();
@@ -100,14 +100,14 @@ public class UserTest {
     private void addUser(UserCreationDto user, String token) throws IOException, URISyntaxException, InterruptedException {
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonBody = objectMapper.writeValueAsString(user);
-        add(AUTH_URI + "register", jsonBody, token, "user");
+        add(AUTH_API + "register", jsonBody, token, "user");
     }
 
     private void addCompetition(CompetitionDto competition, String token) throws IOException, URISyntaxException, InterruptedException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         String jsonBody = objectMapper.writeValueAsString(competition);
-        add(COMP_URI + "add", jsonBody, token, "competiiton");
+        add(COMP_API + "add", jsonBody, token, "competiiton");
     }
 
     private String update(String url, String jsonBody, String token) throws URISyntaxException, IOException, InterruptedException {
@@ -144,7 +144,8 @@ public class UserTest {
     }
 
     private void removeClub(String name, String token) throws IOException, URISyntaxException, InterruptedException {
-        remove(CLUBS_API + "delete/byName/" + name, token, "club");
+        String[] s = name.split(" ");
+        remove(CLUBS_API + "delete/byName/" + String.join("%20", s), token, "club");
     }
 
     private void removeUser(String ucn, String token) throws IOException, URISyntaxException, InterruptedException {
@@ -152,7 +153,8 @@ public class UserTest {
     }
 
     private void removeCompetition(String name, String token) throws URISyntaxException, IOException, InterruptedException {
-        remove(COMP_URI + "delete/byName/" + name, token, "competition");
+        String[] s = name.split(" ");
+        remove(COMP_API + "delete/byName/" + String.join("%20", s), token, "competition");
     }
 
     @Test
@@ -188,33 +190,41 @@ public class UserTest {
 
     }
 
+    private String getAllUsers(String token) throws IOException, URISyntaxException, InterruptedException {
+        return get(USERS_API + "all", token, "all users");
+    }
+
     @Test
     public void getAllUsersTest() throws URISyntaxException, IOException, InterruptedException {
         String token = singInAdmin();
-
-        String allUsers = get(USERS_API + "all", token, "all users");
+        String allUsers = getAllUsers(token);
         String[] lines = allUsers.split("},");
         for (String line : lines) {
             System.out.println(line);
         }
     }
 
+    private String getAllClubs(String token) throws IOException, URISyntaxException, InterruptedException {
+        return get(CLUBS_API + "all", token, "all clubs");
+    }
     @Test
     public void getAllClubsTest() throws URISyntaxException, IOException, InterruptedException {
         String token = singInAdmin();
-
-        String allClubs = get(CLUBS_API + "all", token, "all clubs");
+        String allClubs = getAllClubs(token);
         String[] lines = allClubs.split("},");
         for (String line : lines) {
             System.out.println(line);
         }
     }
 
+    private String getAllCompetitions(String token) throws IOException, URISyntaxException, InterruptedException {
+        return get(COMP_API + "all", token, "all competitions");
+    }
+
     @Test
     public void getAllCompetitionsTest() throws URISyntaxException, IOException, InterruptedException {
         String token = singInAdmin();
-
-        String allCompetitions = get(COMP_URI + "all", token, "all competitions");
+        String allCompetitions = getAllCompetitions(token);
         String[] lines = allCompetitions.split("},");
         for (String line : lines) {
             System.out.println(line);
@@ -225,7 +235,7 @@ public class UserTest {
     public void getAllCompetitionsWithRequestedCompetitorsTest() throws URISyntaxException, IOException, InterruptedException {
         String token = singInAdmin();
 
-        String allCompetitions = get(COMP_URI + "allWithParticipants", token, "all competitions");
+        String allCompetitions = get(COMP_API + "allWithParticipants", token, "all competitions");
         String[] lines = allCompetitions.split("},");
         for (String line : lines) {
             System.out.println(line);
@@ -235,37 +245,55 @@ public class UserTest {
     @Test
     public void requestParticipation() throws IOException, URISyntaxException, InterruptedException {
         String token = getToken("petur_petrov@abv.bg", "Password1");
-        String res = update(COMP_URI + "request/byName/Dryanovo%20cup", "", token);
+        String res = update(COMP_API + "request/byName/Dryanovo%20cup", "", token);
         System.out.println(res);
     }
 
     @Test
     public void removeParticipation() throws IOException, URISyntaxException, InterruptedException {
         String token = getToken("petur_petrov@abv.bg", "Password1");
-        String res = update(COMP_URI + "remove/byName/Dryanovo%20cup", "", token);
+        String res = update(COMP_API + "remove/byName/Dryanovo%20cup", "", token);
         System.out.println(res);
     }
 
+    private void removeAllClubs(String token) throws IOException, URISyntaxException, InterruptedException {
+        String allClubs = getAllClubs(token);
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(allClubs);
+        for (JsonNode clubNode : jsonNode) {
+            String name = clubNode.get("clubName").asText();
+            removeClub(name, token);
+        }
+    }
+
+    private void removeAllUsers(String token) throws IOException, URISyntaxException, InterruptedException {
+        String allUsers = getAllUsers(token);
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(allUsers);
+        for (JsonNode userNode : jsonNode) {
+            int id = userNode.get("userId").asInt();
+            if(id != 1) {
+                String ucn = userNode.get("ucn").asText();
+                removeUser(ucn, token);
+            }
+        }
+    }
+
+    private void removeAllCompetitions(String token) throws IOException, URISyntaxException, InterruptedException {
+        String allCompetitions = getAllCompetitions(token);
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(allCompetitions);
+        for (JsonNode competitionNode : jsonNode) {
+            String name = competitionNode.get("name").asText();
+            removeCompetition(name, token);
+        }
+    }
     @Test
     public void removeInputData() throws URISyntaxException, IOException, InterruptedException {
         String token = singInAdmin();
 
-        removeClub("Bacho%20Kiro", token);
-        removeClub("Uzana", token);
-        removeClub("Valdi", token);
-
-        removeUser("0042302211", token);
-        removeUser("9042302211", token);
-        removeUser("9402302211", token);
-        removeUser("8002302211", token);
-        removeUser("9602302211", token);
-        removeUser("8402302211", token);
-        removeUser("9102302211", token);
-        removeUser("9612302211", token);
-        removeUser("9602202211", token);
-
-        removeCompetition("Turnovo%20cup", token);
-        removeCompetition("Dryanovo%20cup", token);
-        removeCompetition("Sofia%20cup", token);
+        removeAllClubs(token);
+        removeAllUsers(token);
+        removeAllCompetitions(token);
     }
 }

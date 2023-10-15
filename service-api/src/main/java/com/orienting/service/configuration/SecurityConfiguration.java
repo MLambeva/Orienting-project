@@ -35,7 +35,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/*").permitAll()
                         .requestMatchers("/api/tokens/logout").hasAnyAuthority(UserRole.ADMIN.name(), UserRole.COACH.name(), UserRole.COMPETITOR.name())
-                        .requestMatchers("/api/users/all").hasAuthority(UserRole.ADMIN.name())
+                        .requestMatchers("/api/users/all").hasAnyAuthority(UserRole.ADMIN.name(), UserRole.COACH.name())
                         .requestMatchers("/api/users/byId/*").hasAuthority(UserRole.ADMIN.name())
                         .requestMatchers("/api/users/me").hasAnyAuthority(UserRole.ADMIN.name(), UserRole.COACH.name(), UserRole.COMPETITOR.name())
                         .requestMatchers("/api/users/byUcn/*").hasAuthority(UserRole.ADMIN.name())

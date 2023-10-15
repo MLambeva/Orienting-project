@@ -60,7 +60,7 @@ public class UserEntity implements UserDetails {
     private Set<CompetitionEntity> competitions;
 
     @OneToMany(mappedBy = "user")
-    private List<TokenEntity> tokens;
+    private Set<TokenEntity> tokens;
 
     public UserEntity(String email, String password, String firstName, String lastName, String ucn, String phoneNumber, String group, UserRole role, Integer clubId) {
         this.email = email;

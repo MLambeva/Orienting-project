@@ -21,7 +21,7 @@ public class CompetitionUpdateDto {
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime time;
     @JsonFormat(pattern = "dd-MM-yyyy")
-    @FutureOrPresent
+    //@FutureOrPresent
     private LocalDate deadline;
     private String location;
     private String coordinates;
