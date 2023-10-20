@@ -1,6 +1,6 @@
 package com.orienting.service.controller;
 
-import com.orienting.service.dto.*;
+import com.orienting.common.dto.*;
 import com.orienting.service.entity.UserEntity;
 import com.orienting.service.services.UserService;
 import lombok.Getter;

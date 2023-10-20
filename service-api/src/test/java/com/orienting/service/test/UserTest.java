@@ -3,9 +3,9 @@ package com.orienting.service.test;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.orienting.service.dto.CompetitionDto;
-import com.orienting.service.dto.UserCreationDto;
-import com.orienting.service.entity.UserRole;
+import com.orienting.common.dto.CompetitionDto;
+import com.orienting.common.dto.UserCreationDto;
+import com.orienting.common.enums.UserRole;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 

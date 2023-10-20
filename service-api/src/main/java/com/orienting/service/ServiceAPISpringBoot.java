@@ -1,7 +1,7 @@
 package com.orienting.service;
 
 import com.orienting.service.entity.UserEntity;
-import com.orienting.service.entity.UserRole;
+import com.orienting.common.enums.UserRole;
 import com.orienting.service.services.AuthenticationService;
 import com.orienting.service.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

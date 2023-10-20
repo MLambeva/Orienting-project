@@ -1,6 +1,6 @@
 package com.orienting.service.controller;
 
-import com.orienting.service.dto.UserDto;
+import com.orienting.common.dto.UserDto;
 import com.orienting.service.exception.UnauthorizedException;
 import com.orienting.service.services.UserCompetitionService;
 import lombok.Getter;

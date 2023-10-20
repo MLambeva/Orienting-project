@@ -18,6 +18,11 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.orienting</groupId>
+            <artifactId>common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <!--JDBC - based data access-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

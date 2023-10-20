@@ -1,5 +1,6 @@
 package com.orienting.service.entity;
 
+import com.orienting.common.enums.UserRole;
 import com.orienting.service.exception.NoExistedCompetitionException;
 import jakarta.persistence.*;
 import lombok.*;

@@ -1,6 +1,6 @@
-package com.orienting.service.dto;
+package com.orienting.common.dto;
 
-import com.orienting.service.entity.UserRole;
+import com.orienting.common.enums.UserRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -23,11 +23,12 @@ public class UserCreationDto {
     private String firstName;
     @NotBlank(message = "Last name is mandatory!")
     private String lastName;
+    @Pattern(regexp = "^\\d{10}$", message = "UCN have 10 digits")
     @NotBlank(message = "Unified Civil number is mandatory!")
     private String ucn;
     @Pattern(regexp = "^(\\+\\d{1,2})?\\s?\\(?\\d{3}\\)?[-.\\s]?\\d{3}[-.\\s]?\\d{4}$", message = "Invalid phone number!")
     private String phoneNumber;
-    @Pattern(regexp = "^(W|M)\\d{2}$", message = "Invalid format!")
+    @Pattern(regexp = "^(W|M)\\d{2}$", message = "Invalid format of group -> M/W{digit}!")
     private String group;
     @NotNull(message = "The role is mandatory!")
     private UserRole role;
@@ -43,8 +44,30 @@ public class UserCreationDto {
         this.phoneNumber = phoneNumber;
         this.group = group;
         this.role = role;
-        if(clubId != null) this.clubId = clubId;
+        if (clubId != null) this.clubId = clubId;
     }
 
+    public UserCreationDto(String email, String password, String firstName, String lastName, String ucn, String phoneNumber, String group, String role, Integer clubId) {
+        this.email = email;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.ucn = ucn;
+        this.phoneNumber = phoneNumber;
+        this.group = group;
+        if(role.matches("^(COACH|COMPETITOR)$"))
+            this.role = UserRole.valueOf(role);
+        else
+            System.err.println("Role must be coach or competitor!");
+        if (clubId != null) this.clubId = clubId;
+    }
 
+    boolean validateUcn(String ucn) {
+        if(ucn.matches("^\\d{10}$"))
+            return true;
+        else {
+            System.err.println("Error in UCN!");
+            return false;
+        }
+    }
 }

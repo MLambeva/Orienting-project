@@ -3,7 +3,7 @@ package com.orienting.service.services;
 import com.orienting.service.entity.ClubEntity;
 import com.orienting.service.entity.CompetitionEntity;
 import com.orienting.service.entity.UserEntity;
-import com.orienting.service.entity.UserRole;
+import com.orienting.common.enums.UserRole;
 import com.orienting.service.exception.InvalidInputException;
 import com.orienting.service.exception.InvalidRoleException;
 import com.orienting.service.exception.NoExistedClubException;

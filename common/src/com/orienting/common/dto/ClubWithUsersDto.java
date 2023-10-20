@@ -1,4 +1,4 @@
-package com.orienting.service.dto;
+package com.orienting.common.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

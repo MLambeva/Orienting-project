@@ -1,28 +1,26 @@
-package com.orienting.service.dto;
+package com.orienting.common.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.FutureOrPresent;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Set;
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class CompetitionUpdateDto {
+public class CompetitionRequestDto {
+    private Integer compId;
     private String name;
     @JsonFormat(pattern = "dd-MM-yyyy")
-    @Future
     private LocalDate date;
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime time;
     @JsonFormat(pattern = "dd-MM-yyyy")
-    //@FutureOrPresent
     private LocalDate deadline;
     private String location;
     private String coordinates;
+    private Set<CompetitorDto> users;
 }

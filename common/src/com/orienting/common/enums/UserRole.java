@@ -1,4 +1,4 @@
-package com.orienting.service.entity;
+package com.orienting.common.enums;
 
 public enum UserRole {
     COACH,

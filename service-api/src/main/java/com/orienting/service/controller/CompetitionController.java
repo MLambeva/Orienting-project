@@ -1,9 +1,9 @@
 package com.orienting.service.controller;
 
-import com.orienting.service.dto.CompetitionDto;
-import com.orienting.service.dto.CompetitionRequestDto;
-import com.orienting.service.dto.CompetitionUpdateDto;
-import com.orienting.service.dto.CompetitorDto;
+import com.orienting.common.dto.CompetitionDto;
+import com.orienting.common.dto.CompetitionRequestDto;
+import com.orienting.common.dto.CompetitionUpdateDto;
+import com.orienting.common.dto.CompetitorDto;
 import com.orienting.service.entity.CompetitionEntity;
 import com.orienting.service.services.CompetitionService;
 import jakarta.validation.Valid;

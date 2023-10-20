@@ -1,6 +1,6 @@
-package com.orienting.service.dto;
+package com.orienting.common.dto;
 
-import com.orienting.service.entity.UserRole;
+import com.orienting.common.enums.UserRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;

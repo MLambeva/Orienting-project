@@ -1,4 +1,4 @@
-package com.orienting.service.dto;
+package com.orienting.common.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Future;

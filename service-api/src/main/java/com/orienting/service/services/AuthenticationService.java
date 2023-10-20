@@ -1,7 +1,8 @@
 package com.orienting.service.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.orienting.service.dto.AuthenticationResponseDto;
+import com.orienting.common.dto.AuthenticationResponseDto;
+import com.orienting.common.enums.UserRole;
 import com.orienting.service.entity.ClubEntity;
 import com.orienting.service.entity.TokenEntity;
 import com.orienting.service.entity.UserEntity;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -65,14 +67,15 @@ public class AuthenticationService {
             throw new InvalidInputException(String.format("User with email %s already exist!", request.getEmail()));
         }
         ClubEntity newClub = null;
-        if(request.getClub() != null) {
-            if(request.getClub().getClubId() != null) {
+        if (request.getClub() != null) {
+            if (request.getClub().getClubId() != null) {
                 newClub = clubRepository.findClubByClubId(request.getClub().getClubId()).orElseThrow(() -> new NoExistedClubException(String.format("Club with id %d does not exist!", request.getClub().getClubId())));
-            }
-            else if(request.getClub().getClubName() != null){
+            } else if (request.getClub().getClubName() != null) {
                 newClub = clubRepository.findClubByClubName(request.getClub().getClubName()).orElseThrow(() -> new NoExistedClubException(String.format("Club with name %s does not exist!", request.getClub().getClubName())));
             }
         }
+        if(request.getRole() == UserRole.ADMIN)
+            throw new InvalidInputException("Role must be coach or competitor!");
         UserEntity user = UserEntity.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -92,13 +95,16 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponseDto authenticate(UserEntity request) {
+        UserEntity user = userRepository.findUserByEmail(request.getEmail()).orElseThrow(() -> new NoExistedUserException(String.format("User with email %s does not exist!", request.getEmail())));
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword()))
+            throw new InvalidInputException("Invalid password!");
+
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
                         request.getPassword()
                 )
         );
-        UserEntity user = userRepository.findUserByEmail(request.getEmail()).orElseThrow(() -> new NoExistedUserException(String.format("User with email %s does not exist!", request.getEmail())));
         String jwtToken = jwtUtils.generateToken(user);
         String refreshToken = jwtUtils.generateRefreshToken(user);
         revokeAllUserTokens(user);
@@ -109,7 +115,7 @@ public class AuthenticationService {
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return;
         }
         final String refreshToken = authHeader.substring(7);

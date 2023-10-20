@@ -1,6 +1,6 @@
 package com.orienting.service.configuration;
 
-import com.orienting.service.entity.UserRole;
+import com.orienting.common.enums.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -64,7 +64,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/users/addClub/*/*").hasAuthority(UserRole.ADMIN.name())
                         .requestMatchers("/api/users/addClub/*").hasAnyAuthority(UserRole.COACH.name(), UserRole.COMPETITOR.name())
                         //Clubs:
-                        .requestMatchers("/api/clubs/all").hasAnyAuthority(UserRole.COACH.name(), UserRole.COMPETITOR.name(), UserRole.ADMIN.name())
+                        .requestMatchers("/api/clubs/all").permitAll()//hasAnyAuthority(UserRole.COACH.name(), UserRole.COMPETITOR.name(), UserRole.ADMIN.name())
                         .requestMatchers("/api/clubs/allWithUsers").hasAuthority(UserRole.ADMIN.name())
                         .requestMatchers("/api/clubs/*/*").hasAnyAuthority(UserRole.COACH.name(), UserRole.ADMIN.name())
                         .requestMatchers("/api/clubs/withUsers/*/*").hasAnyAuthority(UserRole.COACH.name(), UserRole.ADMIN.name())

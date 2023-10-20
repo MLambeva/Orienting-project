@@ -1,9 +1,11 @@
-package com.orienting.service.dto;
+package com.orienting.common.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 @Builder
+@ToString
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class AuthenticationResponseDto {

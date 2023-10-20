@@ -1,7 +1,7 @@
 package com.orienting.service.controller;
 
-import com.orienting.service.dto.UserDto;
-import com.orienting.service.dto.UserUpdateDto;
+import com.orienting.common.dto.UserDto;
+import com.orienting.common.dto.UserUpdateDto;
 import com.orienting.service.entity.UserEntity;
 import com.orienting.service.services.UserClubService;
 import jakarta.validation.Valid;
