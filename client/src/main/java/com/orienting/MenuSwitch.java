@@ -133,13 +133,13 @@ public class MenuSwitch {
             if (result != null)
                 System.out.println(JsonFormatter.formatJson(result));
             showMenu("manage users");
-        }), List.of(UserRole.ADMIN));
+        }), List.of(UserRole.ADMIN, UserRole.COACH, UserRole.COMPETITOR));
         MenuEntry getAllCompetitors = new MenuEntry("Get all competitors", new Command(() -> {
             List<CompetitorDto> result = usersController.getAllCompetitors();
             if (result != null)
                 System.out.println(JsonFormatter.formatJson(result));
             showMenu("manage users");
-        }), List.of(UserRole.ADMIN));
+        }), List.of(UserRole.ADMIN, UserRole.COACH));
         MenuEntry getUserWithCoachesById = new MenuEntry("Get user with coaches by id", new CommandWithInputs(List.of(id), (args) -> {
             CompetitorsWithCoachesDto result = usersController.getUserWithCoachesById(Integer.parseInt(args.get(0).getValue()));
             if (result != null)
@@ -151,7 +151,7 @@ public class MenuSwitch {
             if (result != null)
                 System.out.println(JsonFormatter.formatJson(result));
             showMenu("manage users");
-        }), List.of(UserRole.COACH, UserRole.COMPETITOR));
+        }), List.of(UserRole.COMPETITOR));
         MenuEntry getUserWithRequestedCompetitionsById = new MenuEntry("Get user by id with requested competitions", new CommandWithInputs(List.of(id), (args) -> {
             UsersWithRequestedCompetitionsDto result = usersController.getUserWithRequestedCompetitionsById(Integer.parseInt(args.get(0).getValue()));
             if (result != null)
@@ -207,13 +207,13 @@ public class MenuSwitch {
             showMenu("manage users");
         }), List.of(UserRole.COMPETITOR, UserRole.COACH));
         MenuEntry getAllCoachesInClub = new MenuEntry("Get all coaches from my club", new Command(() -> {
-            AllUsersInClubDto result = usersController.getAllCoachesInClub();
+            List<CompetitorsAndCoachDto> result = usersController.getAllCoachesInClub();
             if (result != null)
                 System.out.println(JsonFormatter.formatJson(result));
             showMenu("manage users");
         }), List.of(UserRole.COMPETITOR, UserRole.COACH));
         MenuEntry getAllCompetitorsInClub = new MenuEntry("Get all competitors from my club", new Command(() -> {
-            AllUsersInClubDto result = usersController.getAllCompetitorsInClub();
+            List<CompetitorsAndCoachDto> result = usersController.getAllCompetitorsInClub();
             if (result != null)
                 System.out.println(JsonFormatter.formatJson(result));
             showMenu("manage users");
@@ -229,7 +229,7 @@ public class MenuSwitch {
             if (result != null)
                 System.out.println(JsonFormatter.formatJson(result));
             showMenu("manage users");
-        }), List.of(UserRole.ADMIN));
+        }), List.of(UserRole.ADMIN, UserRole.COACH));
         MenuEntry deleteUserByUcn = new MenuEntry("Delete user by ucn", new CommandWithInputs(List.of(ucn), (args) -> {
             UserDto result = usersController.deleteUserByUcn(args.get(0).getValue());
             if (result != null)
@@ -260,9 +260,53 @@ public class MenuSwitch {
                 System.out.println(JsonFormatter.formatJson(result));
             showMenu("manage users");
         }), List.of(UserRole.ADMIN));
+        MenuEntry setCoachToClub = new MenuEntry("Add coach to club by given id", new CommandWithInputs(List.of(id, id), (args) -> {
+            UserDto result = usersController.setCoachToClub(Integer.parseInt(args.get(0).getValue()), Integer.parseInt(args.get(1).getValue()));
+            if (result != null)
+                System.out.println(JsonFormatter.formatJson(result));
+            showMenu("manage users");
+        }), List.of(UserRole.ADMIN));
+        MenuEntry addClubToUser = new MenuEntry("Add user`s club by user and club id", new CommandWithInputs(List.of(id, id), (args) -> {
+            UserDto result = usersController.addClubToUser(Integer.parseInt(args.get(0).getValue()), Integer.parseInt(args.get(1).getValue()));
+            if (result != null)
+                System.out.println(JsonFormatter.formatJson(result));
+            showMenu("manage users");
+        }), List.of(UserRole.ADMIN));
+        MenuEntry addClubToLoggedInUser = new MenuEntry("Add club", new CommandWithInputs(List.of(id), (args) -> {
+            UserDto result = usersController.addClubToLoggedInUser(Integer.parseInt(args.get(0).getValue()));
+            if (result != null)
+                System.out.println(JsonFormatter.formatJson(result));
+            showMenu("manage users");
+        }), List.of(UserRole.COACH, UserRole.COMPETITOR));
+        MenuEntry updateUserByUserId = new MenuEntry("Update user by id", new CommandWithInputs(List.of(id, email, password, firstName, lastName, phoneNumber, group, role, clubId), (args) -> {
+            UserUpdateDto userUpdateDto = new UserUpdateDto(args.get(1).getValue(), args.get(2).getValue(), args.get(3).getValue(), args.get(4).getValue(), args.get(5).getValue(), args.get(6).getValue(), args.get(7).getValue(), (args.get(8).getValue().matches("\\d+")) ? Integer.parseInt(args.get(8).getValue()) : null);
+            UserDto result = usersController.updateUserByUserId(Integer.parseInt(args.get(0).getValue()), userUpdateDto);
+            if (result != null)
+                System.out.println(JsonFormatter.formatJson(result));
+            showMenu("manage users");
+        }), List.of(UserRole.ADMIN, UserRole.COACH));
+        MenuEntry updateUserByUcn = new MenuEntry("Update user by ucn", new CommandWithInputs(List.of(ucn, email, password, firstName, lastName, phoneNumber, group, role, clubId), (args) -> {
+            UserUpdateDto userUpdateDto = new UserUpdateDto(args.get(1).getValue(), args.get(2).getValue(), args.get(3).getValue(), args.get(4).getValue(), args.get(5).getValue(), args.get(6).getValue(), args.get(7).getValue(), (args.get(8).getValue().matches("\\d+")) ? Integer.parseInt(args.get(8).getValue()) : null);
+            UserDto result = usersController.updateUserByUcn(args.get(0).getValue(), userUpdateDto);
+            if (result != null)
+                System.out.println(JsonFormatter.formatJson(result));
+            showMenu("manage users");
+        }), List.of(UserRole.ADMIN, UserRole.COACH));
+        MenuEntry updateLoggedInUser = new MenuEntry("Update", new CommandWithInputs(List.of(email, password, firstName, lastName, phoneNumber, group, role, clubId), (args) -> {
+            UserUpdateDto userUpdateDto = new UserUpdateDto(args.get(0).getValue(), args.get(1).getValue(), args.get(2).getValue(), args.get(3).getValue(), args.get(4).getValue(), args.get(5).getValue(), args.get(6).getValue(), (args.get(7).getValue().matches("\\d+")) ? Integer.parseInt(args.get(7).getValue()) : null);
+            UserDto result = usersController.updateLoggedInUser(userUpdateDto);
+            if (result != null)
+                System.out.println(JsonFormatter.formatJson(result));
+            showMenu("manage users");
+        }), List.of(UserRole.ADMIN, UserRole.COACH, UserRole.COMPETITOR));
 
-
-        Menu usersMenu = new Menu("Manage users", List.of(getLoggedInUser, getAllUsers, getUserById, getUserByUcn, getRole, getRoleById, getRoleByUcn, logout, exit));
+        Menu usersMenu = new Menu("Manage users",
+                List.of(getLoggedInUser, getAllUsers, getUserById, getUserByUcn, getRole, getRoleById, getRoleByUcn,
+                        getAllCoaches,getAllCompetitors, getUserWithCoachesById, getLoggedInUserWithCoaches, getUserWithRequestedCompetitionsById,
+                        getLoggedInUserWithRequestedCompetitions, getAllUsersInClubById, getAllCompetitorsInClubById, getAllCoachesInClubById, getAllUsersInClubByName,
+                        getAllCompetitorsInClubByName, getAllCoachesInClubByName, getAllUsersInClub, getAllCoachesInClub, getAllCompetitorsInClub, getLoginUserClub,
+                        deleteUserByUserId, deleteUserByUcn, leftClubById, leftClubLoggedInUser, makeCoach, removeCoach,
+                        setCoachToClub, addClubToUser, addClubToLoggedInUser, updateUserByUserId, updateUserByUcn, updateLoggedInUser, logout, exit));
         menus.put("manage users", usersMenu);
 
 

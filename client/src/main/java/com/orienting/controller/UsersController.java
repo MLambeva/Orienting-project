@@ -88,12 +88,12 @@ public class UsersController extends MainController {
         return (AllUsersInClubDto) makeRequest(null, USER_URL + "/competitorsAndCoaches", "GET", new AllUsersInClubDto());
     }
 
-    public AllUsersInClubDto getAllCoachesInClub() {
-        return (AllUsersInClubDto) makeRequest(null, USER_URL + "/coaches", "GET", new AllUsersInClubDto());
+    public List<CompetitorsAndCoachDto> getAllCoachesInClub() {
+        return (List<CompetitorsAndCoachDto>) makeRequest(null, USER_URL + "/coaches", "GET", new ArrayList<AllUsersInClubDto>());
     }
 
-    public AllUsersInClubDto getAllCompetitorsInClub() {
-        return (AllUsersInClubDto) makeRequest(null, USER_URL + "/competitors", "GET", new AllUsersInClubDto());
+    public List<CompetitorsAndCoachDto> getAllCompetitorsInClub() {
+        return (List<CompetitorsAndCoachDto>) makeRequest(null, USER_URL + "/competitors", "GET", new ArrayList<AllUsersInClubDto>());
     }
 
     public ClubDto getLoginUserClub() {
@@ -123,5 +123,30 @@ public class UsersController extends MainController {
     public UserDto removeCoach(Integer id) {
         return (UserDto) makeRequest(null, USER_URL + "/removeCoach/" + id, "PUT", new UserDto());
     }
+
+    public UserDto setCoachToClub(Integer userId, Integer clubId) {
+        return (UserDto) makeRequest(null, USER_URL + "/setCoach/" + userId + "/" + clubId, "PUT", new UserDto());
+    }
+
+    public UserDto addClubToUser(Integer userId, Integer clubId) {
+        return (UserDto) makeRequest(null, USER_URL + "/addClub/" + userId + "/" + clubId, "PUT", new UserDto());
+    }
+
+    public UserDto addClubToLoggedInUser(Integer clubId) {
+        return (UserDto) makeRequest(null, USER_URL + "/addClub/" + clubId, "PUT", new UserDto());
+    }
+
+    public UserDto updateUserByUserId(Integer userId, UserUpdateDto user) {
+        return (UserDto) makeRequest(user, USER_URL + "/update/byUserId/" + userId, "PUT", new UserDto());
+    }
+
+    public UserDto updateUserByUcn(String ucn, UserUpdateDto user) {
+        return (UserDto) makeRequest(user, USER_URL + "/update/byUcn/" + ucn, "PUT", new UserDto());
+    }
+
+    public UserDto updateLoggedInUser(UserUpdateDto user) {
+        return (UserDto) makeRequest(user, USER_URL + "/update", "PUT", new UserDto());
+    }
+
 }
 

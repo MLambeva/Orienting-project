@@ -4,11 +4,13 @@ import com.orienting.common.enums.UserRole;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.Set;
 
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 public class UsersWithRequestedCompetitionsDto {
     private Integer userId;

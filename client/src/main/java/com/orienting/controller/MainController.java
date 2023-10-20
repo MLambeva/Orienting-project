@@ -11,6 +11,7 @@ import java.util.Objects;
 public class MainController {
     public Object makeRequest(Object object, String url, String httpMethod, Object responseType) {
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.findAndRegisterModules();
         String requestUrl = url;
 
         try {

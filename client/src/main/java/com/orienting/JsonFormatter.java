@@ -8,6 +8,7 @@ public class JsonFormatter {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     static {
+        objectMapper.findAndRegisterModules();
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
     }
 
