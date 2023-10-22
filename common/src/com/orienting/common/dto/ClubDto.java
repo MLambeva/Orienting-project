@@ -1,11 +1,14 @@
 package com.orienting.common.dto;
 
+import com.orienting.common.enums.UserRole;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 public class ClubDto {
     private Integer clubId;
     @NotBlank(message = "Club name is mandatory!")
@@ -15,4 +18,8 @@ public class ClubDto {
 
     public ClubDto() {}
 
+    public ClubDto(String clubName, String city) {
+        this.clubName = (clubName != null && !clubName.isEmpty()) ? clubName : null;
+        this.city = (city != null && !city.isEmpty()) ? city : null;
+    }
 }

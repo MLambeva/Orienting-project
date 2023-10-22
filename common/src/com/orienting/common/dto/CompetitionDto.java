@@ -9,6 +9,8 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 @Getter
 @Setter
@@ -40,4 +42,20 @@ public class CompetitionDto {
         this.location = location;
         this.coordinates = coordinates;
     }
+    public CompetitionDto(String name, String date, String time, String deadline, String location, String coordinates) {
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+
+        this.name = name;
+        try {
+            this.date = LocalDate.parse(date, dateFormatter);
+            this.time = LocalTime.parse(time, timeFormatter);
+            this.deadline = LocalDate.parse(deadline, dateFormatter);
+        }catch (DateTimeParseException e) {
+            System.err.println("Invalid formats!");
+        }
+        this.location = location;
+        this.coordinates = coordinates;
+    }
+
 }

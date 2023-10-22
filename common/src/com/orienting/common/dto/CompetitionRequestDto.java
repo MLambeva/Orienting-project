@@ -4,12 +4,15 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Set;
 
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 public class CompetitionRequestDto {
     private Integer compId;

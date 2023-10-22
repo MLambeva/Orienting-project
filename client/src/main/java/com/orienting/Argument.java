@@ -1,5 +1,8 @@
 package com.orienting;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 public class Argument {
@@ -26,6 +29,7 @@ public class Argument {
     public void enterValue() {
         Scanner sc = new Scanner(System.in);
         System.out.printf("Enter value for %s: ", name);
-        this.value = sc.nextLine();
+        String input = sc.nextLine();;
+        this.value = input.replaceAll(" ", "%20");
     }
 }

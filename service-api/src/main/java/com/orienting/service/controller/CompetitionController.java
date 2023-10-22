@@ -93,13 +93,13 @@ public class CompetitionController {
     }
 
     @GetMapping("/byCompId/{compId}")
-    public ResponseEntity<CompetitionDto> getCompetitionByName(@PathVariable("compId") Integer compId) {
+    public ResponseEntity<CompetitionDto> getCompetitionById(@PathVariable("compId") Integer compId) {
         CompetitionDto competitionDto = modelMapper.map(competitionService.getCompetitionByCompId(compId), CompetitionDto.class);
 
         return ResponseEntity.ok(competitionDto);
     }
     @GetMapping("/withUsers/byCompId/{compId}")
-    public ResponseEntity<CompetitionRequestDto> getCompetitionByNameWithParticipants(@PathVariable("compId") Integer compId) {
+    public ResponseEntity<CompetitionRequestDto> getCompetitionByIdWithParticipants(@PathVariable("compId") Integer compId) {
         CompetitionRequestDto competitionDto = modelMapper.map(competitionService.getCompetitionByCompId(compId), CompetitionRequestDto.class);
 
         return ResponseEntity.ok(competitionDto);

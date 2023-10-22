@@ -61,13 +61,4 @@ public class UserCreationDto {
             System.err.println("Role must be coach or competitor!");
         if (clubId != null) this.clubId = clubId;
     }
-
-    boolean validateUcn(String ucn) {
-        if(ucn.matches("^\\d{10}$"))
-            return true;
-        else {
-            System.err.println("Error in UCN!");
-            return false;
-        }
-    }
 }

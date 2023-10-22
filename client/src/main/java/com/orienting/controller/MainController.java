@@ -21,7 +21,7 @@ public class MainController {
             HttpURLConnection connection = getHttpURLConnection(requestUrl, httpMethod, requestBody);
             int responseCode = connection.getResponseCode();
 
-            if (responseCode == HttpURLConnection.HTTP_OK) {
+            if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_CREATED) {
                 return handleSuccessfulResponse(connection, objectMapper, responseType);
             } else {
                 handleErrorResponse(connection);
