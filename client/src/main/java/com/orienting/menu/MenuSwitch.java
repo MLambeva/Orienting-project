@@ -94,6 +94,7 @@ public class MenuSwitch {
         Argument coordinates = new Argument("coordinates");
         Argument newCompetitionName = new Argument("new competiton name");
 
+        //Register menu
         MenuEntry m1 = new MenuEntry("Sign up", new CommandWithInputs(List.of(email, password, firstName, lastName, ucn, phoneNumber, group, role, clubId, clubName), (args) -> {
             UserCreationDto user = new UserCreationDto(args.get(0).getValue(), args.get(1).getValue(), args.get(2).getValue(), args.get(3).getValue(), args.get(4).getValue(), args.get(5).getValue(), args.get(6).getValue(), args.get(7).getValue(), args.get(8).getValue(), args.get(9).getValue());
             AuthenticationResponseDto authResponse = auth.register(user);
@@ -143,6 +144,7 @@ public class MenuSwitch {
 
         MenuEntry loggedIn = new MenuEntry("Back to previous menu", new Command(() -> showMenu("menu")), List.of(UserRole.ADMIN, UserRole.COACH, UserRole.COMPETITOR));
 
+        //Users
         MenuEntry getLoggedInUser = new MenuEntry("Get information about me", new Command(() -> {
             System.out.println(JsonFormatter.formatJson(usersController.getLoggedInUser()));
             showMenu("manage users");
@@ -321,6 +323,14 @@ public class MenuSwitch {
                 System.out.println(JsonFormatter.formatJson(result));
             showMenu("manage users");
         }), List.of(UserRole.ADMIN, UserRole.COACH, UserRole.COMPETITOR));
+        MenuEntry addUser = new MenuEntry("Add user", new CommandWithInputs(List.of(email, password, firstName, lastName, ucn, phoneNumber, group, role, clubId, clubName), (args) -> {
+            UserCreationDto user = new UserCreationDto(args.get(0).getValue(), args.get(1).getValue(), args.get(2).getValue(), args.get(3).getValue(), args.get(4).getValue(), args.get(5).getValue(), args.get(6).getValue(), args.get(7).getValue(), args.get(8).getValue(), args.get(9).getValue());
+            UserDto result = usersController.addUser(user);
+            if (result != null)
+                System.out.println(JsonFormatter.formatJson(result));
+            showMenu("manage users");
+        }), List.of(UserRole.ADMIN));
+
 
         Menu usersMenu = new Menu("Manage users",
                 List.of(getLoggedInUser, getAllUsers, getUserById, getUserByUcn, getRole, getRoleById, getRoleByUcn,
@@ -328,7 +338,7 @@ public class MenuSwitch {
                         getLoggedInUserWithRequestedCompetitions, getAllUsersInClubById, getAllCompetitorsInClubById, getAllCoachesInClubById, getAllUsersInClubByName,
                         getAllCompetitorsInClubByName, getAllCoachesInClubByName, getAllUsersInClub, getAllCoachesInClub, getAllCompetitorsInClub,
                         deleteUserByUserId, deleteUserByUcn, makeCoach, removeCoach,
-                        setCoachToClub, updateUserByUserId, updateUserByUcn, updateLoggedInUser, loggedIn, logout));
+                        setCoachToClub, updateUserByUserId, updateUserByUcn, updateLoggedInUser, addUser, loggedIn, logout));
         menus.put("manage users", usersMenu);
 
         //Clubs
@@ -431,6 +441,8 @@ public class MenuSwitch {
                 List.of(getLoginUserClub, getAllClubs, getAllClubsWithUsers, getClubById, getClubByName, getClubWithUsersById, getClubWithUsersByName, addClubToUser, addClubToLoggedInUser, leftClubById, leftClubLoggedInUser, addClub, deleteClubById, deleteClubByName, updateClubById, updateClubByName, loggedIn, logout));
         menus.put("manage clubs", clubsMenu);
 
+
+        //Competitions
         MenuEntry getAllCompetitions = getAllCompetitions(competitionController,"manage competitions");
         MenuEntry getAllCompetitionsWithParticipants = new MenuEntry("Get all competitions with participants", new Command(() -> {
             List<CompetitionRequestDto> result = competitionController.getAllCompetitionsWithParticipants();
@@ -565,25 +577,13 @@ public class MenuSwitch {
                         requestParticipationById, requestParticipationByName, requestLoggedInUserParticipationById, requestLoggedInUserParticipationByName, removeParticipationById, removeParticipationByName, removeLoggedInUserParticipationById, removeLoggedInUserParticipationByName, loggedIn, logout));
         menus.put("manage competitions", competitionMenu);
 
-        MenuEntry menuUsers = new MenuEntry("Menu users", new Command(() -> {
-            showMenu("manage users");
-        }),
-                List.of(UserRole.ADMIN, UserRole.COACH, UserRole.COMPETITOR)
-        );
-        MenuEntry menuClubs = new MenuEntry("Menu clubs", new Command(() -> {
-            showMenu("manage clubs");
-        }),
-                List.of(UserRole.ADMIN, UserRole.COACH, UserRole.COMPETITOR)
-        );
-        MenuEntry menuCompetitions = new MenuEntry("Menu competitions", new Command(() -> {
-            showMenu("manage competitions");
-        }),
-                List.of(UserRole.ADMIN, UserRole.COACH, UserRole.COMPETITOR)
-        );
+
+        MenuEntry menuUsers = new MenuEntry("Menu users", new Command(() -> showMenu("manage users")),List.of(UserRole.ADMIN, UserRole.COACH, UserRole.COMPETITOR));
+        MenuEntry menuClubs = new MenuEntry("Menu clubs", new Command(() -> showMenu("manage clubs")), List.of(UserRole.ADMIN, UserRole.COACH, UserRole.COMPETITOR));
+        MenuEntry menuCompetitions = new MenuEntry("Menu competitions", new Command(() -> showMenu("manage competitions")), List.of(UserRole.ADMIN, UserRole.COACH, UserRole.COMPETITOR));
 
         Menu loggedInUser = new Menu("My menu", List.of(menuUsers, menuClubs, menuCompetitions, logout));
         menus.put("menu", loggedInUser);
-
     }
 
     public static void showMenu(String name) {

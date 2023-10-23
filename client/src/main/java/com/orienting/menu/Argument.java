@@ -1,4 +1,4 @@
-package com.orienting;
+package com.orienting.controller;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
