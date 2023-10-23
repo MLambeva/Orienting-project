@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 @Service
@@ -31,7 +32,7 @@ public class UserCompetitionService {
         }
         if (authUser.isCoach() && (authUser.getClub() == null || user.getClub() == null)
                 || (authUser.getClub() != null && user.getClub() != null && !Objects.equals(authUser.getClub().getClubId(), user.getClub().getClubId()))) {
-            throw new InvalidRoleException(String.format("Cannot manage user with id %d!", user.getUserId()));
+            throw new InvalidRoleException("Cannot manage user with that id!");
         }
     }
 
@@ -40,8 +41,9 @@ public class UserCompetitionService {
         if(user.isRequestedInCompetition(competition)) {
             throw new InvalidInputException("User has already request!");
         }
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         if(LocalDate.now().isAfter(competition.getDeadline())) {
-            throw new InvalidInputException(String.format("Cannot request participation! The deadline is %s!", competition.getDeadline()));
+            throw new InvalidInputException(String.format("Cannot request participation! The deadline is %s!", competition.getDeadline().format(dateFormatter)));
         }
         if (user.getClub() != null) {
             user.addCompetition(competition);
@@ -52,14 +54,14 @@ public class UserCompetitionService {
     }
 
     public UserEntity requestParticipationById(Integer userId, Integer compId, String email) {
-        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with userId: %d does not exist!", userId)));
-        CompetitionEntity competition = competitionRepository.findCompetitionByCompId(compId).orElseThrow(() -> new NoExistedCompetitionException(String.format("Competition with id %d does not exist!", compId)));
+        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException("User with that id does not exist!"));
+        CompetitionEntity competition = competitionRepository.findCompetitionByCompId(compId).orElseThrow(() -> new NoExistedCompetitionException("Competition with that id does not exist!"));
         return request(user, competition, email);
     }
 
 
     public UserEntity requestParticipationByName(Integer userId, String name, String email) {
-        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with userId: %d does not exist!", userId)));
+        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException("User with that id does not exist!"));
         CompetitionEntity competition = competitionRepository.findCompetitionByName(name).orElseThrow(() -> new NoExistedCompetitionException(String.format("Competition with name %s does not exist!", name)));
         return request(user, competition, email);
     }
@@ -74,14 +76,14 @@ public class UserCompetitionService {
     }
 
     public UserEntity removeParticipationById(Integer userId, Integer compId, String email) {
-        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with userId: %d does not exist!", userId)));
-        CompetitionEntity competition = competitionRepository.findCompetitionByCompId(compId).orElseThrow(() -> new NoExistedCompetitionException(String.format("Competition with id %d does not exist!", compId)));
+        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException("User with that id does not exist!"));
+        CompetitionEntity competition = competitionRepository.findCompetitionByCompId(compId).orElseThrow(() -> new NoExistedCompetitionException("Competition with that id does not exist!"));
         return removeParticipant(user, competition, email);
     }
 
 
     public UserEntity removeParticipationByName(Integer userId, String name, String email) {
-        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with userId: %d does not exist!", userId)));
+        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException("User with that id does not exist!"));
         CompetitionEntity competition = competitionRepository.findCompetitionByName(name).orElseThrow(() -> new NoExistedCompetitionException(String.format("Competition with name %s does not exist!", name)));
         return removeParticipant(user, competition, email);
     }

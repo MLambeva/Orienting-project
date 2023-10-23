@@ -19,7 +19,7 @@ public class ClubDto {
     public ClubDto() {}
 
     public ClubDto(String clubName, String city) {
-        this.clubName = (clubName != null && !clubName.isEmpty()) ? clubName : null;
-        this.city = (city != null && !city.isEmpty()) ? city : null;
+        this.clubName = (clubName != null && !clubName.isEmpty() ?  clubName.replaceAll("%20", " ") : null);
+        this.city = (city != null && !city.isEmpty() ?  city.replaceAll("%20", " ") : null);
     }
 }

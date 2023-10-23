@@ -46,7 +46,7 @@ public class CompetitionDto {
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-        this.name = name;
+        this.name = (name != null && !name.isEmpty() ?  name.replaceAll("%20", " ") : null);
         try {
             this.date = LocalDate.parse(date, dateFormatter);
             this.time = LocalTime.parse(time, timeFormatter);
@@ -54,7 +54,7 @@ public class CompetitionDto {
         }catch (DateTimeParseException e) {
             System.err.println("Invalid formats!");
         }
-        this.location = location;
+        this.location = (location != null && !location.isEmpty() ?  location.replaceAll("%20", " ") : null);
         this.coordinates = coordinates;
     }
 

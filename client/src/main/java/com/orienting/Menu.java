@@ -1,14 +1,12 @@
 package com.orienting;
 
+import java.awt.*;
 import java.util.List;
 import java.util.Scanner;
 
 public class Menu {
     private String name;
     private List<MenuEntry> entries;
-
-    public Menu() {
-    }
 
     public Menu(String name, List<MenuEntry> entries) {
         this.name = name;
@@ -36,7 +34,7 @@ public class Menu {
 
         System.out.println();
         System.out.println(name);
-        System.out.println("==================================");
+        System.out.println("===============================");
 
         List<MenuEntry> permittedEntries = entries
                 .stream()
@@ -46,15 +44,20 @@ public class Menu {
             System.out.printf("(%d) - %s\n", i+1, permittedEntries.get(i).getName());
         }
 
-        System.out.print("Choose menu: ");
-        int choice = Integer.parseInt(sc.nextLine());
+        int choice = -1;
+        while (choice < 1 || choice > permittedEntries.size()) {
+            try {
+                System.out.print("Choose menu: ");
+                choice = Integer.parseInt(sc.nextLine());
 
-        if (choice >= 1 && choice <= permittedEntries.size()) {
-            permittedEntries.get(choice - 1).getAction().doAction();
+                if (choice < 1 || choice > permittedEntries.size()) {
+                    System.out.printf("Your choice should be between %d and %d%n", 1, permittedEntries.size());
+                } else {
+                    permittedEntries.get(choice - 1).getAction().doAction();
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a valid integer choice.");
+            }
         }
-        else {
-            throw new RuntimeException(String.format("Your choice should be between %d and %d", 1, permittedEntries.size()));
-        }
-
     }
 }

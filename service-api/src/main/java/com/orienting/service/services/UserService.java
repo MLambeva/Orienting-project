@@ -33,7 +33,7 @@ public class UserService {
 
     public UserEntity getUserById(Integer userId) {
         return userRepository.findUserByUserId(userId).orElseThrow(() ->
-                new NoExistedUserException(String.format("User with id %d does not exist!", userId)));
+                new NoExistedUserException("User with that id does not exist!"));
     }
 
     public UserEntity getUserByUcn(String ucn) {
@@ -42,7 +42,7 @@ public class UserService {
     }
 
     public String getRoleByUserId(Integer userId) {
-        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with userId: %d does not exist!", userId)));
+        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException("User with that id does not exist!"));
         return user.getRole().name();
     }
 
@@ -62,10 +62,10 @@ public class UserService {
     }
 
     public List<UserEntity> getCoachesByUserId(Integer userId) {
-        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with userId: %d does not exist!", userId)));
+        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException("User with that id does not exist!"));
         ClubEntity club = user.getClub();
         if (club == null) {
-            throw new NoExistedClubException(String.format("User with id %d does not belong to club!", userId));
+            throw new NoExistedClubException("User with that id does not belong to club!");
         }
         if (user.isCoach()) {
             throw new InvalidRoleException("User must be competitor!");
@@ -74,32 +74,8 @@ public class UserService {
     }
 
     public List<CompetitionEntity> getCompetitionsByUserId(Integer userId) {
-        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with userId: %d does not exist!", userId)));
+        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException("User with that id does not exist!"));
         return user.getCompetitions().stream().toList();
-    }
-
-    public List<UserEntity> getAllUsersInClubByClubId(Integer clubId) {
-        return userRepository.findAllUsersInClubByClubId(clubId).orElseThrow(() -> new NoExistedUserException("Club is empty!"));
-    }
-
-    public List<UserEntity> getAllCompetitorsInClubByClubId(Integer clubId) {
-        return userRepository.findAllUsersInClubByClubId(clubId).orElseThrow(() -> new NoExistedUserException("The club does not have competitors!")).stream().filter(UserEntity::isCompetitor).toList();
-    }
-
-    public List<UserEntity> getAllCoachesInClubByClubId(Integer clubId) {
-        return userRepository.findAllUsersInClubByClubId(clubId).orElseThrow(() -> new NoExistedUserException("The club does not have coaches!")).stream().filter(UserEntity::isCoach).toList();
-    }
-
-    public List<UserEntity> getAllUsersInClubByClubName(String clubName) {
-        return userRepository.findAllUsersInClubByName(clubName).orElseThrow(() -> new NoExistedUserException("Club is empty!"));
-    }
-
-    public List<UserEntity> getAllCompetitorsInClubByClubName(String clubName) {
-        return userRepository.findAllUsersInClubByName(clubName).orElseThrow(() -> new NoExistedUserException("The club does not have competitors!")).stream().filter(UserEntity::isCompetitor).toList();
-    }
-
-    public List<UserEntity> getAllCoachesInClubByClubName(String clubName) {
-        return userRepository.findAllUsersInClubByName(clubName).orElseThrow(() -> new NoExistedUserException("The club does not have coaches!")).stream().filter(UserEntity::isCoach).toList();
     }
 
     private void validateAccessUser(UserEntity user, String email) {
@@ -112,12 +88,12 @@ public class UserService {
         }
         if (authUser.isCoach() && (authUser.getClub() == null || user.getClub() == null)
         || (authUser.getClub() != null && user.getClub() != null && !Objects.equals(authUser.getClub().getClubId(), user.getClub().getClubId()))) {
-                throw new InvalidRoleException(String.format("Cannot delete user with id %d!", user.getUserId()));
+                throw new InvalidRoleException("Cannot delete user with that id!");
         }
     }
 
     public UserEntity deleteUserByUserId(Integer userId, String email) {
-        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with userId: %d does not exist!", userId)));
+        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException("User with that id does not exist!"));
         validateAccessUser(user, email);
         userRepository.delete(user);
         return user;
@@ -131,13 +107,18 @@ public class UserService {
     }
 
     public UserEntity leftClub(Integer userId) {
-        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with id: %s does not exist!", userId)));
-        user.leftClub();
-        return userRepository.save(user);
+        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException("User with that id does not exist!"));
+        if(user.getClub() != null) {
+            user.leftClub();
+            return userRepository.save(user);
+        }
+        else {
+            throw new NoExistedClubException("User does not belong to club!");
+        }
     }
 
     public UserEntity makeCoach(Integer userId) {
-        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with id %d does not exist!", userId)));
+        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException("User with that id does not exist!"));
         if (user.isCoach()) {
             throw new InvalidRoleException("Role must be competitor!");
         }
@@ -146,7 +127,7 @@ public class UserService {
     }
 
     public UserEntity removeCoach(Integer userId) {
-        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException(String.format("User with id %d does not exist!", userId)));
+        UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException("User with that id does not exist!"));
         if (user.isCompetitor()) {
             throw new InvalidRoleException("Role must be coach!");
         }

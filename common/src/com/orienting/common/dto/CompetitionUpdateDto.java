@@ -10,6 +10,7 @@ import lombok.Setter;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 @Getter
 @Setter
@@ -31,11 +32,15 @@ public class CompetitionUpdateDto {
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-        this.name = (name != null && !name.isEmpty()) ? name : null;
-        this.date = (date != null && !date.isEmpty()) ? LocalDate.parse(date, dateFormatter) : null;
-        this.time = (time != null && !time.isEmpty()) ? LocalTime.parse(time, timeFormatter) : null;
-        this.deadline = (deadline != null && !deadline.isEmpty()) ? LocalDate.parse(deadline, dateFormatter) : null;
-        this.location = (location != null && !location.isEmpty()) ? location : null;
+        this.name = (name != null && !name.isEmpty() ?  name.replaceAll("%20", " ") : null);
+        try {
+            this.date = (date != null && !date.isEmpty()) ? LocalDate.parse(date, dateFormatter) : null;
+            this.time = (time != null && !time.isEmpty()) ? LocalTime.parse(time, timeFormatter) : null;
+            this.deadline = (deadline != null && !deadline.isEmpty()) ? LocalDate.parse(deadline, dateFormatter) : null;
+        }catch (DateTimeParseException e) {
+            System.err.println("Invalid formats!");
+        }
+        this.location = (location != null && !location.isEmpty() ?  location.replaceAll("%20", " ") : null);
         this.coordinates = (coordinates != null && !coordinates.isEmpty()) ? coordinates : null;
     }
 }

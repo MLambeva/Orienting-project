@@ -32,25 +32,11 @@ public class MainController {
         return null;
     }
 
-    /*private Object handleSuccessfulResponse(HttpURLConnection connection, ObjectMapper objectMapper, Object responseType) throws IOException {
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
-            StringBuilder handleResponse = new StringBuilder();
-            String line;
-            while ((line = br.readLine()) != null) {
-                handleResponse.append(line);
-            }
-            connection.disconnect();
-            if("".equals(responseType)) {
-                return handleResponse.toString();
-            }
-            return objectMapper.readValue(handleResponse.toString(), responseType.getClass());
-        }
-    }*/
     private Object handleSuccessfulResponse(HttpURLConnection connection, ObjectMapper objectMapper, Object responseType) throws IOException {
         String responseContent = readResponseContent(connection);
         connection.disconnect();
 
-        if ("".equals(responseType)) {
+        if (responseType instanceof String) {
             return responseContent;
         }
 

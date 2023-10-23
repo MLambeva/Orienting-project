@@ -1,5 +1,7 @@
 package com.orienting.service.controller;
 
+import com.orienting.common.dto.AllUsersInClubDto;
+import com.orienting.common.dto.CompetitorsAndCoachDto;
 import com.orienting.common.dto.UserDto;
 import com.orienting.common.dto.UserUpdateDto;
 import com.orienting.service.entity.UserEntity;
@@ -13,6 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping(value = "/api/users", produces = MediaType.APPLICATION_JSON_VALUE)
 @Getter
@@ -24,6 +29,59 @@ public class UserClubController {
     public UserClubController(UserClubService userClubService, ModelMapper modelMapper) {
         this.userClubService = userClubService;
         this.modelMapper = modelMapper;
+    }
+
+    @GetMapping("allUsersInClub/byId/{clubId}")
+    public ResponseEntity<List<CompetitorsAndCoachDto>> getAllUsersInClubById(@PathVariable("clubId") Integer clubId) {
+        return ResponseEntity.ok(userClubService.getAllUsersInClubByClubId(clubId).stream().map(user -> modelMapper.map(user, CompetitorsAndCoachDto.class)).toList());
+    }
+
+    @GetMapping("allCompetitorsInClub/byId/{clubId}")
+    public ResponseEntity<List<CompetitorsAndCoachDto>> getAllCompetitorsInClubById(@PathVariable("clubId") Integer clubId) {
+        return ResponseEntity.ok(userClubService.getAllCompetitorsInClubByClubId(clubId).stream().map(user -> modelMapper.map(user, CompetitorsAndCoachDto.class)).toList());
+    }
+
+    @GetMapping("allCoachesInClub/byId/{clubId}")
+    public ResponseEntity<List<CompetitorsAndCoachDto>> getAllCoachesInClubById(@PathVariable("clubId") Integer clubId) {
+        return ResponseEntity.ok(userClubService.getAllCoachesInClubByClubId(clubId).stream().map(user -> modelMapper.map(user, CompetitorsAndCoachDto.class)).toList());
+    }
+
+    @GetMapping("allUsersInClub/byName/{clubName}")
+    public ResponseEntity<List<CompetitorsAndCoachDto>> getAllUsersInClubByName(@PathVariable("clubName") String clubName) {
+        return ResponseEntity.ok(userClubService.getAllUsersInClubByClubName(clubName).stream().map(user -> modelMapper.map(user, CompetitorsAndCoachDto.class)).toList());
+    }
+
+    @GetMapping("allCompetitorsInClub/byName/{clubName}")
+    public ResponseEntity<List<CompetitorsAndCoachDto>> getAllCompetitorsInClubByNAme(@PathVariable("clubName") String clubName) {
+        return ResponseEntity.ok(userClubService.getAllCompetitorsInClubByClubName(clubName).stream().map(user -> modelMapper.map(user, CompetitorsAndCoachDto.class)).toList());
+    }
+
+    @GetMapping("allCoachesInClub/byName/{clubName}")
+    public ResponseEntity<List<CompetitorsAndCoachDto>> getAllCoachesInClubByName(@PathVariable("clubName") String clubName) {
+        return ResponseEntity.ok(userClubService.getAllCoachesInClubByClubName(clubName).stream().map(user -> modelMapper.map(user, CompetitorsAndCoachDto.class)).toList());
+    }
+
+    @GetMapping("competitorsAndCoaches")
+    public ResponseEntity<AllUsersInClubDto> getAllUsersInClub(Authentication authentication) {
+        if(userClubService.findAuthenticatedUser(authentication.getName()).getClub() == null) {
+            throw new IllegalArgumentException("User does not belong to club!");
+        }
+        Integer clubId = userClubService.findAuthenticatedUser(authentication.getName()).getClub().getClubId();
+        AllUsersInClubDto result = new AllUsersInClubDto();
+        result.setCompetitors(userClubService.getAllCompetitorsInClubByClubId(clubId).stream().map(coach -> modelMapper.map(coach, CompetitorsAndCoachDto.class)).collect(Collectors.toSet()));
+        result.setCoaches(userClubService.getAllCoachesInClubByClubId(clubId).stream().map(coach -> modelMapper.map(coach, CompetitorsAndCoachDto.class)).collect(Collectors.toSet()));
+
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/coaches")
+    public ResponseEntity<List<CompetitorsAndCoachDto>> getAllCoachesInClub(Authentication authentication) {
+        return getAllCoachesInClubById(userClubService.findAuthenticatedUser(authentication.getName()).getClub().getClubId());
+    }
+
+    @GetMapping("/competitors")
+    public ResponseEntity<List<CompetitorsAndCoachDto>> getAllCompetitorsInClub(Authentication authentication) {
+        return getAllCompetitorsInClubById(userClubService.findAuthenticatedUser(authentication.getName()).getClub().getClubId());
     }
 
     @PutMapping("setCoach/{userId}/{clubId}")

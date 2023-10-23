@@ -24,7 +24,7 @@ public class ClubService {
     }
 
     public ClubEntity getClubById(Integer clubId) {
-        return clubRepository.findClubByClubId(clubId).orElseThrow(() -> new NoExistedClubException(String.format("Club with id %d does not exist!", clubId)));
+        return clubRepository.findClubByClubId(clubId).orElseThrow(() -> new NoExistedClubException("Club with that id does not exist!"));
     }
 
     public ClubEntity getClubByName(String clubName) {
@@ -46,7 +46,7 @@ public class ClubService {
     }
 
     public ClubEntity deleteClubById(Integer clubId) {
-        ClubEntity club = clubRepository.findClubByClubId(clubId).orElseThrow(() -> new NoExistedClubException(String.format("Club with id %d does not exist!", clubId)));
+        ClubEntity club = clubRepository.findClubByClubId(clubId).orElseThrow(() -> new NoExistedClubException("Club with that id does not exist!"));
         clubRepository.delete(club);
         return club;
     }
@@ -59,7 +59,7 @@ public class ClubService {
 
     public ClubEntity updateClubById(Integer clubId, ClubEntity newClub) {
         validateIfClubExist(newClub);
-        ClubEntity club = clubRepository.findClubByClubId(clubId).orElseThrow(() -> new NoExistedClubException(String.format("Club with id %d does not exist!", clubId)));
+        ClubEntity club = clubRepository.findClubByClubId(clubId).orElseThrow(() -> new NoExistedClubException("Club with that id does not exist!"));
         club.updateClub(newClub);
         return clubRepository.save(club);
     }

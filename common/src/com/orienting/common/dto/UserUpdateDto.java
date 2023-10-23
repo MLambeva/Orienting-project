@@ -25,7 +25,7 @@ public class UserUpdateDto {
     private Integer clubId;
     private String clubName;
 
-    public UserUpdateDto(String email, String password, String firstName, String lastName, String phoneNumber, String group, String role, Integer clubId) {
+    public UserUpdateDto(String email, String password, String firstName, String lastName, String phoneNumber, String group, String role, String clubId, String clubName) {
         this.email = (email != null && !email.isEmpty()) ? email : null;
         this.password = (password != null && !password.isEmpty()) ? password : null;
         this.firstName = (firstName != null && !firstName.isEmpty()) ? firstName : null;
@@ -36,8 +36,12 @@ public class UserUpdateDto {
             this.role = UserRole.valueOf(role);
         else if(role != null && !role.isEmpty() && !role.matches("^(COACH|COMPETITOR)$"))
             System.err.println("Role must be coach or competitor!");
-        if (clubId != null) {
-            this.clubId = clubId;
+        if(clubId != null &&  !clubId.isEmpty() && clubId.matches("\\d+"))
+            this.clubId = Integer.parseInt(clubId);
+        else if(clubId != null &&  !clubId.isEmpty() && !clubId.matches("\\d+")) {
+            this.clubId = null;
+            System.err.println("Invalid input for clubId!");
         }
+        if(clubName != null && !clubName.isEmpty()) this.clubName = clubName.replaceAll("%20", " ");
     }
 }

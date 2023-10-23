@@ -31,7 +31,7 @@ public class CompetitionService {
     }
 
     public CompetitionEntity getCompetitionByCompId(Integer compId) {
-        return competitionRepository.findCompetitionByCompId(compId).orElseThrow(() -> new NoExistedCompetitionException(String.format("Competition with id %s does not exist!", compId)));
+        return competitionRepository.findCompetitionByCompId(compId).orElseThrow(() -> new NoExistedCompetitionException("Competition with that id does not exist!"));
     }
 
     private void validateIfCompetitionExist(CompetitionEntity competition) {
@@ -58,7 +58,7 @@ public class CompetitionService {
     }
 
     public CompetitionEntity deleteCompById(Integer compId) {
-        CompetitionEntity competition = competitionRepository.findCompetitionByCompId(compId).orElseThrow(() -> new NoExistedCompetitionException(String.format("Competition with id %d does not exist!", compId)));
+        CompetitionEntity competition = competitionRepository.findCompetitionByCompId(compId).orElseThrow(() -> new NoExistedCompetitionException("Competition with that id does not exist!"));
         validateAndDeleteCompetition(competition);
         return competition;
     }
@@ -80,7 +80,7 @@ public class CompetitionService {
 
     public CompetitionEntity updateCompetitionById(Integer compId, CompetitionEntity competition) {
         validateIfCompetitionExist(competition);
-        CompetitionEntity competitionEntity = competitionRepository.findCompetitionByCompId(compId).orElseThrow(() -> new NoExistedCompetitionException(String.format("Competition with id %d does not exist!", compId)));
+        CompetitionEntity competitionEntity = competitionRepository.findCompetitionByCompId(compId).orElseThrow(() -> new NoExistedCompetitionException("Competition with that id does not exist!"));
         validateAndUpdateCompetition(competitionEntity, competition);
         return competitionRepository.save(competitionEntity);
     }
