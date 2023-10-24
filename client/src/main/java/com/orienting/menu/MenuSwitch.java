@@ -80,8 +80,8 @@ public class MenuSwitch {
         Argument lastName = new Argument("last name");
         Argument ucn = new Argument("ucn");
         Argument phoneNumber = new Argument("phone number");
-        Argument group = new Argument("group");
-        Argument role = new Argument("role");
+        Argument group = new Argument("group in format M/W(dd), d-digit --> for exampe: M21");
+        Argument role = new Argument("role - coach/competitor");
 
         Argument clubId = new Argument("club id");
         Argument clubName = new Argument("club name");
@@ -90,12 +90,12 @@ public class MenuSwitch {
 
         Argument compId = new Argument("competition id");
         Argument competitionName = new Argument("competition name");
-        Argument date = new Argument("date");
-        Argument time = new Argument("time");
-        Argument deadline = new Argument("deadline");
+        Argument date = new Argument("date in format dd-MM-yyyy");
+        Argument time = new Argument("time in format hh:mm:ss");
+        Argument deadline = new Argument("deadline in format dd-MM-yyyy");
         Argument location = new Argument("location");
         Argument coordinates = new Argument("coordinates");
-        Argument newCompetitionName = new Argument("new competiton name");
+        Argument newCompetitionName = new Argument("new competition name");
 
         //Register menu
         MenuEntry m1 = new MenuEntry("Sign up", new CommandWithInputs(List.of(email, password, firstName, lastName, ucn, phoneNumber, group, role, clubId, clubName), (args) -> {
@@ -305,22 +305,22 @@ public class MenuSwitch {
                 System.out.println(JsonFormatter.formatJson(result));
             showMenu("manage users");
         }), List.of(UserRole.ADMIN));
-        MenuEntry updateUserByUserId = new MenuEntry("Update user by user id", new CommandWithInputs(List.of(userId, email, password, firstName, lastName, phoneNumber, group, role, clubId, clubName), (args) -> {
-            UserUpdateDto userUpdateDto = new UserUpdateDto(args.get(1).getValue(), args.get(2).getValue(), args.get(3).getValue(), args.get(4).getValue(), args.get(5).getValue(), args.get(6).getValue(), args.get(7).getValue(), args.get(8).getValue(), args.get(9).getValue());
+        MenuEntry updateUserByUserId = new MenuEntry("Update user by user id", new CommandWithInputs(List.of(userId, email, password, firstName, lastName, phoneNumber, group, clubId, clubName), (args) -> {
+            UserUpdateDto userUpdateDto = new UserUpdateDto(args.get(1).getValue(), args.get(2).getValue(), args.get(3).getValue(), args.get(4).getValue(), args.get(5).getValue(), args.get(6).getValue(), args.get(7).getValue(), args.get(8).getValue());
             UserDto result = usersController.updateUserByUserId(validateId(args.get(0).getValue()), userUpdateDto);
             if (result != null)
                 System.out.println(JsonFormatter.formatJson(result));
             showMenu("manage users");
         }), List.of(UserRole.ADMIN, UserRole.COACH));
-        MenuEntry updateUserByUcn = new MenuEntry("Update user by ucn", new CommandWithInputs(List.of(ucn, email, password, firstName, lastName, phoneNumber, group, role, clubId, clubName), (args) -> {
-            UserUpdateDto userUpdateDto = new UserUpdateDto(args.get(1).getValue(), args.get(2).getValue(), args.get(3).getValue(), args.get(4).getValue(), args.get(5).getValue(), args.get(6).getValue(), args.get(7).getValue(), args.get(8).getValue(), args.get(9).getValue());
+        MenuEntry updateUserByUcn = new MenuEntry("Update user by ucn", new CommandWithInputs(List.of(ucn, email, password, firstName, lastName, phoneNumber, group, clubId, clubName), (args) -> {
+            UserUpdateDto userUpdateDto = new UserUpdateDto(args.get(1).getValue(), args.get(2).getValue(), args.get(3).getValue(), args.get(4).getValue(), args.get(5).getValue(), args.get(6).getValue(), args.get(7).getValue(), args.get(8).getValue());
             UserDto result = usersController.updateUserByUcn(args.get(0).getValue(), userUpdateDto);
             if (result != null)
                 System.out.println(JsonFormatter.formatJson(result));
             showMenu("manage users");
         }), List.of(UserRole.ADMIN, UserRole.COACH));
-        MenuEntry updateLoggedInUser = new MenuEntry("Update", new CommandWithInputs(List.of(email, password, firstName, lastName, phoneNumber, group, role, clubId, clubName), (args) -> {
-            UserUpdateDto userUpdateDto = new UserUpdateDto(args.get(0).getValue(), args.get(1).getValue(), args.get(2).getValue(), args.get(3).getValue(), args.get(4).getValue(), args.get(5).getValue(), args.get(6).getValue(), args.get(7).getValue(), args.get(8).getValue());
+        MenuEntry updateLoggedInUser = new MenuEntry("Update", new CommandWithInputs(List.of(email, password, firstName, lastName, phoneNumber, group, clubId, clubName), (args) -> {
+            UserUpdateDto userUpdateDto = new UserUpdateDto(args.get(0).getValue(), args.get(1).getValue(), args.get(2).getValue(), args.get(3).getValue(), args.get(4).getValue(), args.get(5).getValue(), args.get(6).getValue(), args.get(7).getValue());
             UserDto result = usersController.updateLoggedInUser(userUpdateDto);
             if (result != null)
                 System.out.println(JsonFormatter.formatJson(result));

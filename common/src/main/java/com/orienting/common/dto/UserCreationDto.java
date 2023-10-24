@@ -23,7 +23,7 @@ public class UserCreationDto {
     private String firstName;
     @NotBlank(message = "Last name is mandatory!")
     private String lastName;
-    @Pattern(regexp = "^\\d{10}$", message = "UCN have 10 digits")
+    @Pattern(regexp = "^\\d{10}$", message = "UCN must have 10 digits")
     @NotBlank(message = "Unified Civil number is mandatory!")
     private String ucn;
     @Pattern(regexp = "^(\\+\\d{1,2})?\\s?\\(?\\d{3}\\)?[-.\\s]?\\d{3}[-.\\s]?\\d{4}$", message = "Invalid phone number!")
@@ -48,13 +48,19 @@ public class UserCreationDto {
     }
 
     public UserCreationDto(String email, String password, String firstName, String lastName, String ucn, String phoneNumber, String group, String role, String clubId, String clubName) {
-        this.email = email;
-        this.password = password;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.ucn = ucn;
+        if (email != null) this.email = email;
+        else System.err.println("The email is mandatory!");
+        if(password != null) this.password = password;
+        else System.err.println("The password is mandatory!");
+        if(firstName != null) this.firstName = firstName;
+        else System.err.println("First name is mandatory!");
+        if(lastName != null) this.lastName = firstName;
+        else System.err.println("Last name is mandatory!");
+        if(ucn != null && ucn.length() == 10) this.ucn = ucn;
+        else System.err.println("Unified Civil number is mandatory and must have 10 digits!");
         this.phoneNumber = phoneNumber;
         this.group = group;
+        role = role.toUpperCase();
         if(role.matches("^(COACH|COMPETITOR)$"))
             this.role = UserRole.valueOf(role);
         else
