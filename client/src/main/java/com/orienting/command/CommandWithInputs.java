@@ -1,4 +1,6 @@
-package com.orienting;
+package com.orienting.command;
+
+import com.orienting.menu.Argument;
 
 import java.util.List;
 import java.util.function.Consumer;

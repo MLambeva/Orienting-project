@@ -1,8 +1,12 @@
-package com.orienting;
+package com.orienting.menu;
 
+import com.orienting.command.Command;
+import com.orienting.command.CommandWithInputs;
 import com.orienting.common.dto.*;
+import com.orienting.context.UserContext;
 import com.orienting.controller.*;
 import com.orienting.common.enums.UserRole;
+import com.orienting.utils.JsonFormatter;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -16,7 +20,6 @@ public class MenuSwitch {
         if (id.matches("\\d+")) {
             return Integer.parseInt(id);
         } else {
-            //System.err.println("Id must be integer!");
             return -1;
         }
     }
@@ -142,7 +145,7 @@ public class MenuSwitch {
         menus.put("logout", logoutMenu);
 
 
-        MenuEntry loggedIn = new MenuEntry("Back to previous menu", new Command(() -> showMenu("menu")), List.of(UserRole.ADMIN, UserRole.COACH, UserRole.COMPETITOR));
+        MenuEntry loggedIn = new MenuEntry("Back to the previous menu", new Command(() -> showMenu("menu")), List.of(UserRole.ADMIN, UserRole.COACH, UserRole.COMPETITOR));
 
         //Users
         MenuEntry getLoggedInUser = new MenuEntry("Get information about me", new Command(() -> {

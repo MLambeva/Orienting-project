@@ -1,5 +1,5 @@
-package com.orienting;
+package com.orienting.command;
 
 public interface Action {
-    public void doAction();
+    void doAction();
 }

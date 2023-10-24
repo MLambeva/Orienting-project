@@ -74,8 +74,6 @@ public class AuthenticationService {
                 newClub = clubRepository.findClubByClubName(request.getClub().getClubName()).orElseThrow(() -> new NoExistedClubException(String.format("Club with name %s does not exist!", request.getClub().getClubName())));
             }
         }
-        if(request.getRole() == UserRole.ADMIN)
-            throw new InvalidInputException("Role must be coach or competitor!");
         UserEntity user = UserEntity.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))

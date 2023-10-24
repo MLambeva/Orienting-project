@@ -1,10 +1,8 @@
 package com.orienting.service.controller;
 
-import com.orienting.common.dto.AllUsersInClubDto;
-import com.orienting.common.dto.CompetitorsAndCoachDto;
-import com.orienting.common.dto.UserDto;
-import com.orienting.common.dto.UserUpdateDto;
+import com.orienting.common.dto.*;
 import com.orienting.service.entity.UserEntity;
+import com.orienting.service.exception.NoExistedClubException;
 import com.orienting.service.services.UserClubService;
 import jakarta.validation.Valid;
 import lombok.Getter;
@@ -61,11 +59,14 @@ public class UserClubController {
         return ResponseEntity.ok(userClubService.getAllCoachesInClubByClubName(clubName).stream().map(user -> modelMapper.map(user, CompetitorsAndCoachDto.class)).toList());
     }
 
+    private void validateIfHaveClub(Authentication authentication) {
+        if(userClubService.findAuthenticatedUser(authentication.getName()).getClub() == null) {
+            throw new NoExistedClubException("User does not belong to club!");
+        }
+    }
     @GetMapping("competitorsAndCoaches")
     public ResponseEntity<AllUsersInClubDto> getAllUsersInClub(Authentication authentication) {
-        if(userClubService.findAuthenticatedUser(authentication.getName()).getClub() == null) {
-            throw new IllegalArgumentException("User does not belong to club!");
-        }
+        validateIfHaveClub(authentication);
         Integer clubId = userClubService.findAuthenticatedUser(authentication.getName()).getClub().getClubId();
         AllUsersInClubDto result = new AllUsersInClubDto();
         result.setCompetitors(userClubService.getAllCompetitorsInClubByClubId(clubId).stream().map(coach -> modelMapper.map(coach, CompetitorsAndCoachDto.class)).collect(Collectors.toSet()));
@@ -76,11 +77,13 @@ public class UserClubController {
 
     @GetMapping("/coaches")
     public ResponseEntity<List<CompetitorsAndCoachDto>> getAllCoachesInClub(Authentication authentication) {
+        validateIfHaveClub(authentication);
         return getAllCoachesInClubById(userClubService.findAuthenticatedUser(authentication.getName()).getClub().getClubId());
     }
 
     @GetMapping("/competitors")
     public ResponseEntity<List<CompetitorsAndCoachDto>> getAllCompetitorsInClub(Authentication authentication) {
+        validateIfHaveClub(authentication);
         return getAllCompetitorsInClubById(userClubService.findAuthenticatedUser(authentication.getName()).getClub().getClubId());
     }
 
@@ -115,5 +118,11 @@ public class UserClubController {
     public ResponseEntity<UserDto> updateLoggedInUser(@Valid @RequestBody UserUpdateDto newUser, Authentication authentication) {
         UserDto user = modelMapper.map(userClubService.update(authentication.getName(), modelMapper.map(newUser, UserEntity.class)), UserDto.class);
         return ResponseEntity.ok(user);
+    }
+
+    @PostMapping("/addUser")
+    public ResponseEntity<UserDto> addUser(@Valid @RequestBody UserCreationDto user) {
+        UserDto userDto = modelMapper.map(userClubService.addUser(modelMapper.map(user, UserEntity.class)), UserDto.class);
+        return ResponseEntity.ok(userDto);
     }
 }

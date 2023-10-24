@@ -1,5 +1,6 @@
-package com.orienting;
+package com.orienting.menu;
 
+import com.orienting.command.Action;
 import com.orienting.common.enums.UserRole;
 
 import java.util.List;

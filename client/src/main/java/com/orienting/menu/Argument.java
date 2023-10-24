@@ -1,8 +1,5 @@
-package com.orienting.controller;
+package com.orienting.menu;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 public class Argument {

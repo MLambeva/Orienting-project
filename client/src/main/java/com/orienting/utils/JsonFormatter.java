@@ -1,4 +1,4 @@
-package com.orienting;
+package com.orienting.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;

@@ -144,4 +144,24 @@ public class UserClubService {
         user.updateUser(newUser);
         return userRepository.save(user);
     }
+
+    public UserEntity addUser(UserEntity user) {
+        if (user == null) {
+            throw new InvalidInputException("Input user is null!");
+        }
+        if (userRepository.findUserByEmail(user.getEmail()).isPresent()) {
+            throw new InvalidInputException(String.format("User with email %s already exist!", user.getEmail()));
+        }
+        ClubEntity newClub = null;
+        if (user.getClub() != null) {
+            if (user.getClub().getClubId() != null) {
+                newClub = clubRepository.findClubByClubId(user.getClub().getClubId()).orElseThrow(() -> new NoExistedClubException(String.format("Club with id %d does not exist!", user.getClub().getClubId())));
+            } else if (user.getClub().getClubName() != null) {
+                newClub = clubRepository.findClubByClubName(user.getClub().getClubName()).orElseThrow(() -> new NoExistedClubException(String.format("Club with name %s does not exist!", user.getClub().getClubName())));
+            }
+        }
+        user.setClub(newClub);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userRepository.save(user);
+    }
 }

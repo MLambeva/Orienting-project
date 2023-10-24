@@ -63,6 +63,8 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/users/setCoach/*/*").hasAuthority(UserRole.ADMIN.name())
                         .requestMatchers("/api/users/addClub/*/*").hasAuthority(UserRole.ADMIN.name())
                         .requestMatchers("/api/users/addClub/*").hasAnyAuthority(UserRole.COACH.name(), UserRole.COMPETITOR.name())
+                        .requestMatchers("/api/users/addUser").hasAnyAuthority(UserRole.ADMIN.name())
+
                         //Clubs:
                         .requestMatchers("/api/clubs/all").permitAll()//hasAnyAuthority(UserRole.COACH.name(), UserRole.COMPETITOR.name(), UserRole.ADMIN.name())
                         .requestMatchers("/api/clubs/allWithUsers").hasAnyAuthority(UserRole.COACH.name(), UserRole.ADMIN.name())

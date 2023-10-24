@@ -1,4 +1,4 @@
-package com.orienting;
+package com.orienting.command;
 
 public class Command implements Action {
     private Runnable function;

@@ -148,5 +148,8 @@ public class UsersController extends MainController {
         return (UserDto) makeRequest(user, USER_URL + "/update", "PUT", new UserDto());
     }
 
+    public UserDto addUser(UserCreationDto user) {
+        return (UserDto) makeRequest(user, USER_URL + "/addUser", "POST", new UserDto());
+    }
 }
 

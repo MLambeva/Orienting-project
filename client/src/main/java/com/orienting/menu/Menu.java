@@ -1,6 +1,8 @@
-package com.orienting;
+package com.orienting.menu;
 
-import java.awt.*;
+import com.orienting.context.UserContext;
+import com.orienting.menu.MenuEntry;
+
 import java.util.List;
 import java.util.Scanner;
 

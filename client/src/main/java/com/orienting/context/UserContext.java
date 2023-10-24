@@ -1,4 +1,4 @@
-package com.orienting;
+package com.orienting.context;
 
 import com.orienting.common.enums.UserRole;
 

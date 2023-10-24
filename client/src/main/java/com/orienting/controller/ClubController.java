@@ -1,6 +1,5 @@
 package com.orienting.controller;
 
-import com.orienting.Main;
 import com.orienting.common.dto.ClubDto;
 import com.orienting.common.dto.ClubWithUsersDto;
 

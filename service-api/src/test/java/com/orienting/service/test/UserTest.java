@@ -144,8 +144,7 @@ public class UserTest {
     }
 
     private void removeClub(String name, String token) throws IOException, URISyntaxException, InterruptedException {
-        String[] s = name.split(" ");
-        remove(CLUBS_API + "delete/byName/" + String.join("%20", s), token, "club");
+        remove(CLUBS_API + "delete/byName/" + name.replaceAll(" ", "%20"), token, "club");
     }
 
     private void removeUser(String ucn, String token) throws IOException, URISyntaxException, InterruptedException {
@@ -153,8 +152,7 @@ public class UserTest {
     }
 
     private void removeCompetition(String name, String token) throws URISyntaxException, IOException, InterruptedException {
-        String[] s = name.split(" ");
-        remove(COMP_API + "delete/byName/" + String.join("%20", s), token, "competition");
+        remove(COMP_API + "delete/byName/" + name.replaceAll(" ", "%20"), token, "competition");
     }
 
     @Test

@@ -1,7 +1,7 @@
 package com.orienting.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.orienting.UserContext;
+import com.orienting.context.UserContext;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -12,13 +12,12 @@ public class MainController {
     public Object makeRequest(Object object, String url, String httpMethod, Object responseType) {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.findAndRegisterModules();
-        String requestUrl = url;
 
         try {
             String requestBody = null;
             if (httpMethod.equals("POST") || httpMethod.equals("PUT"))
                 requestBody = objectMapper.writeValueAsString(object);
-            HttpURLConnection connection = getHttpURLConnection(requestUrl, httpMethod, requestBody);
+            HttpURLConnection connection = getHttpURLConnection(url, httpMethod, requestBody);
             int responseCode = connection.getResponseCode();
 
             if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_CREATED) {
@@ -39,7 +38,6 @@ public class MainController {
         if (responseType instanceof String) {
             return responseContent;
         }
-
         return objectMapper.readValue(responseContent, responseType.getClass());
     }
 
@@ -53,7 +51,6 @@ public class MainController {
             return content.toString();
         }
     }
-
 
     private void handleErrorResponse(HttpURLConnection connection) throws IOException {
         try (InputStream errorStream = connection.getErrorStream()) {
@@ -81,7 +78,6 @@ public class MainController {
         if (!Objects.equals(UserContext.getToken(), "")) {
             connection.setRequestProperty("Authorization", "Bearer " + UserContext.getToken());
         }
-
         if (httpMethod.equals("POST") || httpMethod.equals("PUT")) {
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setDoOutput(true);
