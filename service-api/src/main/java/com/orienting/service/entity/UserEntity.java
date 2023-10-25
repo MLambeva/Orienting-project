@@ -92,6 +92,10 @@ public class UserEntity implements UserDetails {
         return this.role.equals(UserRole.COMPETITOR);
     }
 
+    public boolean isAdmin() {
+        return this.role.equals(UserRole.ADMIN);
+    }
+
     public void addClub(ClubEntity club) {
         this.club = club;
     }

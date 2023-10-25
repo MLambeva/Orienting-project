@@ -8,7 +8,15 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Objects;
 
-public class MainController {
+abstract public class MainController {
+
+    protected final String url;
+
+    public MainController(String url) {
+        this.url = url;
+    }
+
+
     public Object makeRequest(Object object, String url, String httpMethod, Object responseType) {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.findAndRegisterModules();
@@ -70,7 +78,7 @@ public class MainController {
         }
     }
 
-    public static HttpURLConnection getHttpURLConnection(String requestUrl, String httpMethod, String requestBody) throws IOException {
+    private HttpURLConnection getHttpURLConnection(String requestUrl, String httpMethod, String requestBody) throws IOException {
         URL url = new URL(requestUrl);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod(httpMethod);
@@ -88,5 +96,25 @@ public class MainController {
             }
         }
         return connection;
+    }
+
+    public static boolean checkConnection(int port) {
+        String url = "http://localhost:" + port + "/api";
+        try {
+            URL urlObject = new URL(url);
+            HttpURLConnection connection = (HttpURLConnection) urlObject.openConnection();
+            int responseCode = connection.getResponseCode();
+
+            if (responseCode >= 200 && responseCode < 300) {
+                System.out.println(url + " is accessible. HTTP Status Code: " + responseCode);
+                return true;
+            } else {
+                System.out.println(url + " is not accessible. HTTP Status Code: " + responseCode);
+                return false;
+            }
+        } catch (IOException e) {
+            System.out.println(url + " is not accessible. Error: " + e.getMessage());
+            return false;
+        }
     }
 }

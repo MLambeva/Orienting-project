@@ -1,11 +1,14 @@
 package com.orienting.common.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.orienting.common.enums.UserRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Getter
 @Setter
@@ -28,12 +31,15 @@ public class UserCreationDto {
     private String ucn;
     @Pattern(regexp = "^(\\+\\d{1,2})?\\s?\\(?\\d{3}\\)?[-.\\s]?\\d{3}[-.\\s]?\\d{4}$", message = "Invalid phone number!")
     private String phoneNumber;
-    @Pattern(regexp = "^(W|M)\\d{2}$", message = "Invalid format of group -> M/W{digit}!")
+    @Pattern(regexp = "^(W|M)\\d{2}$", message = "Invalid format! Format must be in format M/W(dd), d-digit --> for example: M21")
     private String group;
     @NotNull(message = "The role is mandatory!")
     private UserRole role;
     private Integer clubId;
     private String clubName;
+    @JsonIgnore
+    private Logger logger = LoggerFactory.getLogger(UserCreationDto.class);
+
 
     public UserCreationDto(String email, String password, String firstName, String lastName, String ucn, String phoneNumber, String group, UserRole role, Integer clubId) {
         this.email = email;
@@ -48,29 +54,47 @@ public class UserCreationDto {
     }
 
     public UserCreationDto(String email, String password, String firstName, String lastName, String ucn, String phoneNumber, String group, String role, String clubId, String clubName) {
-        if (email != null) this.email = email;
-        else System.err.println("The email is mandatory!");
-        if(password != null) this.password = password;
-        else System.err.println("The password is mandatory!");
-        if(firstName != null) this.firstName = firstName;
-        else System.err.println("First name is mandatory!");
-        if(lastName != null) this.lastName = firstName;
-        else System.err.println("Last name is mandatory!");
-        if(ucn != null && ucn.length() == 10) this.ucn = ucn;
-        else System.err.println("Unified Civil number is mandatory and must have 10 digits!");
-        this.phoneNumber = phoneNumber;
-        this.group = group;
-        role = role.toUpperCase();
-        if(role.matches("^(COACH|COMPETITOR)$"))
-            this.role = UserRole.valueOf(role);
-        else
-            System.err.println("Role must be coach or competitor!");
-        if(clubId != null &&  !clubId.isEmpty() && clubId.matches("\\d+"))
-            this.clubId = Integer.parseInt(clubId);
-        else if(clubId != null &&  !clubId.isEmpty() && !clubId.matches("\\d+")) {
-            this.clubId = null;
-            System.err.println("Invalid input for clubId!");
+        if (email != null && !email.isEmpty()) this.email = email;
+        else {
+            logger.error("The email is mandatory!");
+            this.email = null;
         }
-        if(clubName != null && !clubName.isEmpty()) this.clubName = clubName.replaceAll("%20", " ");
+
+        if (password != null && !password.isEmpty()) this.password = password;
+        else {
+            logger.error("The password is mandatory!");
+            this.password = null;
+        }
+        if (firstName != null && !firstName.isEmpty()) this.firstName = firstName;
+        else {
+            logger.error("First name is mandatory!");
+            this.firstName = null;
+        }
+        if (lastName != null && !lastName.isEmpty()) this.lastName = firstName;
+        else {
+            logger.error("Last name is mandatory!");
+            this.lastName = null;
+        }
+        if (ucn != null && ucn.length() == 10) this.ucn = ucn;
+        else {
+            logger.error("Unified Civil number is mandatory and must have 10 digits!");
+            this.ucn = null;
+        }
+        this.phoneNumber = (phoneNumber != null && !phoneNumber.isEmpty()) ? phoneNumber : null;
+        this.group = (group != null && !group.isEmpty()) ? group : null;
+        role = role.toUpperCase();
+        if (role.matches("^(COACH|COMPETITOR)$"))
+            this.role = UserRole.valueOf(role);
+        else {
+            this.role = null;
+            logger.error("Role must be coach or competitor!");
+        }
+        if (clubId != null && !clubId.isEmpty() && clubId.matches("\\d+"))
+            this.clubId = Integer.parseInt(clubId);
+        else if (clubId != null && !clubId.isEmpty() && !clubId.matches("\\d+")) {
+            this.clubId = null;
+            logger.error("Invalid input for clubId!");
+        }
+        this.clubName = (clubName != null && !clubName.isEmpty()) ? clubName.replaceAll("%20", " ") : null;
     }
 }

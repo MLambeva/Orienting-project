@@ -1,11 +1,14 @@
 package com.orienting.common.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -26,6 +29,7 @@ public class CompetitionDto {
     @NotNull(message = "Date is mandatory!")
     private LocalDate date;
     @JsonFormat(pattern = "HH:mm:ss")
+    @NotNull(message = "Time is mandatory!")
     private LocalTime time;
     @JsonFormat(pattern = "dd-MM-yyyy")
     @FutureOrPresent
@@ -33,6 +37,8 @@ public class CompetitionDto {
     private LocalDate deadline;
     private String location;
     private String coordinates;
+    @JsonIgnore
+    private Logger logger = LoggerFactory.getLogger(CompetitionDto.class);
 
     public CompetitionDto(String name, LocalDate date, LocalTime time, LocalDate deadline, String location, String coordinates) {
         this.name = name;
@@ -52,10 +58,9 @@ public class CompetitionDto {
             this.time = LocalTime.parse(time, timeFormatter);
             this.deadline = LocalDate.parse(deadline, dateFormatter);
         }catch (DateTimeParseException e) {
-            System.err.println("Invalid formats!");
+            logger.error("Invalid formats!");
         }
         this.location = (location != null && !location.isEmpty() ?  location.replaceAll("%20", " ") : null);
         this.coordinates = coordinates;
     }
-
 }

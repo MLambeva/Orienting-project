@@ -5,7 +5,6 @@ import com.orienting.service.entity.UserEntity;
 import com.orienting.service.exception.*;
 import com.orienting.service.repository.CompetitionRepository;
 import com.orienting.service.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
@@ -31,7 +30,7 @@ public class UserCompetitionService {
             throw new InvalidRoleException(String.format("Cannot manage coach with id %d!", user.getUserId()));
         }
         if (authUser.isCoach() && (authUser.getClub() == null || user.getClub() == null)
-                || (authUser.getClub() != null && user.getClub() != null && !Objects.equals(authUser.getClub().getClubId(), user.getClub().getClubId()))) {
+                || (!authUser.isAdmin() && authUser.getClub() != null && user.getClub() != null && !Objects.equals(authUser.getClub().getClubId(), user.getClub().getClubId()))) {
             throw new InvalidRoleException("Cannot manage user with that id!");
         }
     }
@@ -58,7 +57,6 @@ public class UserCompetitionService {
         CompetitionEntity competition = competitionRepository.findCompetitionByCompId(compId).orElseThrow(() -> new NoExistedCompetitionException("Competition with that id does not exist!"));
         return request(user, competition, email);
     }
-
 
     public UserEntity requestParticipationByName(Integer userId, String name, String email) {
         UserEntity user = userRepository.findUserByUserId(userId).orElseThrow(() -> new NoExistedUserException("User with that id does not exist!"));

@@ -53,18 +53,35 @@ public class MenuSwitch {
         }), null);
     }
 
+    private static int getPort() {
+        Scanner sc = new Scanner(System.in);
+        int port = 0;
+        while (port < 1 || port > 65535 || !MainController.checkConnection(port)) {
+            try {
+                System.out.print("Please, write your port: ");
+                port = Integer.parseInt(sc.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.printf("Your choice should be between 1 and 65535%n");
+            }
+        }
+        return port;
+    }
+
     static {
-        AuthenticationController auth = new AuthenticationController();
-        UsersController usersController = new UsersController();
-        ClubController clubController = new ClubController();
-        CompetitionController competitionController = new CompetitionController();
-        LogoutController logoutController = new LogoutController();
+        int port = getPort();
+        final String serverHost = String.format("http://localhost:%d", port);
+        AuthenticationController auth = new AuthenticationController(String.format("%s/api/auth", serverHost));
+        UsersController usersController = new UsersController(String.format("%s/api/users", serverHost));
+        ClubController clubController = new ClubController(String.format("%s/api/clubs", serverHost));
+        CompetitionController competitionController = new CompetitionController(String.format("%s/api/competitions", serverHost));
+        LogoutController logoutController = new LogoutController(String.format("%s/api/tokens", serverHost));
 
 
         MenuEntry goToMain = new MenuEntry("Go to the main menu", new Command(() -> showMenu("main")), null);
         MenuEntry register = new MenuEntry("Register menu: ", new Command(() -> showMenu("register")), null);
         MenuEntry login = new MenuEntry("Login menu: ", new Command(() -> showMenu("login")), null);
-        MenuEntry exit = new MenuEntry("Exit ", new Command(() -> {}), null);
+        MenuEntry exit = new MenuEntry("Exit ", new Command(() -> {
+        }), null);
 
         MenuEntry getAllClubsGuest = getAllClubs(clubController, "main");
         MenuEntry getAllCompetitionsGuest = getAllCompetitions(competitionController, "main");
@@ -80,7 +97,7 @@ public class MenuSwitch {
         Argument lastName = new Argument("last name");
         Argument ucn = new Argument("ucn");
         Argument phoneNumber = new Argument("phone number");
-        Argument group = new Argument("group in format M/W(dd), d-digit --> for exampe: M21");
+        Argument group = new Argument("group in format M/W(dd), d-digit --> for example: M21");
         Argument role = new Argument("role - coach/competitor");
 
         Argument clubId = new Argument("club id");
@@ -98,13 +115,12 @@ public class MenuSwitch {
         Argument newCompetitionName = new Argument("new competition name");
 
         //Register menu
-        MenuEntry m1 = new MenuEntry("Sign up", new CommandWithInputs(List.of(email, password, firstName, lastName, ucn, phoneNumber, group, role, clubId, clubName), (args) -> {
+        MenuEntry sighUp = new MenuEntry("Sign up", new CommandWithInputs(List.of(email, password, firstName, lastName, ucn, phoneNumber, group, role, clubId, clubName), (args) -> {
             UserCreationDto user = new UserCreationDto(args.get(0).getValue(), args.get(1).getValue(), args.get(2).getValue(), args.get(3).getValue(), args.get(4).getValue(), args.get(5).getValue(), args.get(6).getValue(), args.get(7).getValue(), args.get(8).getValue(), args.get(9).getValue());
             AuthenticationResponseDto authResponse = auth.register(user);
             if (authResponse != null) {
                 System.out.println("The registration is successful!");
                 System.out.println("Access token: " + authResponse.getAccessToken());
-
                 System.out.println(authResponse);
                 UserContext.setRole(user.getRole());
                 UserContext.setEmail(user.getEmail());
@@ -114,11 +130,11 @@ public class MenuSwitch {
                 showMenu("register");
             }
         }), null);
-        Menu registerMenu = new Menu("Register menu", List.of(m1, goToMain));
+        Menu registerMenu = new Menu("Register menu", List.of(sighUp, goToMain));
         menus.put("register", registerMenu);
 
         //Login menu
-        MenuEntry m2 = new MenuEntry("Sign in", new CommandWithInputs(List.of(email, password), (args) -> {
+        MenuEntry signIn = new MenuEntry("Sign in", new CommandWithInputs(List.of(email, password), (args) -> {
             SignInDto user = new SignInDto(args.get(0).getValue(), args.get(1).getValue());
             AuthenticationResponseDto authResponse = auth.authenticate(user);
             if (authResponse != null) {
@@ -133,7 +149,7 @@ public class MenuSwitch {
                 showMenu("login");
             }
         }), null);
-        Menu authMenu = new Menu("Authentication menu", List.of(m2, goToMain));
+        Menu authMenu = new Menu("Authentication menu", List.of(signIn, goToMain));
         menus.put("login", authMenu);
 
         //Logout menu
@@ -446,7 +462,7 @@ public class MenuSwitch {
 
 
         //Competitions
-        MenuEntry getAllCompetitions = getAllCompetitions(competitionController,"manage competitions");
+        MenuEntry getAllCompetitions = getAllCompetitions(competitionController, "manage competitions");
         MenuEntry getAllCompetitionsWithParticipants = new MenuEntry("Get all competitions with participants", new Command(() -> {
             List<CompetitionRequestDto> result = competitionController.getAllCompetitionsWithParticipants();
             if (result != null)
@@ -458,7 +474,7 @@ public class MenuSwitch {
                 List<CompetitionDto> result = competitionController.getCompetitionByDate(args.get(0).getValue());
                 if (result != null)
                     System.out.println(JsonFormatter.formatJson(result));
-            } else System.err.println("Invalid date!");
+            } else System.out.println("Invalid date!");
             showMenu("manage competitions");
         }), List.of(UserRole.ADMIN, UserRole.COACH, UserRole.COMPETITOR));
         MenuEntry getCompetitionByDateWithParticipants = new MenuEntry("Get competition by date with participants", new CommandWithInputs(List.of(date), (args) -> {
@@ -466,7 +482,7 @@ public class MenuSwitch {
                 List<CompetitionRequestDto> result = competitionController.getCompetitionByDateWithParticipants(args.get(0).getValue());
                 if (result != null)
                     System.out.println(JsonFormatter.formatJson(result));
-            } else System.err.println("Invalid date!");
+            } else System.out.println("Invalid date!");
             showMenu("manage competitions");
         }), List.of(UserRole.ADMIN, UserRole.COACH, UserRole.COMPETITOR));
         MenuEntry getCompetitionByName = new MenuEntry("Get competition by name", new CommandWithInputs(List.of(competitionName), (args) -> {
@@ -581,7 +597,7 @@ public class MenuSwitch {
         menus.put("manage competitions", competitionMenu);
 
 
-        MenuEntry menuUsers = new MenuEntry("Menu users", new Command(() -> showMenu("manage users")),List.of(UserRole.ADMIN, UserRole.COACH, UserRole.COMPETITOR));
+        MenuEntry menuUsers = new MenuEntry("Menu users", new Command(() -> showMenu("manage users")), List.of(UserRole.ADMIN, UserRole.COACH, UserRole.COMPETITOR));
         MenuEntry menuClubs = new MenuEntry("Menu clubs", new Command(() -> showMenu("manage clubs")), List.of(UserRole.ADMIN, UserRole.COACH, UserRole.COMPETITOR));
         MenuEntry menuCompetitions = new MenuEntry("Menu competitions", new Command(() -> showMenu("manage competitions")), List.of(UserRole.ADMIN, UserRole.COACH, UserRole.COMPETITOR));
 

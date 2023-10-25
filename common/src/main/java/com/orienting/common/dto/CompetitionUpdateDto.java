@@ -1,11 +1,13 @@
 package com.orienting.common.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.FutureOrPresent;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -27,6 +29,8 @@ public class CompetitionUpdateDto {
     private LocalDate deadline;
     private String location;
     private String coordinates;
+    @JsonIgnore
+    private Logger logger = LoggerFactory.getLogger(CompetitionUpdateDto.class);
 
     public CompetitionUpdateDto(String name, String date, String time, String deadline, String location, String coordinates) {
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -38,7 +42,7 @@ public class CompetitionUpdateDto {
             this.time = (time != null && !time.isEmpty()) ? LocalTime.parse(time, timeFormatter) : null;
             this.deadline = (deadline != null && !deadline.isEmpty()) ? LocalDate.parse(deadline, dateFormatter) : null;
         }catch (DateTimeParseException e) {
-            System.err.println("Invalid formats!");
+            logger.error("Invalid formats!");
         }
         this.location = (location != null && !location.isEmpty() ?  location.replaceAll("%20", " ") : null);
         this.coordinates = (coordinates != null && !coordinates.isEmpty()) ? coordinates : null;

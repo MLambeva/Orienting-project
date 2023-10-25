@@ -33,6 +33,7 @@ public class SecurityConfiguration {
         httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api").permitAll()
                         .requestMatchers("/api/auth/*").permitAll()
                         .requestMatchers("/api/tokens/logout").hasAnyAuthority(UserRole.ADMIN.name(), UserRole.COACH.name(), UserRole.COMPETITOR.name())
                         .requestMatchers("/api/users/all").hasAnyAuthority(UserRole.ADMIN.name(), UserRole.COACH.name())
@@ -66,7 +67,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/users/addUser").hasAnyAuthority(UserRole.ADMIN.name())
 
                         //Clubs:
-                        .requestMatchers("/api/clubs/all").permitAll()//hasAnyAuthority(UserRole.COACH.name(), UserRole.COMPETITOR.name(), UserRole.ADMIN.name())
+                        .requestMatchers("/api/clubs/all").permitAll()
                         .requestMatchers("/api/clubs/allWithUsers").hasAnyAuthority(UserRole.COACH.name(), UserRole.ADMIN.name())
                         .requestMatchers("/api/clubs/*/*").hasAnyAuthority(UserRole.COACH.name(), UserRole.ADMIN.name())
                         .requestMatchers("/api/clubs/withUsers/*/*").hasAnyAuthority(UserRole.COACH.name(), UserRole.ADMIN.name())
