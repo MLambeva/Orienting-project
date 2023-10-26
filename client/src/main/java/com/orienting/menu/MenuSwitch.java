@@ -53,23 +53,25 @@ public class MenuSwitch {
         }), null);
     }
 
-    private static int getPort() {
+    private static String getHostAndPort() {
         Scanner sc = new Scanner(System.in);
         int port = 0;
-        while (port < 1 || port > 65535 || !MainController.checkConnection(port)) {
+        String host = null;
+        while (port < 1 || port > 65535 || !MainController.checkConnection(host, port)) {
             try {
+                System.out.print("Please, write your host: ");
+                host = sc.nextLine();
                 System.out.print("Please, write your port: ");
                 port = Integer.parseInt(sc.nextLine());
             } catch (NumberFormatException e) {
                 System.out.printf("Your choice should be between 1 and 65535%n");
             }
         }
-        return port;
+        return String.format("%s%d", host, port);
     }
 
     static {
-        int port = getPort();
-        final String serverHost = String.format("http://localhost:%d", port);
+        final String serverHost = getHostAndPort();
         AuthenticationController auth = new AuthenticationController(String.format("%s/api/auth", serverHost));
         UsersController usersController = new UsersController(String.format("%s/api/users", serverHost));
         ClubController clubController = new ClubController(String.format("%s/api/clubs", serverHost));

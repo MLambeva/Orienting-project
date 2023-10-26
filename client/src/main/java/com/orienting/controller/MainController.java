@@ -98,8 +98,8 @@ abstract public class MainController {
         return connection;
     }
 
-    public static boolean checkConnection(int port) {
-        String url = "http://localhost:" + port + "/api";
+    public static boolean checkConnection(String host, int port) {
+        String url = String.format("%s%d/api", host, port);
         try {
             URL urlObject = new URL(url);
             HttpURLConnection connection = (HttpURLConnection) urlObject.openConnection();
