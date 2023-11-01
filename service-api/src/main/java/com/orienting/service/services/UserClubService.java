@@ -160,8 +160,17 @@ public class UserClubService {
                 newClub = clubRepository.findClubByClubName(user.getClub().getClubName()).orElseThrow(() -> new NoExistedClubException(String.format("Club with name %s does not exist!", user.getClub().getClubName())));
             }
         }
-        user.setClub(newClub);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        UserEntity newUser = UserEntity.builder()
+                .email(user.getEmail())
+                .password(passwordEncoder.encode(user.getPassword()))
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .ucn(user.getUcn())
+                .phoneNumber(user.getPhoneNumber())
+                .group(user.getGroup())
+                .role(user.getRole())
+                .club(newClub)
+                .build();
+        return userRepository.save(newUser);
     }
 }
