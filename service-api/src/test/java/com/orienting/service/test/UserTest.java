@@ -183,7 +183,7 @@ public class UserTest {
 
         addCompetition(new CompetitionDto("Turnovo cup", LocalDate.parse("16-03-2024", dateFormatter), LocalTime.parse("13:00:00", timeFormatter), LocalDate.parse("13-03-2024", dateFormatter), "Veliko Turnovo", "245N651E"), token);
         addCompetition(new CompetitionDto("Ruse cup", LocalDate.parse("16-03-2024", dateFormatter), LocalTime.parse("16:00:00", timeFormatter), LocalDate.parse("13-03-2024", dateFormatter), "Ruse", "245N661E"), token);
-        addCompetition(new CompetitionDto("Dryanovo cup", LocalDate.parse("13-11-2023", dateFormatter), LocalTime.parse("10:00:00", timeFormatter), LocalDate.parse("09-11-2023", dateFormatter), "Dryanovo", "255N651E"), token);
+        addCompetition(new CompetitionDto("Dryanovo cup", LocalDate.parse("13-11-2024", dateFormatter), LocalTime.parse("10:00:00", timeFormatter), LocalDate.parse("09-11-2024", dateFormatter), "Dryanovo", "255N651E"), token);
         addCompetition(new CompetitionDto("Sofia cup", LocalDate.parse("02-02-2024", dateFormatter), LocalTime.parse("16:00:00", timeFormatter), LocalDate.parse("31-01-2024", dateFormatter), "Sofia", "265N651E"), token);
 
     }

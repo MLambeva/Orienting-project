@@ -99,7 +99,7 @@ abstract public class MainController {
     }
 
     public static boolean checkConnection(String host, int port) {
-        String url = String.format("%s%d/api", host, port);
+        String url = String.format("%s:%d/api", host, port);
         try {
             URL urlObject = new URL(url);
             HttpURLConnection connection = (HttpURLConnection) urlObject.openConnection();

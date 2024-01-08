@@ -67,7 +67,7 @@ public class MenuSwitch {
                 System.out.printf("Your choice should be between 1 and 65535%n");
             }
         }
-        return String.format("%s%d", host, port);
+        return String.format("%s:%d", host, port);
     }
 
     static {
